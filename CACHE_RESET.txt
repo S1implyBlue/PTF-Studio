@@ -1,0 +1,5 @@
+PTF Studio Beta 0.9.1
+
+Extract this release into a new folder. The HTML, CSS, JavaScript, battery asset, and macOS app resources use 0.9.1 cache identifiers.
+
+If an older interface still appears, close the browser tab and launch this folder's `PTF Studio.command`, `PTF Studio.bat`, or `index.html` again.

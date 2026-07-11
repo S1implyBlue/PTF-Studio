@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PTF Studio Beta 0.9.1</title>
+  <link rel="stylesheet" href="styles.css?v=0.9.1-beta" />
+</head>
+<body>
+  <div id="appShell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brandMark">P</div>
+        <div>
+          <div class="brandTitle">PTF Studio</div>
+          <div class="brandSub">PSP theme editor · Beta 0.9.1</div>
+        </div>
+      </div>
+      <div class="topActions">
+        <label class="button primary" for="ptfInput">Import PTF</label>
+        <input id="ptfInput" type="file" accept=".ptf,application/octet-stream" hidden />
+        <button id="loadSampleBtn" class="button">Load sample</button>
+        <button id="exportBtn" class="button success" disabled>Export PTF</button>
+        <div class="menuWrap">
+          <button id="helpMenuBtn" class="button" aria-haspopup="true" aria-expanded="false">Help</button>
+          <div id="helpMenu" class="helpMenu hidden" role="menu">
+            <button id="aboutBtn" role="menuitem">About PTF Studio</button>
+            <button id="creditsBtn" role="menuitem">Credits</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar leftPanel">
+        <section class="panelSection projectSection">
+          <div class="sectionTitle">Theme</div>
+          <div class="fieldGroup compact">
+            <label>Title</label>
+            <input id="themeName" type="text" disabled />
+          </div>
+          <div class="fieldGroup compact">
+            <label>Product ID</label>
+            <input id="themeProductId" type="text" disabled maxlength="47" />
+          </div>
+          <div class="inlineFields">
+            <div class="fieldGroup compact">
+              <label>Version</label>
+              <input id="themeVersion" type="text" disabled maxlength="7" />
+            </div>
+            <div class="fieldGroup compact">
+              <label>Color</label>
+              <select id="themeColor" disabled></select>
+            </div>
+          </div>
+          <div class="fontLoader">
+            <label class="button full" for="fontInput">Load PSP preview font</label>
+            <input id="fontInput" type="file" accept=".otf,.ttf,.woff,.woff2,font/otf,font/ttf" hidden />
+            <div class="fontStatusRow"><span>Preview font</span><strong id="fontStatus">System fallback</strong></div>
+          </div>
+          <div class="batchTools">
+            <div class="sectionTitle small">Batch tools</div>
+            <button id="bulkFocusBtn" class="button primary full" disabled>Bulk change first-level focus</button>
+            <input id="bulkFocusInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
+            <button id="restoreBulkFocusBtn" class="button full" disabled>Restore all first-level focus</button>
+            <div class="batchHint">Applies one image to every first-level focus slot using the current fit setting.</div>
+          </div>
+        </section>
+
+        <section class="panelSection assetsSection">
+          <div class="sectionTitleRow">
+            <div class="sectionTitle">Assets</div>
+            <input id="assetSearch" class="searchInput" type="search" placeholder="Search" disabled />
+          </div>
+          <div id="assetGroups" class="assetGroups emptyState">
+            Import a PTF theme to begin.
+          </div>
+        </section>
+      </aside>
+
+      <section class="centerStage">
+        <div class="viewerToolbar">
+          <div class="segmented">
+            <button class="seg active" data-view="xmb">XMB</button>
+            <button class="seg" data-view="assets">Asset</button>
+          </div>
+          <div class="viewerMeta">
+            <span id="viewerStatus">No theme loaded</span>
+            <span class="dot"></span>
+            <span>480 × 272</span>
+          </div>
+          <div class="viewerControls">
+            <button id="resetNavBtn" class="iconButton" title="Reset XMB position" disabled>↺</button>
+            <button id="toggleGridBtn" class="iconButton" title="Toggle guides" disabled>⌗</button>
+          </div>
+        </div>
+
+        <div class="viewerWrap">
+          <div id="dropZone" class="dropZone">
+            <canvas id="xmbCanvas" width="960" height="544"></canvas>
+            <div id="dropOverlay" class="dropOverlay">
+              <div class="dropIcon">↓</div>
+              <div class="dropTitle">Drop a PTF theme here</div>
+              <div class="dropHint">or use Import PTF</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="navHelp">
+          <span><kbd>←</kbd><kbd>→</kbd> categories</span>
+          <span><kbd>↑</kbd><kbd>↓</kbd> items</span>
+          <span><kbd>Enter</kbd> second level</span>
+          <span><kbd>Esc</kbd> back</span>
+        </div>
+      </section>
+
+      <aside class="sidebar rightPanel">
+        <section class="panelSection inspectorSection">
+          <div class="sectionTitle">Inspector</div>
+          <div id="inspectorEmpty" class="emptyInspector">
+            Select an asset to edit it.
+          </div>
+          <div id="inspector" class="inspector hidden">
+            <div class="assetHero">
+              <canvas id="assetPreview" width="280" height="180"></canvas>
+            </div>
+            <div class="assetIdentity">
+              <div id="assetTitle" class="assetTitle"></div>
+              <div id="assetSlot" class="assetSlot"></div>
+            </div>
+
+            <div class="infoGrid">
+              <div><span>Required</span><strong id="requiredSize">—</strong></div>
+              <div><span>Current</span><strong id="currentSize">—</strong></div>
+              <div><span>Format</span><strong id="currentFormat">—</strong></div>
+              <div><span>Palette</span><strong id="paletteInfo">—</strong></div>
+            </div>
+
+            <div class="inspectorActions">
+              <label class="button primary full" for="replaceInput">Replace image</label>
+              <input id="replaceInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
+              <button id="restoreAssetBtn" class="button full" disabled>Restore original</button>
+              <button id="exportAssetBtn" class="button full">Export PNG</button>
+            </div>
+
+            <div class="sectionDivider"></div>
+
+            <div class="sectionTitle small">Import handling</div>
+            <div class="fieldGroup compact">
+              <label>Fit</label>
+              <select id="fitMode">
+                <option value="contain">Contain</option>
+                <option value="cover">Cover / crop</option>
+                <option value="stretch">Stretch</option>
+              </select>
+            </div>
+            <label class="checkRow">
+              <input id="ditherToggle" type="checkbox" checked />
+              <span>Use dithering when reducing to 256 colors</span>
+            </label>
+            <label class="checkRow">
+              <input id="pulseToggle" type="checkbox" checked />
+              <span>Animate focus pulse in live view</span>
+            </label>
+
+            <div class="validationBox" id="validationBox">
+              <div class="validationDot ok"></div>
+              <div>
+                <strong>Asset is valid</strong>
+                <span id="validationText">Ready for export.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="statusbar">
+      <div id="statusText">Ready</div>
+      <div class="statusRight">
+        <span id="dirtyState">No project</span>
+        <span class="statusSep"></span>
+        <span>PTF Studio Beta 0.9.1 · PTF v1</span>
+      </div>
+    </footer>
+  </div>
+
+  <div id="aboutModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="modalCard">
+      <div class="modalHeader">
+        <div>
+          <div id="aboutTitle" class="modalTitle">PTF Studio</div>
+          <div class="modalVersion">Beta 0.9.1 · Build 2026.07.11</div>
+        </div>
+        <button id="closeAboutBtn" class="modalClose" aria-label="Close">×</button>
+      </div>
+      <div class="modalBody">
+        <p class="modalLead">A portable PSP PTF theme maker, editor, live viewer, and exporter for the modding community.</p>
+        <div class="creditGrid">
+          <div><span>Created by</span><strong>Blue</strong></div>
+          <div><span>Development</span><strong>With the assistance of ChatGPT</strong></div>
+          <div><span>Testing</span><strong>Blue and community testers</strong></div>
+          <div><span>Runtime</span><strong>Dependency-free browser build</strong></div>
+        </div>
+        <div class="modalSection">
+          <h3>Credits</h3>
+          <p>Created by Blue with the use and assistance of ChatGPT.</p>
+        </div>
+        <div class="modalSection">
+          <h3>Third-party libraries</h3>
+          <p>No external runtime libraries are bundled. PTF Studio uses standard browser APIs.</p>
+        </div>
+        <div class="modalNote">GitHub and forum links can be added to the release description once the public project pages are available.</div>
+      </div>
+      <div class="modalFooter">
+        <button id="modalCloseButton" class="button primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastHost"></div>
+  <script src="sample.js?v=0.9.1-beta"></script>
+  <script src="app.js?v=0.9.1-beta"></script>
+</body>
+</html>

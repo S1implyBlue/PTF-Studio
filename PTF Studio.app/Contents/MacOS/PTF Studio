@@ -1,0 +1,3 @@
+#!/bin/bash
+RES="$(cd "$(dirname "$0")/../Resources" && pwd)"
+open "$RES/index.html"
