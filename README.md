@@ -1,5 +1,9 @@
 # PTF Studio Beta 0.9.1
 
+<img width="1463" height="904" alt="Image" src="https://github.com/user-attachments/assets/913684f3-fa94-4c29-8c4d-384bb754a8c7" />
+
+<img width="1463" height="904" alt="Image" src="https://github.com/user-attachments/assets/e60d2bc0-0558-4d54-a910-50298cbf3c50" />
+
 PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It is intended for the PSP modding community and runs locally in a modern browser.
 
 ## Launch
