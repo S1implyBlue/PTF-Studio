@@ -1,4 +1,4 @@
-# PTF Studio Beta 0.9.5
+# PTF Studio Beta 0.9.5.1
 
 PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It runs locally in a modern browser and is intended for the PSP modding community.
 
@@ -25,26 +25,21 @@ You may also open `index.html` directly in a current Safari, Chrome, Edge, or Fi
 - Use PSP model profiles for PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or a universal asset view.
 - Generate focus glows and apply one focus image to every first-level focus slot.
 
-## New in Beta 0.9.5
+## New in Beta 0.9.5.1
 
-### Built-in Asset Maker
+### Asset Maker display correction
 
-PTF Studio now includes a layer-based workspace for creating PSP theme artwork without leaving the editor.
+- Fixed the central Asset Maker canvas being squeezed or stretched by the responsive modal layout.
+- Square icon and focus presets now display as exact squares.
+- Category icons, preview images, and wallpapers retain their correct aspect ratios.
+- The canvas now synchronizes its internal pixel buffer with its displayed browser size, including Retina/HiDPI scaling.
+- Grid lines, transparent canvas borders, imported artwork, selection outlines, dragging, and pointer coordinates remain aligned after resizing.
 
-- Native presets for wallpapers, preview images, category icons, first- and second-level icons, focus graphics, and the 16 × 16 preview icon.
-- Import transparent artwork as editable layers.
-- Add rectangles, rounded rectangles, circles, and lines.
-- Move, resize, rotate, reorder, duplicate, hide, and delete layers.
-- Undo and redo support.
-- Solid fills, simple two-colour gradients, strokes, opacity, tint, brightness, contrast, and saturation controls.
-- Conservative baked outline, solid-shadow, and low-radius glow controls limited for PSP-friendly output.
-- Live 256-colour indexed preview for icon and focus presets.
-- Wallpaper readability overlay using the current theme’s XMB icons and labels.
-- Generate a restrained matching focus asset from a first- or second-level body icon.
-- Apply artwork directly to a compatible PTF slot, apply and return to the XMB preview, or export the canvas as PNG.
-- Open any supported asset directly in the Asset Maker from the Inspector.
+### Asset Maker introduced in Beta 0.9.5
 
-The planned sample icon library is intentionally not bundled in this release and will be added after the distributable asset set is ready.
+PTF Studio includes a layer-based workspace for creating wallpapers, preview assets, category icons, first- and second-level icons, and focus graphics. It provides shapes, transforms, basic PSP-safe effects, palette preview, focus generation, direct slot assignment, undo/redo, and PNG export.
+
+The planned sample icon library is intentionally not bundled yet and will be added after the distributable asset set is ready.
 
 ## Previous metadata fixes — Beta 0.9.4.3
 

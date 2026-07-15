@@ -1,5 +1,13 @@
 # Changelog
 
+## Beta 0.9.5.1 — 2026-07-15
+
+- Fixed non-uniform stretching of the Asset Maker drawing surface.
+- Added responsive canvas backing-store synchronization with Retina/HiDPI support.
+- Preserved correct aspect ratios for every Asset Maker preset.
+- Kept grid, artwork, selection outlines, dragging, and pointer mapping aligned after modal or window resizing.
+- Retained all Beta 0.9.5 Asset Maker and PTF import/export functionality.
+
 ## Beta 0.9.5 — 2026-07-15
 
 - Added the integrated Asset Maker with PSP-native canvas presets.

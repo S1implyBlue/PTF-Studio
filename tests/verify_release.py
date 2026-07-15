@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static and binary regression checks for PTF Studio Beta 0.9.5."""
+"""Static and binary regression checks for PTF Studio Beta 0.9.5.1."""
 from __future__ import annotations
 
 import base64
@@ -46,7 +46,7 @@ def main() -> None:
     sample_js = (ROOT / "sample.js").read_text(encoding="utf-8")
     maker = (ROOT / "asset_maker.js").read_text(encoding="utf-8")
 
-    assert "Beta 0.9.5" in app and "Beta 0.9.5" in html
+    assert "Beta 0.9.5.1" in app and "Beta 0.9.5.1" in html
     assert "title: readFixedString(bytes,8,128)" in app
     assert "productId:readFixedString(bytes,136,48)" in app
     assert "els.themeName.value=t.title" in app
@@ -85,6 +85,9 @@ def main() -> None:
     ]:
         assert token in maker, token
     assert "makerQuantizedImageData" in maker
+    assert "makerSyncCanvasResolution" in maker
+    assert "ResizeObserver" in maker
+    assert "requestAnimationFrame(()=>requestAnimationFrame(makerRenderAll))" in maker
     assert "makerApplyToAsset" in maker
     assert "makerCreateFocus" in maker
     assert "makerUndo" in maker and "makerRedo" in maker
@@ -125,7 +128,7 @@ def main() -> None:
     subprocess.run(["node", "--check", str(ROOT / "asset_maker.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "rlz.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "sample.js")], check=True)
-    print("PTF Studio Beta 0.9.5 verification passed")
+    print("PTF Studio Beta 0.9.5.1 verification passed")
 
 
 if __name__ == "__main__":

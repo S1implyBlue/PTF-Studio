@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5 — built-in PSP Asset Maker */
+/* PTF Studio Beta 0.9.5.1 — built-in PSP Asset Maker */
 'use strict';
 
 const MAKER_PRESETS = Object.freeze({
@@ -145,7 +145,8 @@ function makerNewFromAsset(asset){
   layer.source=makerCloneImageData(asset.imageData);layer.width=p.width;layer.height=p.height;layer.x=p.width/2;layer.y=p.height/2;
   makerState.layers=[layer];makerState.selectedId=layer.id;makerState.targetKey=`${asset.objIdx}:${asset.subIdx}`;
   makerRefreshTargets();makerEls.target.value=makerState.targetKey;
-  makerRenderAll();openModal(makerEls.modal);
+  openModal(makerEls.modal);
+  requestAnimationFrame(()=>requestAnimationFrame(makerRenderAll));
 }
 function makerAddLayer(layer){ makerPushHistory();makerState.layers.push(layer);makerState.selectedId=layer.id;makerRenderAll(); }
 function makerAddShape(type){
@@ -237,11 +238,24 @@ function makerOutput({palettePreview=false}={}){
   if(palettePreview&&p.indexed){const result=makerQuantizedImageData(imageData);imageData=result.imageData;used=result.used;c.clearRect(0,0,p.width,p.height);c.putImageData(imageData,0,0);}
   return {canvas,imageData,used};
 }
+function makerSyncCanvasResolution(){
+  if(!makerEls.canvas)return false;
+  const bounds=makerEls.canvas.getBoundingClientRect();
+  if(bounds.width<2||bounds.height<2)return false;
+  const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  const width=Math.max(1,Math.round(bounds.width*dpr));
+  const height=Math.max(1,Math.round(bounds.height*dpr));
+  if(makerEls.canvas.width===width&&makerEls.canvas.height===height)return false;
+  makerEls.canvas.width=width;
+  makerEls.canvas.height=height;
+  return true;
+}
 function makerDisplayRect(){
-  const p=makerPreset(),margin=36,W=makerEls.canvas.width,H=makerEls.canvas.height,scale=Math.min((W-margin*2)/p.width,(H-margin*2)/p.height);return {x:(W-p.width*scale)/2,y:(H-p.height*scale)/2,w:p.width*scale,h:p.height*scale,scale};
+  const p=makerPreset(),margin=Math.max(24,Math.round(Math.min(makerEls.canvas.width,makerEls.canvas.height)*.055)),W=makerEls.canvas.width,H=makerEls.canvas.height,scale=Math.min((W-margin*2)/p.width,(H-margin*2)/p.height);return {x:(W-p.width*scale)/2,y:(H-p.height*scale)/2,w:p.width*scale,h:p.height*scale,scale};
 }
 function makerRenderCanvas(){
   if(!makerCtx)return;
+  makerSyncCanvasResolution();
   const W=makerEls.canvas.width,H=makerEls.canvas.height,rect=makerDisplayRect(),p=makerPreset();makerCtx.clearRect(0,0,W,H);makerCtx.fillStyle='#090b0e';makerCtx.fillRect(0,0,W,H);
   const tile=12;for(let y=rect.y;y<rect.y+rect.h;y+=tile)for(let x=rect.x;x<rect.x+rect.w;x+=tile){makerCtx.fillStyle=(((x-rect.x)/tile+(y-rect.y)/tile)&1)?'#232830':'#181c22';makerCtx.fillRect(x,y,Math.min(tile,rect.x+rect.w-x),Math.min(tile,rect.y+rect.h-y));}
   const output=makerOutput({palettePreview:makerEls.palettePreview.checked});makerState.lastRender=output;
@@ -313,7 +327,11 @@ function makerCreateFocus(){
 function makerBindProperty(element,property,parser=value=>value,{event='input',aspect=false}={}){
   element?.addEventListener(event,()=>{const l=makerLayer();if(!l)return;makerPushHistory();const oldW=l.width,oldH=l.height;l[property]=parser(element.type==='checkbox'?element.checked:element.value);if(aspect&&makerEls.lockAspect.checked&&oldW&&oldH){if(property==='width')l.height=l.width*(oldH/oldW);else if(property==='height')l.width=l.height*(oldW/oldH);}makerRenderAll();});
 }
-function makerOpen(){makerRefreshTargets();makerRenderAll();openModal(makerEls.modal);}
+function makerOpen(){
+  makerRefreshTargets();
+  openModal(makerEls.modal);
+  requestAnimationFrame(()=>requestAnimationFrame(makerRenderAll));
+}
 
 if(makerEls.modal){
   for(const [key,preset] of Object.entries(MAKER_PRESETS))makerEls.preset.add(new Option(`${preset.label} — ${preset.width} × ${preset.height}`,key));
@@ -340,5 +358,12 @@ if(makerEls.modal){
   makerEls.canvas.addEventListener('pointermove',event=>{if(!makerState.drag)return;const layer=makerState.layers.find(l=>l.id===makerState.drag.id);if(!layer)return;const p=makerLayerPoint(event),preset=makerPreset();layer.x=Math.max(-preset.width,Math.min(preset.width*2,p.x-makerState.drag.dx));layer.y=Math.max(-preset.height,Math.min(preset.height*2,p.y-makerState.drag.dy));makerRenderAll();});
   makerEls.canvas.addEventListener('pointerup',event=>{makerState.drag=null;if(makerEls.canvas.hasPointerCapture(event.pointerId))makerEls.canvas.releasePointerCapture(event.pointerId);});
   makerEls.canvas.addEventListener('dragover',event=>event.preventDefault());makerEls.canvas.addEventListener('drop',async event=>{event.preventDefault();const file=[...event.dataTransfer.files].find(f=>f.type.startsWith('image/'));if(file)await makerImportFile(file);});
+  if(typeof ResizeObserver!=='undefined'){
+    const makerResizeObserver=new ResizeObserver(()=>{
+      if(!makerEls.modal.classList.contains('hidden'))makerRenderCanvas();
+    });
+    makerResizeObserver.observe(makerEls.canvas);
+  }
+  window.addEventListener('resize',()=>{if(!makerEls.modal.classList.contains('hidden'))makerRenderCanvas();});
   makerNewDocument('firstBody',{skipConfirm:true});
 }
