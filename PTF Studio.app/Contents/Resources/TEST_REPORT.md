@@ -1,23 +1,25 @@
-# PTF Studio Beta 0.9.1 — Test Report
+# PTF Studio Beta 0.9.5 Test Report
 
-## Automated checks completed
+## Static checks
 
-- JavaScript syntax verified with Node.js 22.
-- All 47 DOM element references used by `app.js` resolve to IDs present in `index.html`.
-- The bundled `S1mplyBlue.ptf` structure was parsed successfully.
-- The sample contains 29 first-level focus slots, all targeted by the new bulk-focus operation.
-- Corrected labels are present for Extras, Save Data Utility, and UMD Update.
-- The upper-lane positioning rule is present for first-level icons above the category row.
-- Root browser files and macOS app resources match byte-for-byte.
-- Version strings and cache identifiers report Beta 0.9.1.
+- JavaScript syntax validated for `app.js`, `asset_maker.js`, `rlz.js`, and `sample.js`.
+- Every Asset Maker DOM reference is present in `index.html`.
+- Main and macOS app resources are synchronized.
+- Version and cache identifiers are consistent.
 
-## Export behaviour
+## Regression checks
 
-- Batch-edited focus images use the same normal asset pipeline as individual replacements.
-- Each focus image is resized according to its PTF slot requirements and the selected fit mode.
-- Indexed focus assets remain subject to the existing 256-colour quantisation during PTF export.
-- Restore-all reloads each first-level focus asset from the imported PTF data.
+- Bundled `PTF_STUDIO_SAMPLE_THEME.ptf` matches the embedded sample byte-for-byte.
+- Correct Title, Product ID, fixed-colour metadata records, RLZ/LZR, Deflate, and stored import/export code paths remain present.
+- Exact-size Import and alpha-safe bicubic Downscale & Import remain present.
 
-## Recommended release check
+## Asset Maker checks
 
-Test one bulk-edited export from `/PSP/THEME/` on real PSP hardware before public distribution.
+- All eight PSP canvas presets are declared with the correct dimensions.
+- Layer import, shapes, transforms, ordering, duplication, deletion, undo, and redo are wired.
+- Indexed palette preview is available only as a non-destructive preview.
+- Output applies at native preset dimensions to compatible theme slots.
+- Wallpaper XMB overlay is preview-only and is not baked into the wallpaper.
+- Sample icon library is not bundled.
+
+Real PSP testing remains recommended before public distribution.

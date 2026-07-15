@@ -1,5 +1,78 @@
 # Changelog
 
+## Beta 0.9.5 — 2026-07-15
+
+- Added the integrated Asset Maker with PSP-native canvas presets.
+- Added layer-based artwork composition, shapes, transforms, opacity, ordering, duplicate/delete, undo, and redo.
+- Added PSP palette preview and wallpaper XMB readability overlay.
+- Added conservative baked gradients, outline, shadow, glow, tint, and colour adjustments.
+- Added direct assignment to compatible PTF slots, matching-focus generation, and PNG export.
+- Added Edit in Asset Maker to the asset inspector.
+- Deferred the sample icon library to the following release.
+
+## Beta 0.9.4.3 — 2026-07-15
+
+- Corrected Title and Product ID mapping across import, editing, export, variants, and filenames.
+- Corrected theme-colour export to use the canonical four-byte PSP record with file type 5 and compression marker 2.
+- Added strict post-build metadata and colour-record verification.
+- Added Title, Product ID, and Version byte-length validation plus official Product ID character validation.
+
+## Beta 0.9.4.2 — 2026-07-15
+
+- Replaced the bundled sample theme with `PTF_STUDIO_SAMPLE_THEME.ptf`.
+- Removed the previous sample from the package.
+- Regenerated the embedded sample and synchronized macOS/browser resources.
+- Added regression checks confirming the embedded payload matches the distributed PTF.
+
+## Beta 0.9.4.1 — 2026-07-15
+
+- Corrected severe-downscale aliasing in Downscale & Import.
+- Added adaptive antialiased bicubic-smooth resampling.
+- Improved premultiplied-alpha edge handling and preview smoothing.
+
+## Beta 0.9.4 — 2026-07-15
+
+- Added the first metadata-field mapping revision; the definitive PTF header correction is included in Beta 0.9.4.3.
+- Fixed theme-colour persistence with explicit 0–12 validation and post-build colour verification.
+- Replaced the ambiguous single image-replacement action with separate Import and Downscale & Import actions.
+- Added exact-dimension validation for non-resizing imports.
+- Added alpha-safe bicubic smooth downscaling for icons, focuses, preview assets, and wallpapers.
+- Preserved complete transparent icon canvases and borders without trimming or visible-pixel cropping.
+- Rejected sources that would require enlargement.
+- Added separate exact and downscale modes to folder import and bulk first-level focus replacement.
+- Added single-click preview-to-asset navigation and automatic sidebar scrolling.
+- Added double-click preview import selection for the clicked asset.
+- Added import-mode guidance, dedicated import modal, and fresh cache identifiers.
+
+## Beta 0.9.3.1
+
+- Fixed the left asset browser being unreachable on displays where the expanded project tools exceeded the available window height.
+- The entire left sidebar now scrolls, so every asset remains available for individual replacement.
+- Added a visible, stable sidebar scrollbar and fresh cache identifiers.
+
+## Beta 0.9.3 — 2026-07-12
+
+- Added PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, and Universal model profiles.
+- Added compatibility badges and profile-aware live-view filtering.
+- Added creation of missing model-specific and fallback PTF slots.
+- Added automatic bulk folder import using numeric or descriptive asset names.
+- Added a visual focus-glow generator for selected, first-level, and second-level icon sets.
+- Added a palette, dimensions, compression, and final-file-size analyser with CSV export.
+- Added theme variants with metadata colour changes and optional icon tinting.
+- Added a release-package generator for PTF, preview, icon sheet, instructions, credits, and manifest.
+- Added direct selection and editing of the Default/Fallback icon pair.
+- Retained RLZ/LZR, Deflate, and stored-resource compatibility from Beta 0.9.2.
+- Screenshot comparison was deliberately left out of this release.
+
+## Beta 0.9.2 — 2026-07-11
+
+- Added RLZ/LZR decompression for firmware 3.70-era and other legacy PTF themes.
+- Preserved untouched legacy compressed payloads during export.
+- Edited LZR resources now export through the proven Deflate/stored pipeline.
+- Added legacy and modern compression regression coverage.
+- Added compression labels and more precise import/export status messages.
+
+
 ## Beta 0.9.1 — 2026-07-11
 
 - Renamed the PlayStation Network asset category to Extras.
