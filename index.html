@@ -4,17 +4,34 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>PTF Studio Beta 0.9.5.5</title>
-<link href="styles.css?v=0.9.5.5-beta" rel="stylesheet"/>
+<title>PTF Studio 1.0</title>
+<link href="assets/app-icon-16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="assets/app-icon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="assets/app-icon-256.png" rel="apple-touch-icon"/>
+<link href="styles.css?v=1.0-final-polish" rel="stylesheet"/>
 </head>
-<body>
+<body class="release10">
 <div id="appShell">
+<nav class="appRail" aria-label="PTF Studio navigation">
+<div class="railLogo" title="PTF Studio 1.0"><img alt="PTF Studio" src="assets/app-icon-64.png"/></div>
+<div class="railNav">
+<button class="railButton" data-icon="sample" data-rail-action="theme" title="Theme settings"><span>Theme</span></button>
+<button class="railButton" data-icon="image" data-rail-action="assets" title="Theme assets"><span>Assets</span></button>
+<button class="railButton active" data-icon="preview" data-rail-action="preview" title="Live XMB preview"><span>Preview</span></button>
+<button class="railButton" data-icon="palette" data-rail-action="maker" title="Asset Maker"><span>Maker</span></button>
+<button class="railButton" data-icon="analyze" data-rail-action="analysis" title="Asset analysis"><span>Analyze</span></button>
+<button class="railButton" data-icon="download" data-rail-action="export" title="Export PTF"><span>Export</span></button>
+</div>
+<div class="railBottom">
+<button class="railButton" data-icon="help" data-rail-action="about" title="About PTF Studio"><span>About</span></button>
+</div>
+</nav>
 <header class="topbar">
 <div class="brand">
-<div class="brandMark">P</div>
+<div class="brandMark"><img alt="" src="assets/app-icon-64.png"/></div>
 <div>
 <div class="brandTitle">PTF Studio</div>
-<div class="brandSub">PSP theme editor · Beta 0.9.5.5</div>
+<div class="brandSub">PSP theme workshop · Release 1.0</div>
 </div>
 </div>
 <div class="topActions">
@@ -29,14 +46,16 @@
 <button aria-expanded="false" aria-haspopup="true" class="button action-secondary" data-icon="help" id="helpMenuBtn">Help</button>
 <div class="helpMenu hidden" id="helpMenu" role="menu">
 <button class="action-secondary" data-icon="info" id="aboutBtn" role="menuitem">About PTF Studio</button>
+<button class="action-secondary" data-icon="book" id="guideBtn" role="menuitem">PSP Design Guide</button>
 <button class="action-secondary" data-icon="users" id="creditsBtn" role="menuitem">Credits</button>
+<a class="action-secondary" data-icon="github" href="https://github.com/S1implyBlue/PTF-Studio" rel="noopener noreferrer" role="menuitem" target="_blank">GitHub Repository</a>
 </div>
 </div>
 </div>
 </header>
 <main class="workspace">
 <aside class="sidebar leftPanel">
-<section class="panelSection projectSection">
+<section class="panelSection projectSection" id="themeSection">
 <div class="sectionTitle">Theme</div>
 <div class="fieldGroup compact">
 <label>Title</label>
@@ -91,7 +110,7 @@
 <div class="batchHint">Folder import accepts slot names such as <code>3_0024.png</code> or descriptive names such as <code>first_theme_settings_focus.png</code>.</div>
 </div>
 </section>
-<section class="panelSection assetsSection">
+<section class="panelSection assetsSection" id="assetsSection">
 <div class="sectionTitleRow">
 <div class="sectionTitle">Assets</div>
 <input class="searchInput" disabled="" id="assetSearch" placeholder="Search" type="search"/>
@@ -101,8 +120,8 @@
           </div>
 </section>
 </aside>
-<section class="centerStage">
-<div class="viewerToolbar">
+<section class="centerStage" id="previewStage">
+<div class="viewerToolbar"><div class="viewerHeading"><span class="viewerEyebrow">Live preview</span><strong>PSP XMB</strong></div>
 <div class="segmented">
 <button class="seg active" data-icon="preview" data-view="xmb">XMB</button>
 <button class="seg" data-icon="image" data-view="assets">Asset</button>
@@ -195,16 +214,19 @@
 <div class="statusRight">
 <span id="dirtyState">No project</span>
 <span class="statusSep"></span>
-<span>PTF Studio Beta 0.9.5.5 · PTF v1</span>
+<span>PTF Studio 1.0 · PTF v1</span>
 </div>
 </footer>
 </div>
 <div aria-labelledby="aboutTitle" aria-modal="true" class="modalBackdrop hidden" id="aboutModal" role="dialog">
 <div class="modalCard">
 <div class="modalHeader">
+<div class="aboutBrand">
+<img alt="PTF Studio icon" class="aboutBrandIcon" src="assets/app-icon-64.png"/>
 <div>
 <div class="modalTitle" id="aboutTitle">PTF Studio</div>
-<div class="modalVersion">Beta 0.9.5.5 · Build 2026.07.17</div>
+<div class="modalVersion">Version 1.0 · Build 2026.07.17</div>
+</div>
 </div>
 <button aria-label="Close" class="modalClose action-secondary" data-icon="close" id="closeAboutBtn"></button>
 </div>
@@ -224,10 +246,134 @@
 <h3>Third-party libraries</h3>
 <p>No external runtime libraries are bundled. PTF Studio uses standard browser APIs, including its built-in legacy LZR/RLZ decoder.</p>
 </div>
-<div class="modalNote">GitHub and forum links can be added to the release description once the public project pages are available.</div>
+<div class="modalNote">Project home: <a href="https://github.com/S1implyBlue/PTF-Studio" rel="noopener noreferrer" target="_blank">github.com/S1implyBlue/PTF-Studio</a></div>
 </div>
 <div class="modalFooter">
 <button class="button action-secondary" data-icon="close" id="modalCloseButton">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="guideTitle" aria-modal="true" class="modalBackdrop hidden" id="guideModal" role="dialog">
+<div class="modalCard guideModalCard">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="guideTitle">PSP PTF Design Guide</div>
+<div class="modalVersion">Dimensions, formats, transparency, focus artwork, and hardware limits</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-icon="close" id="closeGuideBtn"></button>
+</div>
+<div class="modalBody guideBody">
+<section class="guideSection">
+<h3>Required asset dimensions</h3>
+<div class="guideTableWrap"><table class="guideTable"><thead><tr><th>Asset</th><th>Canvas</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Category icon</td><td>64 × 48 px</td><td>No separate focus image.</td></tr>
+<tr><td>First-level icon</td><td>48 × 48 px</td><td>Keep transparent padding inside the full canvas.</td></tr>
+<tr><td>First-level focus</td><td>64 × 64 px</td><td>Matching 48 × 48 icon centred with 8 px space on each side.</td></tr>
+<tr><td>Second-level icon</td><td>32 × 32 px</td><td>Used in nested XMB menus.</td></tr>
+<tr><td>Second-level focus</td><td>48 × 48 px</td><td>Matching 32 × 32 icon centred with 8 px space on each side.</td></tr>
+<tr><td>Preview icon</td><td>16 × 16 px</td><td>Keep the design extremely simple at this size.</td></tr>
+<tr><td>Preview image</td><td>300 × 170 px</td><td>Theme preview shown by the PSP theme selector.</td></tr>
+<tr><td>Wallpaper</td><td>480 × 272 px</td><td>Native PSP screen resolution.</td></tr>
+</tbody></table></div>
+</section>
+<section class="guideSection">
+<h3>Image format and palette limits</h3>
+<ul>
+<li>Use transparent PNG artwork while designing. PTF Studio converts supported assets to PSP-compatible indexed GIM data during export.</li>
+<li>Icon artwork is limited to an indexed palette of no more than 256 RGBA entries. Complex gradients can band or dither after conversion.</li>
+<li>Keep fully transparent pixels transparent and avoid hidden coloured pixels outside the visible artwork.</li>
+<li>Use <strong>Import</strong> only for artwork already matching the exact canvas size. Use <strong>Downscale &amp; Import</strong> for larger artwork.</li>
+<li>Downscaling preserves the complete canvas and transparent borders. It does not trim to visible pixels or enlarge undersized artwork.</li>
+</ul>
+</section>
+<section class="guideSection">
+<h3>PSP-safe focus artwork</h3>
+<ul>
+<li>Focus graphics should be an outer white halo stored mainly in the alpha channel, not a second coloured copy of the icon.</li>
+<li>Keep the original icon silhouette centred and leave 8 px of transparent room around it.</li>
+<li>Use restrained blur and opacity. Heavy glow, glass effects, and complex transparency consume palette entries and may break or degrade on hardware.</li>
+<li>Generated focuses are validated for dimensions, palette count, transparency, GIM round-trip, and final theme size before being accepted.</li>
+</ul>
+</section>
+<section class="guideSection">
+<h3>Design recommendations</h3>
+<ul>
+<li>Design with bold silhouettes, clean edges, and limited colour ramps. Tiny details often disappear on the PSP LCD.</li>
+<li>Preview artwork against both dark and bright wallpapers. White XMB labels need sufficient contrast.</li>
+<li>Do not crop transparent margins from icon canvases; PSP alignment depends on the full canvas, not only visible pixels.</li>
+<li>Test the exported PTF on real hardware. The live viewer closely recreates the XMB but is not firmware emulation.</li>
+</ul>
+</section>
+<section class="guideSection guideWarning">
+<h3>Theme limits and common failures</h3>
+<ul>
+<li>Keep the final PTF below approximately 768 KB. Large focus sets and complex palettes can exceed the practical PSP limit.</li>
+<li>Do not invent unsupported record IDs. Later or model-specific XMB items should use the Default/Fallback icon where the PTF format has no safe dedicated slot.</li>
+<li>Never overwrite the only copy of a working theme. Export to a new file and verify it on the PSP first.</li>
+</ul>
+</section>
+<p class="guideSource">Project support and bug reports: <a href="https://github.com/S1implyBlue/PTF-Studio" rel="noopener noreferrer" target="_blank">PTF Studio on GitHub</a></p>
+</div>
+<div class="modalFooter">
+<button class="button action-secondary" data-icon="close" id="guideCloseButton">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="exportDialogTitle" aria-modal="true" class="modalBackdrop hidden" id="exportModal" role="dialog">
+<div class="modalCard exportModalCard">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="exportDialogTitle">Export PSP PTF Theme</div>
+<div class="modalVersion">Review metadata, choose the output filename, and validate the theme before export</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="exportModal" data-icon="close"></button>
+</div>
+<div class="modalBody exportModalBody">
+<div class="exportFormGrid">
+<div class="fieldGroup compact exportFileField">
+<label>Output filename</label>
+<input id="exportFileName" maxlength="128" placeholder="MY_THEME.ptf" type="text"/>
+<div class="fieldHint">The .ptf extension is added automatically when omitted.</div>
+</div>
+<div class="fieldGroup compact">
+<label>Theme title</label>
+<input id="exportTitle" maxlength="128" type="text"/>
+</div>
+<div class="fieldGroup compact">
+<label>Product ID</label>
+<input id="exportProductId" maxlength="48" type="text"/>
+<div class="fieldHint">Letters, numbers, hyphens, and underscores only.</div>
+</div>
+<div class="fieldGroup compact">
+<label>Version</label>
+<input id="exportVersion" maxlength="8" type="text"/>
+</div>
+<div class="fieldGroup compact">
+<label>Theme colour</label>
+<select id="exportThemeColor"></select>
+<div class="fieldHint">Choose Monthly / automatic or a fixed January–December colour.</div>
+</div>
+</div>
+<div aria-live="polite" class="exportValidationCard checking" id="exportValidationCard">
+<div class="exportValidationHeader">
+<div class="exportValidationIcon" id="exportValidationIcon"></div>
+<div>
+<strong id="exportValidationTitle">Waiting for validation</strong>
+<span id="exportValidationSummary">PTF Studio will verify metadata, assets, compression, and final file size.</span>
+</div>
+<span class="exportSizePill" id="exportSizePill">—</span>
+</div>
+<ul class="exportValidationList" id="exportValidationList"></ul>
+</div>
+<label class="exportConfirmRow disabled" id="exportConfirmRow">
+<input disabled id="exportConfirmCheck" type="checkbox"/>
+<span>I confirm that I reviewed the validation results and want to export this theme.</span>
+</label>
+</div>
+<div class="modalFooter exportModalFooter">
+<button class="button action-secondary" data-close-modal="exportModal" data-icon="close">Cancel</button>
+<button class="button action-batch" data-icon="analyze" id="refreshExportValidationBtn">Validate again</button>
+<button class="button action-generate" data-icon="download" disabled id="confirmExportBtn">Export validated PTF</button>
 </div>
 </div>
 </div>
@@ -265,8 +411,8 @@
 </div>
 <div class="inlineFields">
 <div class="fieldGroup compact">
-<label>Glow color</label>
-<input id="focusColor" type="color" value="#ffffff"/>
+<label>Focus RGB</label>
+<input disabled id="focusColor" title="Sony-compatible generated focuses use pure white RGB" type="color" value="#ffffff"/>
 </div>
 <div class="fieldGroup compact">
 <label>Opacity</label>
@@ -275,23 +421,20 @@
 </div>
 </div>
 <div class="fieldGroup compact">
-<label>Blur radius</label>
-<input id="focusBlur" max="14" min="0" type="range" value="6"/>
+<label>Halo blur radius</label>
+<input id="focusBlur" max="6" min="2" type="range" value="6"/>
 <span class="rangeValue" id="focusBlurValue">6 px</span>
 </div>
 <div class="fieldGroup compact">
-<label>Icon padding</label>
-<input id="focusPadding" max="14" min="0" type="range" value="7"/>
-<span class="rangeValue" id="focusPaddingValue">7 px</span>
+<label>Sony canvas margin</label>
+<input disabled id="focusPadding" max="8" min="8" type="range" value="8"/>
+<span class="rangeValue" id="focusPaddingValue">8 px</span>
 </div>
-<label class="checkRow">
-<input id="focusIncludeCore" type="checkbox"/>
-<span>Include a faint sharp core inside the glow</span>
-</label>
+<input hidden id="focusIncludeCore" type="checkbox"/>
 <div class="focusBatchSummary" id="focusBatchSummary">Select a target to preview the matching icon pairs.</div>
 <button class="button full action-generate" data-icon="sparkles" id="applyFocusGeneratorBtn">Generate matching focus assets</button>
 <button class="button full action-secondary" data-icon="undo" disabled="" id="undoFocusGeneratorBtn">Undo last bulk generation</button>
-<div class="modalNote">Each normal icon is paired with its own focus slot. Missing-only mode leaves existing focus artwork untouched; replace mode regenerates every matching focus.</div>
+<div class="modalNote">PSP-safe mode follows Sony's focus workflow: the body stays at native size, is centred with an 8 px transparent margin, the sharp core is removed, RGB remains pure white, and glow strength is stored in a maximum 64-entry alpha palette. The theme is rebuilt and checked against the 768 KB limit before changes are accepted.</div>
 </div>
 </div>
 </div>
@@ -517,9 +660,9 @@
 </div>
 </div>
 <div id="toastHost"></div>
-<script src="sample.js?v=0.9.5.5-beta"></script>
-<script src="rlz.js?v=0.9.5.5-beta"></script>
-<script src="app.js?v=0.9.5.5-beta"></script>
-<script src="asset_maker.js?v=0.9.5.5-beta"></script>
+<script src="sample.js?v=1.0-focusfix"></script>
+<script src="rlz.js?v=1.0-focusfix"></script>
+<script src="app.js?v=1.0-final-polish"></script>
+<script src="asset_maker.js?v=1.0-final-polish"></script>
 </body>
 </html>

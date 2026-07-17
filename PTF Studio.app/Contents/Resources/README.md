@@ -1,6 +1,14 @@
-# PTF Studio Beta 0.9.5.5
+# PTF Studio
 
-PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It runs locally in a modern browser and is intended for the PSP modding community.
+Project repository: https://github.com/S1implyBlue/PTF-Studio 1.0
+
+PTF Studio is a portable visual maker, editor, live XMB viewer, and exporter for standard Sony PSP `.ptf` themes. It runs locally in a modern browser on macOS and Windows and is intended for the PSP modding community.
+
+## Screenshots
+
+![PTF Studio 1.0 main interface](screenshots/PTF_Studio_1.0_Main_UI.png)
+
+![PTF Studio 1.0 Asset Maker](screenshots/PTF_Studio_1.0_Asset_Maker.png)
 
 ## Launch
 
@@ -14,124 +22,85 @@ Double-click `PTF Studio.bat`.
 
 You may also open `index.html` directly in a current Safari, Chrome, Edge, or Firefox browser.
 
-## Main capabilities
+## Core capabilities
 
-- Import and edit existing `.ptf` themes, including legacy RLZ/LZR and modern Deflate/stored themes.
-- Preview wallpapers, category icons, first-level icons, second-level icons, focus graphics, XMB scrolling, date/time, and battery status.
-- Replace assets individually or through folder-based bulk tools.
-- Convert edited artwork to the standard PSP canvas sizes and indexed GIM formats during export.
-- Edit theme metadata and theme-colour selection.
-- Export rebuilt PSP-compatible `.ptf` files, individual PNG assets, theme variants, analysis reports, and release ZIP packages.
-- Use PSP model profiles for PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or a universal asset view.
-- Generate matching focus artwork individually or in bulk from each normal icon, while retaining the older apply-one-image bulk tool.
+- Import and edit existing PSP PTF themes.
+- Support modern Deflate/stored resources and legacy RLZ/LZR-compressed themes.
+- Rebuild and export PSP-compatible `.ptf` files with post-export verification.
+- Edit Title, Product ID, Version, and fixed/monthly theme colour metadata.
+- Preview wallpapers, category icons, first-level icons, second-level icons, focus graphics, status display, and XMB navigation.
+- Replace assets individually, through bulk-folder tools, or directly from the live viewer.
+- Use separate **Import** and **Downscale & Import** workflows.
+- Downscale oversized artwork with alpha-safe bicubic smooth filtering while preserving transparent borders and the complete source canvas.
+- Convert exported artwork to PSP-sized indexed GIM assets with a maximum 256-colour palette.
+- Export individual assets as PNG.
+- Guided export dialog with filename, Product ID, version, theme colour, full compatibility validation, and explicit confirmation.
+- Generate focus artwork for one selected icon or in bulk from all matching normal icons.
+- Analyze dimensions, palette use, transparency, compression, and estimated final PTF size.
+- Create theme variants and release ZIP packages.
+- Use PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or Universal model profiles.
 
-## New in Beta 0.9.5.5
+## Asset Maker
 
-### Interface and XMB text refinements
+The integrated Asset Maker provides PSP-native presets for:
 
-- All coloured action buttons now use white labels and white SVG icons for consistent contrast.
-- XMB category and icon-title shadows now use a softer, blurred PSP-style drop shadow instead of a hard offset duplicate.
-- The same soft title shadow is used by the Asset Maker wallpaper XMB overlay.
-
-### Bulk Generate Matching Focuses
-
-- Added a dedicated **Bulk generate matching focuses** tool.
-- Automatically pairs every normal first-level or second-level icon with its corresponding focus slot.
-- Supports all first-level icons, all second-level icons, both levels together, the current XMB category, or one selected icon pair.
-- **Generate missing only** preserves focus artwork that already exists.
-- **Replace every matching focus** regenerates the complete selected set.
-- Displays a contact-sheet preview and a count of generated, preserved, and skipped assets before applying.
-- Preserves transparent alignment and uses the correct 64 × 64 or 48 × 48 focus canvas automatically.
-- Added one-click undo for the most recent bulk generation, including removal of newly created synthetic focus slots.
-
-## New in Beta 0.9.5.2
-
-### Complete PSP Go asset profile
-
-- Added **System Storage** body and focus slots.
-- Added **Saved Data Utility — System Storage** body and focus slots.
-- Added **Resume Game** body and focus slots.
-- The PSP Go preview keeps **Memory Stick** and **Saved Data Utility — Memory Stick** separate from the internal-storage entries.
-- Photo, Music, Video, and Game categories now use PSP Go-specific item lists.
-- UMD and UMD Update remain hidden for the PSP Go profile.
-- The Universal profile exposes the new resources with **PSP Go only** compatibility badges.
-- Use **Add missing profile slots** after selecting PSP Go or Universal to create absent body/focus pairs from fallback artwork, then replace them normally.
-
-## New in Beta 0.9.5.1
-
-### Asset Maker display correction
-
-- Fixed the central Asset Maker canvas being squeezed or stretched by the responsive modal layout.
-- Square icon and focus presets now display as exact squares.
-- Category icons, preview images, and wallpapers retain their correct aspect ratios.
-- The canvas now synchronizes its internal pixel buffer with its displayed browser size, including Retina/HiDPI scaling.
-- Grid lines, transparent canvas borders, imported artwork, selection outlines, dragging, and pointer coordinates remain aligned after resizing.
-
-### Asset Maker introduced in Beta 0.9.5
-
-PTF Studio includes a layer-based workspace for creating wallpapers, preview assets, category icons, first- and second-level icons, and focus graphics. It provides shapes, transforms, basic PSP-safe effects, palette preview, focus generation, direct slot assignment, undo/redo, and PNG export.
-
-The planned sample icon library is intentionally not bundled yet and will be added after the distributable asset set is ready.
-
-## Previous metadata fixes — Beta 0.9.4.3
-
-- Corrected Title and Product ID import/export field mapping.
-- Corrected fixed-colour export so the PSP applies the selected value instead of falling back to By Month.
-- Added strict metadata and colour-record verification after every build.
-- Added official byte-length and Product ID character validation.
-
-## New in Beta 0.9.4.2
-
-### Corrected metadata and colour export
-
-- Corrected the reversed **Title** and **Product ID** controls.
-- Theme colour values from 0 through 12 are now normalised and written explicitly during export.
-- Export performs a post-build colour-record check and stops with an error instead of silently producing a monthly-colour theme when the selected value was not encoded.
-
-### Two deliberate image-import modes
-
-Every editable asset now provides two separate actions:
-
-- **Import** accepts only an image already matching the exact required dimensions. It performs no resizing.
-- **Downscale & Import** resizes a larger source using alpha-safe bicubic smooth filtering.
-
-The same separation is available for folder imports and bulk first-level focus replacement.
-
-Required target sizes are:
-
-| Asset | Size |
+| Asset | Canvas |
 |---|---:|
+| Wallpaper | 480 × 272 |
+| Preview image | 300 × 170 |
+| Preview icon | 16 × 16 |
 | Category icon | 64 × 48 |
 | First-level icon | 48 × 48 |
 | First-level focus | 64 × 64 |
 | Second-level icon | 32 × 32 |
 | Second-level focus | 48 × 48 |
-| Preview icon | 16 × 16 |
-| Preview image | 300 × 170 |
-| Wallpaper | 480 × 272 |
 
-Icon and focus downscaling preserves the complete source canvas, including transparent borders. The editor does not trim to visible pixels or crop the artwork. Different-aspect icon canvases are fitted inside the required PSP canvas and centred on transparent padding. Preview images and wallpapers resize the complete source canvas to the exact destination size. Images that would require enlargement are rejected.
+It includes layers, imported artwork, basic shapes, transforms, opacity, colour adjustment, simple gradients, conservative PSP-safe outline/shadow/glow effects, undo/redo, palette preview, direct asset assignment, focus generation, and PNG export.
 
-### Clickable live preview
+## New in 1.0
 
-- Single-click an icon in the XMB preview to select its asset, reveal it in the left asset list, and scroll directly to it.
-- Double-click an icon to open a dedicated import choice window for that slot.
-- The wallpaper and the current asset view are also selectable from the preview where applicable.
+### Release interface
 
-## Legacy compression compatibility
+- Completely redesigned dark navy interface with cyan-to-violet accents.
+- New vertical workspace rail for Theme, Assets, Preview, Asset Maker, Analysis, Export, and About.
+- Refined three-panel layout with clearer hierarchy and responsive behaviour.
+- Improved cards, inputs, asset rows, dialogs, notifications, scrollbars, and button styling.
+- Larger framed live-view presentation and improved Asset Maker workspace styling.
 
-- RLZ/LZR resources are decoded during import.
-- Untouched LZR resources remain preserved during export.
-- Edited LZR resources export through PSP-compatible Deflate or stored compression.
-- Modern Deflate and uncompressed themes continue to use their existing paths.
+### More accurate live XMB viewer
+
+- Coordinates recalibrated from direct 480 × 272 PSP screenshots.
+- Refined category spacing, selected-category anchoring, labels, and inactive opacity.
+- First-level neighbouring icons and labels now remain visible with PSP-like dimming.
+- Previous rows move into the correct lane above the category row rather than overlapping it.
+- Storage entries use the PSP-style two-line label, divider, and free-space presentation.
+- Icon and focus canvases are drawn without unnecessary interpolation at exact PSP scaling.
+- Softer text shadow, corrected status spacing, and updated Online Instruction Manuals label.
+- Existing focus pulse, second-level submenu shift, PSP Go layout, battery, date, and time behaviour remain intact.
+
+## Supported model profiles
+
+- PSP-1000
+- PSP-2000
+- PSP-3000
+- PSP Go
+- PSP Street / E1000
+- Universal — all known slots
+
+The PSP Go profile includes System Storage, Saved Data Utility — System Storage, Resume Game, and separate Memory Stick entries. UMD-related entries remain hidden for PSP Go.
+
+## Notes and limitations
+
+- PTF Studio edits standard PTF themes only. It does not edit CTF, PRX, RCO, firmware modules, system fonts, wave animations, or firmware-level XMB coordinates.
+- The live viewer is a close visual recreation, not a PSP emulator. Firmware-rendered content such as actual media names and free-space values is represented with preview text.
+- The PSP system font is not bundled. A local OTF/TTF font may be loaded for previewing.
+- The planned distributable sample-icon library is not included in this release.
+- Test exported themes from `/PSP/THEME/` on the intended PSP model before public distribution.
 
 ## Credits
 
 Created by Blue with the use and assistance of ChatGPT. See `CREDITS.md`.
 
-## Notes
 
-- The live viewer approximates the standard PSP XMB presentation; it is not a PSP emulator.
-- PTF themes cannot change firmware-level coordinates, system fonts, waves, or PRX/RCO behaviour.
-- The PSP system font is not bundled.
-- Test exported themes from `/PSP/THEME/` on the intended PSP model before public distribution.
+### PSP-safe focus generation
+Generated first- and second-level focus assets use fixed Sony-compatible canvases, white alpha-only halos, a maximum 64-entry palette, GIM round-trip validation and a 768 KB theme-size preflight.

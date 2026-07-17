@@ -1,2 +1,2 @@
-PTF Studio Beta 0.9.5.5
-Cache key: 0.9.5.5-beta
+PTF Studio 1.0 UI cache key: 1.0-poppins-ui
+Hard-refresh the browser after replacing files.

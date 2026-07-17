@@ -9,4 +9,4 @@ Blue and members of the PSP modding community.
 
 ## Runtime dependencies
 
-PTF Studio Beta 0.9.5.5 is a dependency-free browser application. It uses standard Web APIs and does not bundle external runtime libraries or the PSP system font.
+PTF Studio 1.0 is a dependency-free browser application. It uses standard Web APIs and does not bundle external runtime libraries, Sony firmware files, or the PSP system font.

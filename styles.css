@@ -23,7 +23,7 @@
   --warning: #f0bd58;
   --radius: 12px;
   --shadow: 0 18px 50px rgba(0,0,0,.35);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Poppins", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -643,3 +643,716 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
 .button.action-creative, .miniButton.action-creative,
 .button.action-batch, .miniButton.action-batch, .importChoice.action-batch,
 .button.action-danger, .miniButton.action-danger { color:#fff; }
+
+/* --------------------------------------------------------------------------
+   PTF Studio 1.0 — release interface
+   A modern cyan/violet workspace inspired by contemporary creative tools.
+   -------------------------------------------------------------------------- */
+.release10 {
+  --bg: #070b16;
+  --panel: rgba(15, 21, 42, .88);
+  --panel-2: rgba(27, 36, 68, .88);
+  --panel-3: rgba(42, 52, 92, .92);
+  --line: rgba(137, 157, 217, .18);
+  --line-soft: rgba(137, 157, 217, .11);
+  --text: #f7f8ff;
+  --muted: #aeb7d1;
+  --muted-2: #7f8aaa;
+  --accent: #37d4ff;
+  --accent-2: #a448ff;
+  --success: #40d6a0;
+  --danger: #ff6b83;
+  --warning: #ffb65f;
+  --radius: 16px;
+  --shadow: 0 24px 70px rgba(0, 0, 0, .45);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(95, 72, 255, .20), transparent 30%),
+    radial-gradient(circle at 92% 16%, rgba(31, 208, 255, .14), transparent 28%),
+    linear-gradient(145deg, #080b17 0%, #080d1d 45%, #070a14 100%);
+}
+.release10::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .22;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+.release10 #appShell {
+  position: relative;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  grid-template-rows: 72px minmax(0, 1fr) 30px;
+}
+.release10 .appRail {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 9px 10px;
+  border-right: 1px solid rgba(161, 178, 231, .16);
+  background:
+    linear-gradient(180deg, rgba(54, 42, 108, .58), rgba(10, 16, 35, .92) 55%),
+    rgba(11, 16, 35, .92);
+  box-shadow: 14px 0 42px rgba(0, 0, 0, .20);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+.release10 .railLogo {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #32ddff 0%, #705dff 52%, #d13aff 100%);
+  box-shadow: 0 12px 28px rgba(98, 79, 255, .38), inset 0 0 0 1px rgba(255,255,255,.32);
+  color: white;
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -.05em;
+}
+.release10 .railLogo span { filter: drop-shadow(0 2px 4px rgba(0,0,0,.28)); }
+.release10 .railNav { display: grid; gap: 7px; width: 100%; margin-top: 20px; }
+.release10 .railBottom { width: 100%; margin-top: auto; }
+.release10 .railButton {
+  position: relative;
+  appearance: none;
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background: transparent;
+  color: #8e99ba;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.release10 .railButton .buttonIcon { width: 19px; height: 19px; }
+.release10 .railButton > span { font-size: 8px; font-weight: 700; letter-spacing: .02em; }
+.release10 .railButton:hover {
+  color: #f5f7ff;
+  background: rgba(126, 111, 255, .12);
+  border-color: rgba(145, 140, 255, .16);
+  transform: translateY(-1px);
+}
+.release10 .railButton.active {
+  color: white;
+  border-color: rgba(83, 218, 255, .32);
+  background: linear-gradient(145deg, rgba(42, 211, 255, .23), rgba(139, 64, 255, .24));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 9px 24px rgba(51, 95, 211, .18);
+}
+.release10 .railButton.active::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  width: 3px;
+  height: 26px;
+  border-radius: 0 5px 5px 0;
+  background: linear-gradient(#36dcff, #ab47ff);
+  box-shadow: 0 0 14px rgba(55, 212, 255, .85);
+}
+.release10 .topbar {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  padding: 0 18px 0 20px;
+  border-bottom: 1px solid rgba(144, 160, 210, .14);
+  background: rgba(10, 15, 31, .74);
+  box-shadow: 0 10px 34px rgba(0,0,0,.18);
+}
+.release10 .brandMark {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  color: white;
+  background: linear-gradient(145deg, #2bd7ff, #7757ff 54%, #c83cff);
+  box-shadow: 0 10px 25px rgba(91, 83, 255, .28), inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.release10 .brandTitle { font-size: 16px; font-weight: 790; }
+.release10 .brandSub { color: #8f9aba; font-size: 10px; }
+.release10 .topActions { gap: 7px; min-width: 0; }
+.release10 .button {
+  min-height: 34px;
+  border-radius: 11px;
+  border-color: rgba(156, 174, 226, .20);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 17px rgba(0,0,0,.13);
+  font-size: 12px;
+  letter-spacing: .005em;
+}
+.release10 .button:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.07); }
+.release10 .button.action-open, .release10 .miniButton.action-open, .release10 .importChoice.action-open {
+  background: linear-gradient(135deg, #24bdf2, #397fe9);
+  border-color: rgba(85, 205, 255, .55);
+}
+.release10 .button.action-generate, .release10 .miniButton.action-generate {
+  background: linear-gradient(135deg, #25cfd8, #7258f5 62%, #ad42f4);
+  border-color: rgba(127, 117, 255, .55);
+}
+.release10 .button.action-creative, .release10 .miniButton.action-creative {
+  background: linear-gradient(135deg, #7459ee, #b13df0);
+  border-color: rgba(196, 108, 255, .52);
+}
+.release10 .button.action-batch, .release10 .miniButton.action-batch, .release10 .importChoice.action-batch {
+  background: linear-gradient(135deg, #f39b4c, #e85e82);
+  border-color: rgba(255, 164, 105, .55);
+}
+.release10 .button.action-danger, .release10 .miniButton.action-danger {
+  background: linear-gradient(135deg, #ef5779, #c6426b);
+  border-color: rgba(255, 113, 144, .55);
+}
+.release10 .button.action-secondary, .release10 .miniButton.action-secondary, .release10 .iconButton.action-secondary {
+  background: linear-gradient(180deg, rgba(46, 56, 91, .88), rgba(27, 34, 62, .92));
+  border-color: rgba(151, 169, 224, .20);
+  color: #edf0ff;
+}
+.release10 .workspace {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+  padding: 12px;
+  gap: 12px;
+  grid-template-columns: 306px minmax(520px, 1fr) 326px;
+  background: transparent;
+}
+.release10 .sidebar,
+.release10 .centerStage {
+  border: 1px solid rgba(137, 157, 217, .16);
+  border-radius: 19px;
+  background:
+    linear-gradient(145deg, rgba(31, 42, 78, .70), rgba(13, 19, 41, .86));
+  box-shadow: 0 20px 55px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.035);
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.release10 .leftPanel,
+.release10 .rightPanel { border: 1px solid rgba(137, 157, 217, .16); }
+.release10 .leftPanel { overflow-y: auto; }
+.release10 .rightPanel { overflow: hidden; }
+.release10 .panelSection { padding: 17px; }
+.release10 .projectSection { border-bottom: 1px solid rgba(141, 159, 214, .13); }
+.release10 .sectionTitle {
+  color: #e5e8fb;
+  font-size: 10px;
+  letter-spacing: .13em;
+  margin-bottom: 12px;
+}
+.release10 .sectionTitle::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  margin: 0 8px 2px 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #36d9ff, #a848ff);
+}
+.release10 .fieldGroup label { color: #8f9abb; font-size: 10px; }
+.release10 .fieldGroup input,
+.release10 .fieldGroup select,
+.release10 select,
+.release10 .searchInput {
+  border-color: rgba(145, 163, 218, .18);
+  background: rgba(7, 12, 28, .68);
+  color: #f5f7ff;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.22);
+}
+.release10 .fieldGroup input:focus,
+.release10 .fieldGroup select:focus,
+.release10 .searchInput:focus {
+  border-color: rgba(58, 215, 255, .70);
+  box-shadow: 0 0 0 3px rgba(55, 212, 255, .12), inset 0 1px 4px rgba(0,0,0,.2);
+}
+.release10 .batchTools {
+  padding: 14px;
+  margin: 15px -3px 0;
+  border: 1px solid rgba(149, 162, 222, .13);
+  border-radius: 14px;
+  background: rgba(13, 20, 42, .58);
+}
+.release10 .assetGroupHeader {
+  top: -1px;
+  margin: 0 -4px;
+  padding: 8px 8px;
+  border-radius: 9px;
+  background: rgba(14, 21, 44, .96);
+  backdrop-filter: blur(10px);
+}
+.release10 .assetList { gap: 7px; }
+.release10 .assetRow {
+  padding: 8px;
+  border: 1px solid rgba(143, 160, 214, .08);
+  background: rgba(9, 15, 33, .32);
+  border-radius: 12px;
+}
+.release10 .assetRow:hover {
+  background: rgba(46, 61, 105, .52);
+  border-color: rgba(97, 201, 255, .18);
+  transform: translateX(2px);
+}
+.release10 .assetRow.selected {
+  background: linear-gradient(135deg, rgba(40, 202, 255, .17), rgba(145, 64, 255, .17));
+  border-color: rgba(71, 210, 255, .48);
+  box-shadow: inset 0 0 0 1px rgba(178, 93, 255, .12), 0 8px 20px rgba(20, 48, 115, .16);
+}
+.release10 .assetThumb {
+  border-color: rgba(148, 166, 222, .19);
+  background: rgba(4, 8, 18, .74);
+  border-radius: 10px;
+}
+.release10 .assetBadge { border-radius: 8px; }
+.release10 .centerStage {
+  grid-template-rows: 58px minmax(0, 1fr) 42px;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(104, 79, 255, .16), transparent 42%),
+    linear-gradient(145deg, rgba(14, 20, 43, .84), rgba(5, 10, 24, .92));
+}
+.release10 .viewerToolbar {
+  min-width: 0;
+  padding: 0 15px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(145, 163, 218, .15);
+  background: rgba(15, 22, 47, .72);
+}
+.release10 .viewerHeading {
+  display: grid;
+  line-height: 1.05;
+  min-width: 82px;
+}
+.release10 .viewerHeading strong { font-size: 13px; color: #f7f8ff; }
+.release10 .viewerEyebrow {
+  color: #6bdfff;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  margin-bottom: 4px;
+}
+.release10 .segmented {
+  padding: 3px;
+  border-color: rgba(147, 164, 220, .16);
+  background: rgba(5, 10, 24, .58);
+  border-radius: 11px;
+}
+.release10 .seg { height: 28px; border-radius: 8px; }
+.release10 .seg.active {
+  color: white;
+  background: linear-gradient(135deg, rgba(40, 201, 255, .28), rgba(147, 70, 255, .30));
+  box-shadow: inset 0 0 0 1px rgba(104, 213, 255, .20), 0 5px 13px rgba(27, 43, 104, .22);
+}
+.release10 .viewerMeta { color: #919cbd; }
+.release10 .viewerControls .iconButton {
+  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+}
+.release10 .viewerWrap {
+  position: relative;
+  padding: clamp(18px, 2.5vw, 34px);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(47, 92, 182, .20), transparent 43%),
+    linear-gradient(180deg, rgba(10, 15, 32, .32), rgba(2, 6, 16, .70));
+}
+.release10 .viewerWrap::before {
+  content: "PSP LIVE VIEW";
+  position: absolute;
+  top: 15px;
+  right: 18px;
+  z-index: 2;
+  padding: 5px 8px;
+  border: 1px solid rgba(83, 211, 255, .22);
+  border-radius: 99px;
+  background: rgba(5, 13, 29, .56);
+  color: rgba(130, 222, 255, .72);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+.release10 .dropZone {
+  width: min(100%, 1000px);
+  border: 1px solid rgba(144, 168, 230, .32);
+  border-radius: 22px;
+  background: #030712;
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.58),
+    0 0 0 8px rgba(23, 32, 65, .42),
+    0 0 0 9px rgba(160, 180, 238, .12),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.release10 #xmbCanvas { background: #03050a; }
+.release10 .dropOverlay {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(45, 212, 255, .13), transparent 32%),
+    radial-gradient(circle at 58% 56%, rgba(165, 65, 255, .12), transparent 35%);
+}
+.release10 .dropIcon {
+  border-color: rgba(74, 213, 255, .34);
+  background: linear-gradient(145deg, rgba(42, 210, 255, .18), rgba(133, 65, 255, .18));
+  color: #74e4ff;
+  box-shadow: 0 12px 30px rgba(40, 100, 210, .20);
+}
+.release10 .navHelp {
+  gap: 12px;
+  border-top-color: rgba(145, 163, 218, .13);
+  background: rgba(12, 19, 41, .76);
+}
+.release10 .navHelp > span {
+  padding: 5px 8px;
+  border-radius: 9px;
+  background: rgba(27, 38, 71, .48);
+}
+.release10 kbd {
+  border-color: rgba(151, 169, 223, .20);
+  background: rgba(54, 65, 106, .66);
+  box-shadow: 0 2px 0 rgba(0,0,0,.35);
+}
+.release10 .inspectorSection { background: transparent; }
+.release10 .assetHero {
+  border-color: rgba(146, 165, 221, .17);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(84, 103, 184, .32), transparent 46%),
+    linear-gradient(145deg, rgba(23, 32, 65, .82), rgba(6, 11, 26, .82));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+.release10 .infoGrid > div,
+.release10 .validationBox,
+.release10 .importModeHelp {
+  border-color: rgba(145, 163, 218, .12);
+  background: rgba(7, 12, 28, .58);
+  border-radius: 11px;
+}
+.release10 .statusbar {
+  grid-column: 2;
+  grid-row: 3;
+  border-top: 1px solid rgba(144, 160, 210, .12);
+  background: rgba(7, 11, 24, .78);
+  color: #7783a5;
+  padding: 0 16px;
+}
+.release10 .helpMenu,
+.release10 .modalCard {
+  border-color: rgba(145, 163, 218, .22);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(94, 77, 255, .12), transparent 36%),
+    rgba(12, 18, 38, .96);
+  box-shadow: 0 35px 100px rgba(0,0,0,.60), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.release10 .modalBackdrop { background: rgba(3, 6, 16, .74); backdrop-filter: blur(16px); }
+.release10 .modalHeader { border-bottom-color: rgba(145, 163, 218, .14); }
+.release10 .modalTitle { font-weight: 800; }
+.release10 .modalNote { border-left-color: #54dcff; background: rgba(70, 179, 255, .09); }
+.release10 .makerModalCard {
+  border-radius: 22px;
+  background: rgba(9, 14, 30, .98);
+}
+.release10 .makerWorkspace { background: #080d1d; }
+.release10 .makerSidebar {
+  background: linear-gradient(180deg, rgba(27, 36, 68, .90), rgba(12, 18, 38, .96));
+}
+.release10 .makerToolsPanel { border-right-color: rgba(145, 163, 218, .14); }
+.release10 .makerInspectorPanel { border-left-color: rgba(145, 163, 218, .14); }
+.release10 .makerCanvasPanel { background: #050914; }
+.release10 .makerCanvasToolbar,
+.release10 .makerCanvasHint {
+  border-color: rgba(145, 163, 218, .13);
+  background: rgba(17, 25, 51, .84);
+}
+.release10 .makerCanvasWrap {
+  background:
+    radial-gradient(circle at center, rgba(64, 87, 163, .17), transparent 46%),
+    #050914;
+}
+.release10 #makerCanvas {
+  border-color: rgba(151, 174, 235, .25);
+  border-radius: 18px;
+  box-shadow: 0 26px 65px rgba(0,0,0,.48), 0 0 0 6px rgba(29, 39, 77, .34);
+}
+.release10 .makerLayerRow {
+  border-color: rgba(145, 163, 218, .11);
+  background: rgba(6, 12, 27, .58);
+  border-radius: 10px;
+}
+.release10 .makerLayerRow.selected {
+  background: linear-gradient(135deg, rgba(40, 202, 255, .17), rgba(145, 64, 255, .17));
+  border-color: rgba(72, 214, 255, .45);
+}
+.release10 .makerPspNote {
+  border-left-color: #ffb55c;
+  background: rgba(255, 160, 75, .08);
+}
+.release10 .toast {
+  border-color: rgba(145, 163, 218, .24);
+  background: rgba(20, 28, 57, .96);
+  border-radius: 13px;
+  backdrop-filter: blur(15px);
+}
+.release10 * { scrollbar-color: rgba(111, 126, 179, .58) transparent; scrollbar-width: thin; }
+.release10 ::-webkit-scrollbar { width: 9px; height: 9px; }
+.release10 ::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 99px;
+  background: linear-gradient(#4e5e91, #724f9d) padding-box;
+}
+.release10 ::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 1380px) {
+  .release10 .workspace { grid-template-columns: 276px minmax(480px, 1fr) 296px; }
+  .release10 .topActions .button { padding-inline: 10px; }
+  .release10 .topActions .buttonIcon { display: none; }
+}
+@media (max-width: 1180px) {
+  .release10 .workspace { grid-template-columns: 256px minmax(470px, 1fr); }
+  .release10 .rightPanel { display: none; }
+  .release10 .topActions #releasePackageBtn,
+  .release10 .topActions #analyzeBtn { display: none; }
+}
+@media (max-width: 900px) {
+  .release10 #appShell { grid-template-columns: 58px minmax(0, 1fr); }
+  .release10 .appRail { padding-inline: 6px; }
+  .release10 .railLogo { width: 40px; height: 40px; border-radius: 14px; }
+  .release10 .railButton { min-height: 48px; }
+  .release10 .railButton > span { display: none; }
+  .release10 .workspace { grid-template-columns: 230px minmax(420px, 1fr); padding: 8px; gap: 8px; }
+  .release10 .topActions #loadSampleBtn,
+  .release10 .topActions #assetMakerBtn { display: none; }
+}
+
+
+/* 1.0 icon integration and navigation alignment — working source */
+.release10 #appShell { grid-template-columns: 124px minmax(0, 1fr); }
+.release10 .appRail { align-items: stretch; padding-inline: 10px; }
+.release10 .railLogo {
+  width: 52px;
+  height: 52px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 17px;
+  background: transparent;
+  box-shadow: 0 12px 28px rgba(98, 79, 255, .30);
+}
+.release10 .railLogo img,
+.release10 .brandMark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.release10 .brandMark {
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+.release10 .railNav,
+.release10 .railBottom { width: 100%; }
+.release10 .railButton {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  padding: 0 12px;
+  text-align: left;
+  border-radius: 13px;
+}
+.release10 .railButton .buttonIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.release10 .railButton > span {
+  display: block;
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1;
+  text-align: left;
+}
+.release10 .railButton.active::before { left: -10px; }
+.aboutBrand { display: flex; align-items: center; gap: 12px; }
+.aboutBrandIcon { width: 48px; height: 48px; object-fit: contain; flex: 0 0 48px; }
+@media (max-width: 900px) {
+  .release10 #appShell { grid-template-columns: 58px minmax(0, 1fr); }
+  .release10 .appRail { align-items: center; padding-inline: 6px; }
+  .release10 .railLogo { width: 40px; height: 40px; border-radius: 14px; }
+  .release10 .railButton { justify-content: center; padding-inline: 0; min-height: 48px; }
+  .release10 .railButton > span { display: none; }
+}
+
+
+/* 1.0 final polish — uncropped application marks and stronger guides */
+.release10 .railLogo {
+  width: 56px;
+  height: 56px;
+  padding: 4px;
+  overflow: visible;
+  border-radius: 18px;
+  background: rgba(19, 27, 57, .78);
+  box-shadow: 0 12px 28px rgba(98, 79, 255, .24), inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.release10 .railLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+}
+.release10 .brandMark {
+  width: 40px;
+  height: 40px;
+  padding: 3px;
+  overflow: visible;
+  border-radius: 13px;
+  background: rgba(19, 27, 57, .72);
+  box-shadow: 0 8px 18px rgba(79, 74, 207, .20), inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.release10 .brandMark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.release10 #toggleGridBtn.guidesActive {
+  color: #fff;
+  border-color: rgba(83, 226, 255, .85);
+  background: linear-gradient(135deg, rgba(30, 203, 255, .42), rgba(135, 65, 255, .42));
+  box-shadow: 0 0 0 2px rgba(53, 213, 255, .14), 0 0 18px rgba(62, 202, 255, .24);
+}
+@media (max-width: 900px) {
+  .release10 .railLogo { width: 42px; height: 42px; padding: 3px; border-radius: 13px; }
+  .release10 .railLogo img { border-radius: 10px; }
+}
+
+
+/* Version 1.0 final help-layer and PSP design-guide refinements. */
+.topbar { position: relative; z-index: 400; overflow: visible; }
+.menuWrap { z-index: 410; }
+.helpMenu { z-index: 500; }
+.helpMenu a {
+  appearance: none; width: 100%; border: 0; border-radius: 7px; padding: 9px 10px;
+  background: transparent; color: var(--text); text-align: left; cursor: pointer; font-size: 13px;
+  text-decoration: none; display: flex; align-items: center; gap: 8px;
+}
+.helpMenu a:hover { background: var(--panel-3); }
+.helpMenu a .buttonIcon { width: 14px; height: 14px; }
+.guideModalCard { width: min(860px, 96vw); }
+.guideBody { display: grid; gap: 18px; }
+.guideSection { border: 1px solid rgba(145,163,218,.15); border-radius: 13px; background: rgba(7,12,28,.42); padding: 15px 16px; }
+.guideSection h3 { margin: 0 0 10px; font-size: 14px; color: #eef4ff; }
+.guideSection ul { margin: 0; padding-left: 19px; color: #b8c4de; font-size: 12px; line-height: 1.58; }
+.guideSection li + li { margin-top: 5px; }
+.guideTableWrap { overflow-x: auto; }
+.guideTable { width: 100%; border-collapse: collapse; font-size: 12px; color: #bec9df; }
+.guideTable th, .guideTable td { padding: 9px 10px; border-bottom: 1px solid rgba(145,163,218,.12); text-align: left; vertical-align: top; }
+.guideTable th { color: #f0f5ff; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; background: rgba(100,125,210,.08); }
+.guideTable td:nth-child(2) { white-space: nowrap; color: #70ddff; font-weight: 700; }
+.guideWarning { border-color: rgba(255,176,83,.28); background: rgba(111,62,12,.14); }
+.guideSource { margin: 0; color: #8d9abb; font-size: 12px; text-align: center; }
+.guideSource a, .modalNote a { color: #6fe3ff; text-decoration: none; }
+.guideSource a:hover, .modalNote a:hover { text-decoration: underline; }
+
+
+/* Version 1.0 export review and validation workflow */
+.exportModalCard { width: min(760px, 96vw); }
+.exportModalBody { display: grid; gap: 18px; }
+.exportFormGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 16px; }
+.exportFileField { grid-column: 1 / -1; }
+.exportValidationCard {
+  border: 1px solid var(--line); border-radius: 14px; padding: 15px;
+  background: rgba(8, 13, 29, .72); transition: border-color .18s ease, background .18s ease;
+}
+.exportValidationCard.checking { border-color: rgba(84, 220, 255, .34); }
+.exportValidationCard.ok { border-color: rgba(70, 201, 139, .55); background: rgba(30, 115, 78, .10); }
+.exportValidationCard.warn { border-color: rgba(240, 189, 88, .55); background: rgba(134, 93, 18, .10); }
+.exportValidationCard.bad { border-color: rgba(255, 107, 117, .58); background: rgba(138, 35, 48, .11); }
+.exportValidationHeader { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 11px; }
+.exportValidationIcon { width: 13px; height: 13px; border-radius: 50%; background: #54dcff; box-shadow: 0 0 0 5px rgba(84,220,255,.10); }
+.exportValidationCard.ok .exportValidationIcon { background: var(--success); box-shadow: 0 0 0 5px rgba(70,201,139,.12); }
+.exportValidationCard.warn .exportValidationIcon { background: var(--warning); box-shadow: 0 0 0 5px rgba(240,189,88,.12); }
+.exportValidationCard.bad .exportValidationIcon { background: var(--danger); box-shadow: 0 0 0 5px rgba(255,107,117,.12); }
+.exportValidationHeader strong { display: block; font-size: 14px; }
+.exportValidationHeader span:not(.exportSizePill) { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.exportSizePill { justify-self: end; border: 1px solid rgba(142,160,218,.18); border-radius: 999px; padding: 6px 9px; color: #d8e2ff; background: rgba(20,29,58,.78); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.exportValidationList { display: grid; gap: 7px; margin: 13px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(145,163,218,.12); list-style: none; max-height: 210px; overflow: auto; }
+.exportValidationList:empty { display: none; }
+.exportValidationList li { display: grid; grid-template-columns: 20px 1fr; gap: 7px; align-items: start; color: #aeb8d2; font-size: 11px; line-height: 1.45; }
+.exportValidationList li.error { color: #ffb7bd; }
+.exportValidationList li.warning { color: #f4d18b; }
+.exportValidationList li.info { color: #b9c8e9; }
+.validationItemIcon { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: rgba(118,137,193,.15); font-weight: 900; line-height: 1; }
+.exportValidationList li.error .validationItemIcon { background: rgba(255,107,117,.16); }
+.exportValidationList li.warning .validationItemIcon { background: rgba(240,189,88,.16); }
+.exportValidationList li.info .validationItemIcon { color: #67dcff; }
+.exportConfirmRow { display: flex; align-items: flex-start; gap: 10px; border: 1px solid rgba(145,163,218,.15); border-radius: 11px; padding: 12px 13px; background: rgba(7,12,28,.52); color: #d5ddf2; font-size: 12px; line-height: 1.45; cursor: pointer; }
+.exportConfirmRow.disabled { opacity: .46; cursor: not-allowed; }
+.exportConfirmRow input { margin-top: 2px; accent-color: #45cf91; }
+.exportModalFooter { gap: 9px; }
+@media (max-width: 680px) {
+  .exportFormGrid { grid-template-columns: 1fr; }
+  .exportFileField { grid-column: auto; }
+  .exportValidationHeader { grid-template-columns: auto 1fr; }
+  .exportSizePill { grid-column: 2; justify-self: start; }
+  .exportModalFooter { flex-wrap: wrap; }
+}
+
+
+/* Version 1.0 final sidebar alignment fix. */
+.release10 .railButton {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  justify-items: start;
+  justify-content: stretch;
+  column-gap: 10px;
+  padding-inline: 12px;
+  text-align: left;
+}
+.release10 .railButton .buttonIcon {
+  grid-column: 1;
+  justify-self: start;
+  margin: 0;
+}
+.release10 .railButton > span {
+  grid-column: 2;
+  width: 100%;
+  text-align: left;
+}
+.release10 .leftPanel .button.full,
+.release10 .leftPanel label.button.full {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  justify-items: start;
+  justify-content: stretch;
+  column-gap: 9px;
+  min-height: 36px;
+  height: auto;
+  padding: 8px 12px;
+  text-align: left;
+  line-height: 1.25;
+}
+.release10 .leftPanel .button.full .buttonIcon,
+.release10 .leftPanel label.button.full .buttonIcon {
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+  margin: 0;
+}
+@media (max-width: 900px) {
+  .release10 .railButton {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    justify-content: center;
+    padding-inline: 0;
+  }
+  .release10 .railButton .buttonIcon { grid-column: 1; justify-self: center; }
+}

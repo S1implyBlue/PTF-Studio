@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.5 — dependency-free PSP PTF viewer/editor */
+/* PTF Studio 1.0 — dependency-free PSP PTF viewer/editor */
 'use strict';
 
 const $ = (s) => document.querySelector(s);
@@ -15,6 +15,8 @@ const UI_ICON_PATHS = Object.freeze({
   help:'<circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.2 2.1c-.8.4-1 1-1 1.9M12 17h.01"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  book:'<path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22V5.5Z"/><path d="M20 5.5A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22V5.5Z"/>',
+  github:'<path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7A5.4 5.4 0 0 0 19.3 4 5 5 0 0 0 19.2.5S18 0 15 2a13.4 13.4 0 0 0-7 0C5-.1 3.8.5 3.8.5A5 5 0 0 0 3.7 4a5.4 5.4 0 0 0-1.5 3.7c0 5.4 3.5 6.6 6.8 7A4.8 4.8 0 0 0 8 18v4"/><path d="M8 19c-3 .9-3-1.5-4-2"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   font:'<path d="M5 20 11 4h2l6 16M7 15h10"/>',
   folder:'<path d="M3 6h7l2 2h9v11H3z"/>',
@@ -74,8 +76,9 @@ const els = {
   focusGeneratorBtn: $('#focusGeneratorBtn'), selectedFocusGeneratorBtn: $('#selectedFocusGeneratorBtn'), variantsBtn: $('#variantsBtn'), selectFallbackBtn: $('#selectFallbackBtn'),
   ditherToggle: $('#ditherToggle'), pulseToggle: $('#pulseToggle'), validationBox: $('#validationBox'),
   validationText: $('#validationText'), statusText: $('#statusText'), dirtyState: $('#dirtyState'), toastHost: $('#toastHost'),
-  helpMenuBtn: $('#helpMenuBtn'), helpMenu: $('#helpMenu'), aboutBtn: $('#aboutBtn'), creditsBtn: $('#creditsBtn'),
+  helpMenuBtn: $('#helpMenuBtn'), helpMenu: $('#helpMenu'), aboutBtn: $('#aboutBtn'), guideBtn: $('#guideBtn'), creditsBtn: $('#creditsBtn'),
   aboutModal: $('#aboutModal'), closeAboutBtn: $('#closeAboutBtn'), modalCloseButton: $('#modalCloseButton'),
+  guideModal: $('#guideModal'), closeGuideBtn: $('#closeGuideBtn'), guideCloseButton: $('#guideCloseButton'),
   focusModal: $('#focusModal'), focusTitle: $('#focusTitle'), focusSubtitle: $('#focusSubtitle'), focusPreviewCanvas: $('#focusPreviewCanvas'), focusPreviewLabel: $('#focusPreviewLabel'),
   focusTarget: $('#focusTarget'), focusColor: $('#focusColor'), focusOpacity: $('#focusOpacity'), focusOpacityValue: $('#focusOpacityValue'),
   focusBlur: $('#focusBlur'), focusBlurValue: $('#focusBlurValue'), focusPadding: $('#focusPadding'),
@@ -87,20 +90,26 @@ const els = {
   variantTint: $('#variantTint'), variantTintStrength: $('#variantTintStrength'), variantTintValue: $('#variantTintValue'),
   addVariantBtn: $('#addVariantBtn'), variantList: $('#variantList'), exportVariantsBtn: $('#exportVariantsBtn'),
   importAssetModal: $('#importAssetModal'), importAssetModalTitle: $('#importAssetModalTitle'), importAssetModalSub: $('#importAssetModalSub'),
-  importExactModalBtn: $('#importExactModalBtn'), importDownscaleModalBtn: $('#importDownscaleModalBtn')
+  importExactModalBtn: $('#importExactModalBtn'), importDownscaleModalBtn: $('#importDownscaleModalBtn'),
+  exportModal: $('#exportModal'), exportFileName: $('#exportFileName'), exportTitle: $('#exportTitle'),
+  exportProductId: $('#exportProductId'), exportVersion: $('#exportVersion'), exportThemeColor: $('#exportThemeColor'),
+  exportValidationCard: $('#exportValidationCard'), exportValidationTitle: $('#exportValidationTitle'),
+  exportValidationSummary: $('#exportValidationSummary'), exportValidationList: $('#exportValidationList'),
+  exportSizePill: $('#exportSizePill'), exportConfirmRow: $('#exportConfirmRow'), exportConfirmCheck: $('#exportConfirmCheck'),
+  refreshExportValidationBtn: $('#refreshExportValidationBtn'), confirmExportBtn: $('#confirmExportBtn')
 };
 const ctx = els.xmbCanvas.getContext('2d');
 const previewCtx = els.assetPreview.getContext('2d');
 
-const APP_VERSION = 'Beta 0.9.5.5';
-const APP_BUILD = '2026.07.17';
+const APP_VERSION = '1.0';
+const APP_BUILD = '2026.07.17-focusfix';
 
 const CATEGORY_LABELS = {1:'Settings',2:'Photo',3:'Music',4:'Video',5:'TV',6:'Game',7:'Network',8:'Extras'};
 const FIRST_LABELS = {
   2:'Memory Stick',4:'UMD',6:'Camera',8:'Game Sharing',10:'Save Data Utility',12:'UMD Update',
   14:'Network Update',16:'USB Connection',18:'Video Settings',20:'Photo Settings',22:'System Settings',
   24:'Theme Settings',26:'Date & Time Settings',28:'Power Save Settings',30:'External Display Settings',
-  32:'Sound Settings',34:'Security Settings',36:'RSS Channel Settings',38:'Network Settings',40:'Online Manual',
+  32:'Sound Settings',34:'Security Settings',36:'RSS Channel Settings',38:'Network Settings',40:'Online Instruction Manuals',
   42:'Remote Play',44:'Internet Radio',46:'RSS Channel',48:'Internet Browser',50:'Internet Search',
   52:'Account Management',54:'Default / Fallback',56:'Bluetooth Settings',58:'SensMe Channels',
   60:'System Storage',62:'Saved Data Utility — System Storage',64:'Resume Game'
@@ -147,7 +156,7 @@ const MODEL_PROFILES = Object.freeze({
     categories:[1,2,3,4,5,6,7,8], excludedItems:[56]
   },
   go: {
-    label:'PSP Go', hint:'Shows System Storage, System Storage Saved Data Utility, Resume Game, Bluetooth, SensMe and External Display slots; UMD entries are hidden.',
+    label:'PSP Go', hint:'Shows the PSP Go menu structure. System Storage and Resume Game use the standard PTF first-level fallback artwork; UMD entries are hidden.',
     categories:[1,2,3,4,6,7,8], excludedItems:[4,12]
   },
   street: {
@@ -157,28 +166,36 @@ const MODEL_PROFILES = Object.freeze({
 });
 
 const MODEL_SLOT_REQUIREMENTS = Object.freeze({
-  universal: [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59},{obj:3,sub:60},{obj:3,sub:61},{obj:3,sub:62},{obj:3,sub:63},{obj:3,sub:64},{obj:3,sub:65}],
+  universal: [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59}],
   '1000': [{obj:2,sub:8},{obj:3,sub:54},{obj:3,sub:55}],
   '2000': [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55}],
   '3000': [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55}],
-  go: [{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59},{obj:3,sub:60},{obj:3,sub:61},{obj:3,sub:62},{obj:3,sub:63},{obj:3,sub:64},{obj:3,sub:65}],
+  go: [{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59}],
   street: [{obj:2,sub:8},{obj:3,sub:54},{obj:3,sub:55}]
 });
 
 const PTF_MAX_SIZE = 768 * 1024;
+// Sony's final PTF schema ends the first-level asset group at sub-slot 59.
+// PSP Go entries introduced later (System Storage, its Saved Data Utility and
+// Resume Game) are rendered by firmware with the standard first-level fallback
+// icon rather than dedicated PTF records. Writing invented slots 60–65 causes
+// the PSP to reject the complete first-level group.
+const PTF_FIRST_LEVEL_MAX_SUB = 59;
+const PSP_GO_VIRTUAL_FIRST_LEVEL_IDS = new Set([60,62,64]);
 
 
 // Native PSP coordinates are doubled because the preview canvas is 960 × 544.
 const PSP_SCALE = 2;
 const XMB_LAYOUT = Object.freeze({
-  categoryX: 109 * PSP_SCALE,
+  // Calibrated from direct 480 × 272 PSP captures supplied for the 1.0 release.
+  categoryX: 110 * PSP_SCALE,
   categoryY: 72 * PSP_SCALE,
-  categorySpacing: 83 * PSP_SCALE,
+  categorySpacing: 82 * PSP_SCALE,
   categoryWidth: 64 * PSP_SCALE,
   categoryHeight: 48 * PSP_SCALE,
-  categoryLabelY: 104 * PSP_SCALE,
+  categoryLabelY: 103 * PSP_SCALE,
   categoryFontSize: 11 * PSP_SCALE,
-  itemX: 109 * PSP_SCALE,
+  itemX: 110 * PSP_SCALE,
   itemY: 137 * PSP_SCALE,
   itemSpacing: 64 * PSP_SCALE,
   bodyWidth: 48 * PSP_SCALE,
@@ -188,9 +205,11 @@ const XMB_LAYOUT = Object.freeze({
   itemLabelX: 149 * PSP_SCALE,
   itemLabelOffsetY: 6 * PSP_SCALE,
   itemFontSize: 14 * PSP_SCALE,
+  itemSubFontSize: 11 * PSP_SCALE,
+  itemLineRightX: 474 * PSP_SCALE,
   statusBaselineY: 18 * PSP_SCALE,
   statusRightX: 444 * PSP_SCALE,
-  batteryX: 451 * PSP_SCALE,
+  batteryX: 452 * PSP_SCALE,
   batteryY: 6 * PSP_SCALE,
   batteryWidth: 24 * PSP_SCALE,
   batteryHeight: 12 * PSP_SCALE
@@ -199,7 +218,7 @@ const XMB_LAYOUT = Object.freeze({
 const PSP_FONT_STACK = '"PSP New Rodin", "FOT-NewRodin Pro DB", "NewRodin Pro DB", Arial, sans-serif';
 
 const PSP_BATTERY_IMAGE = new Image();
-PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.5-beta';
+PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=1.0-focusfix';
 
 const state = {
   theme: null,
@@ -218,7 +237,9 @@ const state = {
   analysisRows: [],
   analysisEstimate: 0,
   previewHitRegions: [],
-  lastFocusGenerationBackup: null
+  lastFocusGenerationBackup: null,
+  exportValidation: null,
+  exportValidationToken: 0
 };
 
 function toast(title, text='', type='') {
@@ -376,7 +397,7 @@ function visibleItemsForCategory(categorySub){
   const profileItems=PROFILE_CATEGORY_ITEMS[state.modelProfile]?.[categorySub];
   const base=profileItems || CATEGORY_ITEMS[categorySub] || state.assets.filter(a=>a.objIdx===3&&a.subIdx%2===0).map(a=>a.subIdx);
   return base.filter(id=>{
-    const asset=bodyAsset(id);
+    const asset=resolvedBodyAsset(id);
     return !profile.excludedItems.includes(id) && !!asset && assetVisibleForProfile(asset);
   });
 }
@@ -402,7 +423,7 @@ function createSyntheticAsset(objIdx,subIdx,sourceAsset=null){
   return {
     objIdx,subIdx,fileType:5,comp:2,packedSize:0,ucSize:0,packedOriginal:null,rawOriginal:null,rawCurrent:null,
     role,edited:true,imageData,gimMeta:{format:3,pixelOrder:0,width:w,height:h},paletteCount:countColors(imageData,257),
-    decodeError:null,synthetic:true
+    decodeError:null,synthetic:true,pspGeneratedFocus:false
   };
 }
 function sourceForSynthetic(objIdx,subIdx){
@@ -423,10 +444,13 @@ function addMissingModelSlots(){
     state.assets.push(asset);added++;
   }
   state.assets.sort((a,b)=>a.objIdx-b.objIdx||a.subIdx-b.subIdx);
+  const goFallbackNote=(state.modelProfile==='go'||state.modelProfile==='universal')
+    ? ' PSP Go System Storage and Resume Game remain preview aliases of the standard first-level fallback; PTF has no safe dedicated records for them.'
+    : '';
   if(added){
     setDirty(true);renderAssetList();updateUiEnabled();
-    toast('Model slots added',`${added} missing slot${added===1?' was':'s were'} created from the fallback artwork.`,'success');
-  }else toast('Profile is complete','No model-specific slots were missing.','success');
+    toast('Model slots added',`${added} supported missing slot${added===1?' was':'s were'} created from the fallback artwork.${goFallbackNote}`,'success');
+  }else toast('Profile is complete',`No supported model-specific slots were missing.${goFallbackNote}`,'success');
 }
 function slugify(value){
   return String(value||'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
@@ -515,7 +539,7 @@ async function parsePtf(arrayBuffer, sourceName='theme.ptf') {
       if(objIdx===0 && subIdx===2 && raw.length>=4){ theme.backgroundMode=new DataView(raw.buffer,raw.byteOffset,raw.byteLength).getUint32(0,true); }
       else {
         const role=roleFor(objIdx,subIdx);
-        const asset={objIdx,subIdx,fileType,comp,packedSize:size,ucSize,packedOriginal:packed,rawOriginal:raw,rawCurrent:raw,role,edited:false,imageData:null,gimMeta:null,paletteCount:null,decodeError:null};
+        const asset={objIdx,subIdx,fileType,comp,packedSize:size,ucSize,packedOriginal:packed,rawOriginal:raw,rawCurrent:raw,role,edited:false,imageData:null,gimMeta:null,paletteCount:null,decodeError:null,pspGeneratedFocus:false};
         try { await decodeAsset(asset); } catch(e){ asset.decodeError=e.message; }
         assets.push(asset); category.push(asset);
       }
@@ -614,13 +638,13 @@ function formatBytes(value){
 }
 
 function imageDataToCanvas(imageData){const c=document.createElement('canvas');c.width=imageData.width;c.height=imageData.height;c.getContext('2d').putImageData(imageData,0,0);return c;}
-function drawImageDataFit(targetCtx,imageData,x,y,w,h,alpha=1){
+function drawImageDataFit(targetCtx,imageData,x,y,w,h,alpha=1,smoothing=true){
   if(!imageData)return;
   const c=imageDataToCanvas(imageData);
   targetCtx.save();
   targetCtx.globalAlpha=alpha;
-  targetCtx.imageSmoothingEnabled=true;
-  targetCtx.imageSmoothingQuality='high';
+  targetCtx.imageSmoothingEnabled=smoothing;
+  if(smoothing)targetCtx.imageSmoothingQuality='high';
   targetCtx.drawImage(c,x,y,w,h);
   targetCtx.restore();
 }
@@ -628,9 +652,12 @@ function getAsset(obj,sub){return state.assets.find(a=>a.objIdx===obj&&a.subIdx=
 function categoryAssets(){return state.assets.filter(a=>a.objIdx===2).sort((a,b)=>a.subIdx-b.subIdx);}
 function bodyAsset(bodyId){return getAsset(3,bodyId);}
 function focusAsset(bodyId){return getAsset(3,bodyId+1);}
+function isPspGoVirtualFirstLevel(bodyId){return PSP_GO_VIRTUAL_FIRST_LEVEL_IDS.has(bodyId);}
+function resolvedBodyAsset(bodyId){return bodyAsset(bodyId)||(isPspGoVirtualFirstLevel(bodyId)?bodyAsset(54):null);}
+function resolvedFocusAsset(bodyId){return focusAsset(bodyId)||(isPspGoVirtualFirstLevel(bodyId)?focusAsset(54):null);}
 
 function populateThemeColors(){
-  for(const select of [els.themeColor,els.variantThemeColor]){
+  for(const select of [els.themeColor,els.variantThemeColor,els.exportThemeColor]){
     select.innerHTML='';
     THEME_COLORS.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=v;select.appendChild(o);});
   }
@@ -879,7 +906,7 @@ async function prepareImageDataForImport(asset,file,mode='exact'){
 async function replaceAssetWithFile(asset,file,{silent=false,mode='exact'}={}){
   if(!asset||!asset.role.required)return false;
   asset.imageData=await prepareImageDataForImport(asset,file,mode);
-  asset.paletteCount=countColors(asset.imageData,257);asset.edited=true;asset.decodeError=null;
+  asset.paletteCount=countColors(asset.imageData,257);asset.edited=true;asset.decodeError=null;asset.pspGeneratedFocus=false;
   if(!silent){
     const [tw,th]=asset.role.required;
     toast(mode==='downscale'?'Image downscaled':'Image imported',mode==='downscale'?`${asset.role.label} was resized to ${tw} × ${th} with bicubic smooth filtering.`:`${asset.role.label} was imported without resizing.`,'success');
@@ -913,7 +940,7 @@ async function bulkReplaceFirstLevelFocus(file,mode='exact'){
   if(!targets.length){toast('No focus assets found','This PTF does not contain first-level focus slots.','error');return;}
   try{
     const prepared=await prepareImageDataForImport(targets[0],file,mode);
-    for(const a of targets){a.imageData=cloneImageData(prepared);a.paletteCount=countColors(a.imageData,257);a.edited=true;a.decodeError=null;}
+    for(const a of targets){a.imageData=cloneImageData(prepared);a.paletteCount=countColors(a.imageData,257);a.edited=true;a.decodeError=null;a.pspGeneratedFocus=false;}
     setDirty(true);renderAssetList();if(state.selectedAsset?.role.type==='firstFocus')selectAsset(state.selectedAsset);
     toast('First-level focus changed',`${targets.length} focus slots now use the ${mode==='downscale'?'downscaled':'exact-size'} image.`,'success');
   }catch(e){console.error(e);toast('Could not apply focus image',e.message,'error');}
@@ -924,7 +951,7 @@ async function restoreAllFirstLevelFocus(){
   try{
     for(const a of [...targets]){
       if(a.synthetic){state.assets.splice(state.assets.indexOf(a),1);continue;}
-      a.rawCurrent=a.rawOriginal;a.edited=false;await decodeAsset(a);
+      a.rawCurrent=a.rawOriginal;a.edited=false;a.pspGeneratedFocus=false;await decodeAsset(a);
     }
     setDirty(state.assets.some(x=>x.edited)||metadataDirty());renderAssetList();
     if(state.selectedAsset?.role.type==='firstFocus'&&!state.assets.includes(state.selectedAsset)){state.selectedAsset=null;els.inspector.classList.add('hidden');els.inspectorEmpty.style.display='block';}
@@ -938,7 +965,7 @@ async function restoreSelected(){
     state.assets.splice(state.assets.indexOf(a),1);state.selectedAsset=null;els.inspector.classList.add('hidden');els.inspectorEmpty.style.display='block';
     setDirty(state.assets.some(x=>x.edited)||metadataDirty());renderAssetList();toast('Added slot removed',a.role.label,'success');return;
   }
-  a.rawCurrent=a.rawOriginal;a.edited=false;await decodeAsset(a);setDirty(state.assets.some(x=>x.edited)||metadataDirty());selectAsset(a);renderAssetList();toast('Original restored',a.role.label,'success');
+  a.rawCurrent=a.rawOriginal;a.edited=false;a.pspGeneratedFocus=false;await decodeAsset(a);setDirty(state.assets.some(x=>x.edited)||metadataDirty());selectAsset(a);renderAssetList();toast('Original restored',a.role.label,'success');
 }
 function metadataDirty(){if(!state.theme)return false;return els.themeName.value!==state.theme.title||els.productId.value!==state.theme.productId||els.version.value!==state.theme.version||normalizeThemeColor(els.themeColor.value)!==normalizeThemeColor(state.theme.backgroundMode);}
 
@@ -946,20 +973,22 @@ function metadataDirty(){if(!state.theme)return false;return els.themeName.value
 function clamp01(v){return Math.max(0,Math.min(1,v));}
 function easeOutCubic(v){v=clamp01(v);return 1-Math.pow(1-v,3);}
 function setPspFont(sizePx,weight=500){ctx.font=`${weight} ${sizePx}px ${PSP_FONT_STACK}`;}
-function drawPspText(text,x,y,{size=30,weight=500,align='left',alpha=1,shadow=true}={}){
+function drawPspText(text,x,y,{size=30,weight=500,align='left',alpha=1,shadow=true,maxWidth=null}={}){
   ctx.save();
   setPspFont(size,weight);
   ctx.textAlign=align;
   ctx.textBaseline='alphabetic';
   ctx.globalAlpha=alpha;
-  ctx.fillStyle='rgba(247,247,245,.98)';
+  ctx.fillStyle='rgba(248,248,246,.985)';
   if(shadow){
-    ctx.shadowColor='rgba(0,0,0,.56)';
-    ctx.shadowBlur=4;
+    // Soft PSP-style text shadow. It remains readable on bright wallpapers
+    // without producing the harsh duplicate-text outline used in early builds.
+    ctx.shadowColor='rgba(0,0,0,.54)';
+    ctx.shadowBlur=4.5;
     ctx.shadowOffsetX=2;
-    ctx.shadowOffsetY=3;
+    ctx.shadowOffsetY=2.5;
   }
-  ctx.fillText(text,x,y);
+  if(maxWidth)ctx.fillText(text,x,y,maxWidth);else ctx.fillText(text,x,y);
   ctx.restore();
 }
 function formatPspDateTime(date=new Date()){
@@ -1011,27 +1040,75 @@ function hexToRgb(hex){
   const v=String(hex).replace('#','');
   return {r:parseInt(v.slice(0,2),16)||255,g:parseInt(v.slice(2,4),16)||255,b:parseInt(v.slice(4,6),16)||255};
 }
-function generateFocusImage(bodyImage,targetW,targetH,{color='#ffffff',opacity=.9,blur=6,padding=7,includeCore=false}={}){
-  const mask=document.createElement('canvas');mask.width=targetW;mask.height=targetH;
-  const mctx=mask.getContext('2d');const source=imageDataToCanvas(bodyImage);
-  const maxW=Math.max(1,targetW-padding*2),maxH=Math.max(1,targetH-padding*2);
-  const scale=Math.min(maxW/bodyImage.width,maxH/bodyImage.height);
-  const w=bodyImage.width*scale,h=bodyImage.height*scale,x=(targetW-w)/2,y=(targetH-h)/2;
-  mctx.drawImage(source,x,y,w,h);
-  const colored=document.createElement('canvas');colored.width=targetW;colored.height=targetH;
-  const cc=colored.getContext('2d');cc.drawImage(mask,0,0);cc.globalCompositeOperation='source-in';cc.fillStyle=color;cc.fillRect(0,0,targetW,targetH);
-  const out=document.createElement('canvas');out.width=targetW;out.height=targetH;const oc=out.getContext('2d');
-  oc.save();oc.globalAlpha=opacity;oc.filter=`blur(${blur}px)`;oc.drawImage(colored,0,0);oc.restore();
-  if(includeCore){oc.save();oc.globalAlpha=Math.min(1,opacity*.35);oc.drawImage(colored,0,0);oc.restore();}
-  return oc.getImageData(0,0,targetW,targetH);
+const PSP_FOCUS_MARGIN = 8;
+const PSP_FOCUS_ALPHA_LEVELS = 64; // Transparent + 63 visible white-alpha levels.
+
+function gaussianKernel(radius){
+  const r=Math.max(1,Math.min(8,Math.round(radius))),sigma=Math.max(.8,r/2),kernel=new Float32Array(r*2+1);
+  let sum=0;
+  for(let i=-r;i<=r;i++){const value=Math.exp(-(i*i)/(2*sigma*sigma));kernel[i+r]=value;sum+=value;}
+  for(let i=0;i<kernel.length;i++)kernel[i]/=sum;
+  return kernel;
+}
+function blurAlphaChannel(alpha,width,height,radius){
+  const kernel=gaussianKernel(radius),r=(kernel.length-1)/2,temp=new Float32Array(alpha.length),out=new Float32Array(alpha.length);
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    let sum=0;
+    for(let k=-r;k<=r;k++){const sx=Math.max(0,Math.min(width-1,x+k));sum+=alpha[y*width+sx]*kernel[k+r];}
+    temp[y*width+x]=sum;
+  }
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    let sum=0;
+    for(let k=-r;k<=r;k++){const sy=Math.max(0,Math.min(height-1,y+k));sum+=temp[sy*width+x]*kernel[k+r];}
+    out[y*width+x]=sum;
+  }
+  return out;
+}
+function quantizeFocusAlpha(alpha){
+  if(alpha<3)return 0;
+  const visibleLevels=PSP_FOCUS_ALPHA_LEVELS-1;
+  const level=Math.max(1,Math.min(visibleLevels,Math.round(alpha/255*visibleLevels)));
+  return Math.round(level*255/visibleLevels);
+}
+function validatePspGeneratedFocus(imageData,targetW,targetH){
+  if(!imageData||imageData.width!==targetW||imageData.height!==targetH)throw new Error(`Generated focus must be exactly ${targetW} × ${targetH} pixels.`);
+  const colors=new Set(),alphas=new Set(),d=imageData.data;
+  for(let i=0;i<d.length;i+=4){
+    const a=d[i+3];
+    if(a===0){if(d[i]||d[i+1]||d[i+2])throw new Error('Transparent focus pixels contain stray RGB data.');}
+    else if(d[i]!==255||d[i+1]!==255||d[i+2]!==255)throw new Error('Generated focus RGB must remain pure white.');
+    colors.add(`${d[i]},${d[i+1]},${d[i+2]},${a}`);alphas.add(a);
+  }
+  if(colors.size>PSP_FOCUS_ALPHA_LEVELS)throw new Error(`Generated focus uses ${colors.size} palette entries; PSP-safe maximum is ${PSP_FOCUS_ALPHA_LEVELS}.`);
+  return {paletteEntries:colors.size,alphaLevels:alphas.size};
+}
+function generateFocusImage(bodyImage,targetW,targetH,{opacity=.9,blur=6}={}){
+  const expectedW=targetW-PSP_FOCUS_MARGIN*2,expectedH=targetH-PSP_FOCUS_MARGIN*2;
+  if(bodyImage.width!==expectedW||bodyImage.height!==expectedH){
+    throw new Error(`The matching normal icon must be ${expectedW} × ${expectedH} pixels before focus generation.`);
+  }
+  const pixelCount=targetW*targetH,core=new Float32Array(pixelCount),source=bodyImage.data;
+  for(let sy=0;sy<bodyImage.height;sy++)for(let sx=0;sx<bodyImage.width;sx++){
+    const sourceIndex=(sy*bodyImage.width+sx)*4;
+    core[(sy+PSP_FOCUS_MARGIN)*targetW+(sx+PSP_FOCUS_MARGIN)]=source[sourceIndex+3];
+  }
+  const blurred=blurAlphaChannel(core,targetW,targetH,Math.max(2,Math.min(6,Math.round(blur))));
+  const data=new Uint8ClampedArray(pixelCount*4),strength=Math.max(.1,Math.min(1,Number(opacity)||.9));
+  for(let i=0;i<pixelCount;i++){
+    // Sony-style focus artwork is the outer illumination only. The source
+    // silhouette is removed so the normal icon remains the sole sharp core.
+    const halo=Math.max(0,blurred[i]*strength-core[i]);
+    const a=quantizeFocusAlpha(halo),o=i*4;
+    if(a){data[o]=255;data[o+1]=255;data[o+2]=255;data[o+3]=a;}
+  }
+  const result=new ImageData(data,targetW,targetH);
+  validatePspGeneratedFocus(result,targetW,targetH);
+  return result;
 }
 function focusOptionsFromUi(){
   return {
-    color:els.focusColor.value,
     opacity:Number(els.focusOpacity.value)/100,
-    blur:Number(els.focusBlur.value),
-    padding:Number(els.focusPadding.value),
-    includeCore:els.focusIncludeCore.checked
+    blur:Number(els.focusBlur.value)
   };
 }
 function imageHasVisiblePixels(imageData){
@@ -1102,7 +1179,7 @@ function updateFocusGeneratorPreview(){
   if(!els.focusPreviewCanvas)return;
   els.focusOpacityValue.textContent=`${els.focusOpacity.value}%`;
   els.focusBlurValue.textContent=`${els.focusBlur.value} px`;
-  els.focusPaddingValue.textContent=`${els.focusPadding.value} px`;
+  els.focusPaddingValue.textContent=`${PSP_FOCUS_MARGIN} px`;
   const plan=focusGenerationPlan(),pc=els.focusPreviewCanvas.getContext('2d');
   drawFocusPreviewSheet(pc,plan.affected,focusOptionsFromUi());
   if(!plan.populated.length){
@@ -1134,26 +1211,45 @@ function snapshotFocusForUndo(body){
   return {
     objIdx:focus.objIdx,subIdx:focus.subIdx,existed:true,
     imageData:focus.imageData?cloneImageData(focus.imageData):null,
-    paletteCount:focus.paletteCount,edited:focus.edited,decodeError:focus.decodeError,synthetic:focus.synthetic
+    paletteCount:focus.paletteCount,edited:focus.edited,decodeError:focus.decodeError,synthetic:focus.synthetic,pspGeneratedFocus:!!focus.pspGeneratedFocus
   };
 }
-function applyFocusGenerator(){
+async function applyFocusGenerator(){
   const plan=focusGenerationPlan();
   if(!plan.affected.length){
     toast('Nothing to generate',plan.missingOnly?'All matching focus slots already contain artwork.':'No populated source icons match the selected scope.','error');
     return;
   }
   const opts=focusOptionsFromUi(),dirtyBefore=state.dirty,entries=plan.affected.map(snapshotFocusForUndo);
-  for(const body of plan.affected){
-    const focus=ensureFocusPair(body),[tw,th]=focus.role.required;
-    focus.imageData=generateFocusImage(body.imageData,tw,th,opts);
-    focus.paletteCount=countColors(focus.imageData,257);focus.edited=true;focus.decodeError=null;
+  try{
+    for(const body of plan.affected){
+      const focus=ensureFocusPair(body),[tw,th]=focus.role.required;
+      focus.imageData=generateFocusImage(body.imageData,tw,th,opts);
+      const validated=validatePspGeneratedFocus(focus.imageData,tw,th);
+      focus.paletteCount=validated.paletteEntries;focus.edited=true;focus.decodeError=null;focus.pspGeneratedFocus=true;
+      const encoded=encodeGimPspFocus(focus.imageData),decoded=decodeGim(encoded.bytes);
+      if(decoded.imageData.width!==tw||decoded.imageData.height!==th||decoded.paletteCount>PSP_FOCUS_ALPHA_LEVELS)throw new Error(`${focus.role.label} failed GIM round-trip validation.`);
+    }
+    state.lastFocusGenerationBackup={entries,dirtyBefore};
+    const preflight=await buildPtf({status:false});
+    verifyBuiltPtfMetadata(preflight.bytes,preflight.metadata);
+    if(preflight.bytes.length>PTF_MAX_SIZE)throw new Error(`Generated focuses would make the theme ${formatBytes(preflight.bytes.length)}. The PSP PTF limit is 768 KB.`);
+    els.undoFocusGeneratorBtn.disabled=false;
+    setDirty(true);renderAssetList();if(state.selectedAsset)selectAsset(state.selectedAsset);
+    updateFocusGeneratorPreview();
+    toast('PSP-safe focuses generated',`${plan.affected.length} focus asset${plan.affected.length===1?' was':'s were'} generated with white RGB, alpha-only halos and a 64-entry palette.`,'success');
+  }catch(error){
+    const backup={entries,dirtyBefore};
+    for(const entry of [...backup.entries].reverse()){
+      const current=getAsset(entry.objIdx,entry.subIdx);
+      if(!entry.existed){if(current)state.assets=state.assets.filter(asset=>asset!==current);continue;}
+      if(!current)continue;
+      current.imageData=entry.imageData?cloneImageData(entry.imageData):null;current.paletteCount=entry.paletteCount;current.edited=entry.edited;current.decodeError=entry.decodeError;current.synthetic=entry.synthetic;current.pspGeneratedFocus=entry.pspGeneratedFocus;
+    }
+    state.lastFocusGenerationBackup=null;els.undoFocusGeneratorBtn.disabled=true;setDirty(dirtyBefore);renderAssetList();if(state.selectedAsset&&state.assets.includes(state.selectedAsset))selectAsset(state.selectedAsset);
+    updateFocusGeneratorPreview();
+    toast('Focus generation cancelled',error.message,'error');
   }
-  state.lastFocusGenerationBackup={entries,dirtyBefore};
-  els.undoFocusGeneratorBtn.disabled=false;
-  setDirty(true);renderAssetList();if(state.selectedAsset)selectAsset(state.selectedAsset);
-  updateFocusGeneratorPreview();
-  toast('Matching focuses generated',`${plan.affected.length} body icon${plan.affected.length===1?' was':'s were'} converted into matching focus artwork.`,'success');
 }
 function undoLastFocusGeneration(){
   const backup=state.lastFocusGenerationBackup;
@@ -1169,7 +1265,7 @@ function undoLastFocusGeneration(){
     }
     if(!current)continue;
     current.imageData=entry.imageData?cloneImageData(entry.imageData):null;
-    current.paletteCount=entry.paletteCount;current.edited=entry.edited;current.decodeError=entry.decodeError;current.synthetic=entry.synthetic;
+    current.paletteCount=entry.paletteCount;current.edited=entry.edited;current.decodeError=entry.decodeError;current.synthetic=entry.synthetic;current.pspGeneratedFocus=entry.pspGeneratedFocus;
   }
   state.lastFocusGenerationBackup=null;els.undoFocusGeneratorBtn.disabled=true;
   setDirty(backup.dirtyBefore);renderAssetList();
@@ -1203,7 +1299,7 @@ function drawXmb(time){
   const W=960,H=544;ctx.clearRect(0,0,W,H);state.previewHitRegions=[];
   if(!state.theme){ctx.fillStyle='#07090d';ctx.fillRect(0,0,W,H);requestAnimationFrame(drawXmb);return;}
   if(state.viewMode==='assets'&&state.selectedAsset){drawAssetStage();requestAnimationFrame(drawXmb);return;}
-  const bg=getAsset(1,0);if(bg?.imageData){drawImageDataFit(ctx,bg.imageData,0,0,W,H);registerPreviewHit(bg,0,0,W,H,'background');}else{const grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,'#222936');grad.addColorStop(1,'#090b10');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);}
+  const bg=getAsset(1,0);if(bg?.imageData){drawImageDataFit(ctx,bg.imageData,0,0,W,H,1,true);registerPreviewHit(bg,0,0,W,H,'background');}else{const grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,'#222936');grad.addColorStop(1,'#090b10');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);}
   drawStatusBar();
   const cats=visibleCategoryAssets();if(!cats.length){requestAnimationFrame(drawXmb);return;}
   state.nav.categoryPos=Math.max(0,Math.min(state.nav.categoryPos,cats.length-1));
@@ -1214,7 +1310,7 @@ function drawXmb(time){
     const x=XMB_LAYOUT.categoryX+hierarchyShift+d*XMB_LAYOUT.categorySpacing;
     const selectedCat=i===state.nav.categoryPos;
     const hitX=x-XMB_LAYOUT.categoryWidth/2,hitY=XMB_LAYOUT.categoryY-XMB_LAYOUT.categoryHeight/2;
-    drawImageDataFit(ctx,a.imageData,hitX,hitY,XMB_LAYOUT.categoryWidth,XMB_LAYOUT.categoryHeight,selectedCat?1:.72);
+    drawImageDataFit(ctx,a.imageData,hitX,hitY,XMB_LAYOUT.categoryWidth,XMB_LAYOUT.categoryHeight,selectedCat?1:.62,false);
     registerPreviewHit(a,hitX,hitY,XMB_LAYOUT.categoryWidth,XMB_LAYOUT.categoryHeight,'category');
   });
   drawPspText(selected.role.label,XMB_LAYOUT.categoryX+hierarchyShift,XMB_LAYOUT.categoryLabelY,{
@@ -1226,12 +1322,34 @@ function drawXmb(time){
     drawVerticalItems(itemIds,time,hierarchyShift);
   }
   if(state.showGuides){
-    ctx.save();ctx.strokeStyle='rgba(90,180,255,.42)';ctx.setLineDash([6,6]);ctx.strokeRect(.5,.5,W-1,H-1);
-    ctx.beginPath();
-    ctx.moveTo(XMB_LAYOUT.categoryX+hierarchyShift,0);ctx.lineTo(XMB_LAYOUT.categoryX+hierarchyShift,H);
-    ctx.moveTo(0,XMB_LAYOUT.categoryY);ctx.lineTo(W,XMB_LAYOUT.categoryY);
-    ctx.moveTo(0,XMB_LAYOUT.itemY);ctx.lineTo(W,XMB_LAYOUT.itemY);
-    ctx.stroke();ctx.restore();
+    const gx=XMB_LAYOUT.categoryX+hierarchyShift;
+    const drawGuideGeometry=()=>{
+      ctx.strokeRect(1,1,W-2,H-2);
+      ctx.beginPath();
+      ctx.moveTo(gx,0);ctx.lineTo(gx,H);
+      ctx.moveTo(0,XMB_LAYOUT.categoryY);ctx.lineTo(W,XMB_LAYOUT.categoryY);
+      ctx.moveTo(0,XMB_LAYOUT.itemY);ctx.lineTo(W,XMB_LAYOUT.itemY);
+      ctx.stroke();
+    };
+    ctx.save();
+    ctx.setLineDash([12,7]);
+    ctx.lineCap='round';
+    ctx.strokeStyle='rgba(0,0,0,.82)';
+    ctx.lineWidth=6;
+    drawGuideGeometry();
+    ctx.strokeStyle='rgba(85,235,255,.98)';
+    ctx.lineWidth=2.25;
+    ctx.shadowColor='rgba(43,211,255,.75)';
+    ctx.shadowBlur=7;
+    drawGuideGeometry();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(85,235,255,.98)';
+    ctx.shadowBlur=8;
+    for(const [x,y] of [[gx,XMB_LAYOUT.categoryY],[gx,XMB_LAYOUT.itemY]]){
+      ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.9)';ctx.lineWidth=2;ctx.stroke();
+    }
+    ctx.restore();
   }
   requestAnimationFrame(drawXmb);
 }
@@ -1264,35 +1382,71 @@ function focusPulse(elapsed){
   return els.pulseToggle.checked?(0.10+0.90*(0.5+0.5*Math.sin((elapsed/1000)*Math.PI*2-Math.PI/2))):1;
 }
 
+function firstLevelDimAlpha(k){
+  const distance=Math.abs(k);
+  if(distance===0)return 1;
+  if(distance===1)return .34;
+  if(distance===2)return .22;
+  return .12;
+}
+
+function drawStorageItemLabel(bodyId,categorySub,yy,x,alpha){
+  const isStorage=bodyId===2 || bodyId===60;
+  if(!isStorage)return false;
+  const main=bodyId===60?'System Storage':'Memory Stick™';
+  drawPspText(main,x,yy-5*PSP_SCALE,{
+    size:XMB_LAYOUT.itemFontSize,weight:500,align:'left',alpha,maxWidth:310*PSP_SCALE
+  });
+  ctx.save();
+  ctx.globalAlpha=alpha*.95;
+  ctx.strokeStyle='rgba(248,248,246,.95)';
+  ctx.lineWidth=1*PSP_SCALE;
+  ctx.beginPath();ctx.moveTo(x,yy-1*PSP_SCALE);ctx.lineTo(XMB_LAYOUT.itemLineRightX,yy-1*PSP_SCALE);ctx.stroke();
+  ctx.restore();
+  const freeSpace=bodyId===60?'Free Space 12.4 GB':'Free Space 486 MB';
+  drawPspText(freeSpace,x,yy+14*PSP_SCALE,{
+    size:XMB_LAYOUT.itemSubFontSize,weight:500,align:'left',alpha,maxWidth:310*PSP_SCALE
+  });
+  return true;
+}
+
 function drawVerticalItems(ids,time,hierarchyShift=0){
   const selectedIndex=state.nav.itemPos;
   const elapsed=time-state.animationStart;
-  const focusIn=easeOutCubic(elapsed/120);
+  const focusIn=easeOutCubic(elapsed/135);
   const pulse=focusPulse(elapsed);
+  const categories=visibleCategoryAssets();
+  const categorySub=categories[state.nav.categoryPos]?.subIdx;
   for(let k=-2;k<=3;k++){
     const idx=selectedIndex+k;if(idx<0||idx>=ids.length)continue;
-    const bodyId=ids[idx],body=bodyAsset(bodyId),focus=focusAsset(bodyId);if(!body?.imageData)continue;
-    // Keep outgoing first-level icons spatially above the category row instead of
-    // letting the previous item occupy the category icon's slot.
+    const bodyId=ids[idx],body=resolvedBodyAsset(bodyId),focus=resolvedFocusAsset(bodyId);if(!body?.imageData)continue;
+    // The previous row moves into a dedicated lane above the selected category,
+    // matching real PSP captures and preventing it from sitting behind the category icon.
     const upperLaneY=XMB_LAYOUT.categoryY-XMB_LAYOUT.categoryHeight/2-XMB_LAYOUT.bodyHeight/2;
     const yy=k<0?upperLaneY+(k+1)*XMB_LAYOUT.itemSpacing:XMB_LAYOUT.itemY+k*XMB_LAYOUT.itemSpacing;
     const sel=k===0;
+    const dimAlpha=firstLevelDimAlpha(k);
     const itemX=XMB_LAYOUT.itemX+hierarchyShift;
     if(sel&&focus?.imageData){
-      const focusScale=.94+.06*focusIn;
+      const focusScale=.96+.04*focusIn;
       const fw=XMB_LAYOUT.focusWidth*focusScale,fh=XMB_LAYOUT.focusHeight*focusScale;
-      drawImageDataFit(ctx,focus.imageData,itemX-fw/2,yy-fh/2,fw,fh,pulse);
+      drawImageDataFit(ctx,focus.imageData,itemX-fw/2,yy-fh/2,fw,fh,pulse,false);
     }
     const bodyX=itemX-XMB_LAYOUT.bodyWidth/2,bodyY=yy-XMB_LAYOUT.bodyHeight/2;
-    drawImageDataFit(ctx,body.imageData,bodyX,bodyY,XMB_LAYOUT.bodyWidth,XMB_LAYOUT.bodyHeight,sel?1:.40);
+    drawImageDataFit(ctx,body.imageData,bodyX,bodyY,XMB_LAYOUT.bodyWidth,XMB_LAYOUT.bodyHeight,sel?1:dimAlpha,false);
     registerPreviewHit(body,bodyX,bodyY,XMB_LAYOUT.bodyWidth,XMB_LAYOUT.bodyHeight,'first');
-    // The selected first-level label disappears while its second-level menu is open,
-    // matching the PSP hierarchy shown in the hardware reference captures.
-    if(sel&&state.nav.level===1){
-      const label=firstLevelDisplayLabel(bodyId);
-      drawPspText(label,XMB_LAYOUT.itemLabelX+hierarchyShift,yy+XMB_LAYOUT.itemLabelOffsetY,{
-        size:XMB_LAYOUT.itemFontSize,weight:500,align:'left',alpha:focusIn
-      });
+
+    // Real XMB lists keep neighbouring first-level labels visible only at level 1.
+    // When a second-level submenu opens, all parent-level text disappears while
+    // the parent icons remain visible and shift left behind the child menu.
+    if(state.nav.level!==2){
+      const labelAlpha=sel?focusIn:dimAlpha*.90;
+      const labelX=XMB_LAYOUT.itemLabelX+hierarchyShift;
+      if(!(sel&&drawStorageItemLabel(bodyId,categorySub,yy,labelX,labelAlpha))){
+        drawPspText(firstLevelDisplayLabel(bodyId),labelX,yy+XMB_LAYOUT.itemLabelOffsetY,{
+          size:XMB_LAYOUT.itemFontSize,weight:500,align:'left',alpha:labelAlpha,maxWidth:318*PSP_SCALE
+        });
+      }
     }
   }
   if(state.nav.level===2)drawSecondLevelMenu(time);
@@ -1324,10 +1478,10 @@ function drawSecondLevelMenu(time){
     const pair=secondLevelAssetPair(idx);
     if(pair.body?.imageData){
       if(selected&&pair.focus?.imageData){
-        drawImageDataFit(ctx,pair.focus.imageData,iconX-24*PSP_SCALE,yy-24*PSP_SCALE,48*PSP_SCALE,48*PSP_SCALE,pulse);
+        drawImageDataFit(ctx,pair.focus.imageData,iconX-24*PSP_SCALE,yy-24*PSP_SCALE,48*PSP_SCALE,48*PSP_SCALE,pulse,false);
       }
       const secondX=iconX-16*PSP_SCALE,secondY=yy-16*PSP_SCALE;
-      drawImageDataFit(ctx,pair.body.imageData,secondX,secondY,32*PSP_SCALE,32*PSP_SCALE,selected?1:.34);
+      drawImageDataFit(ctx,pair.body.imageData,secondX,secondY,32*PSP_SCALE,32*PSP_SCALE,selected?1:.30,false);
       registerPreviewHit(pair.body,secondX,secondY,32*PSP_SCALE,32*PSP_SCALE,'second');
     }
     drawPspText(items[idx].label,labelX,yy+XMB_LAYOUT.itemLabelOffsetY,{
@@ -1404,16 +1558,36 @@ function swizzleIndices(indices,w,h,bpp=8){const tileW=0x80/bpp,tileH=8,ow=align
 function blockHeader(type,size,next){const b=new Uint8Array(16);const v=new DataView(b.buffer);setU16(v,0,type);setU32(v,4,size);setU32(v,8,next);setU32(v,12,0x10);return b;}
 function concatArrays(parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
 function makeImageBlock(type,format,pixelOrder,w,h,bpp,pixelBytes,levelType){const content=new Uint8Array(0x40+pixelBytes.length);const v=new DataView(content.buffer);setU16(v,0,0x30);setU16(v,4,format);setU16(v,6,pixelOrder);setU16(v,8,w);setU16(v,10,h);setU16(v,12,bpp);setU16(v,14,0x10);setU16(v,16,0x08);setU16(v,18,2);setU32(v,24,0x30);setU32(v,28,0x40);setU32(v,32,0x40+pixelBytes.length);setU32(v,36,0);setU16(v,40,levelType);setU16(v,42,1);setU16(v,44,3);setU16(v,46,1);setU32(v,0x30,0x40);content.set(pixelBytes,0x40);const total=16+content.length;return concatArrays([blockHeader(type,total,total),content]);}
-function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.5\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
+function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio 1.0\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
 function encodeGimIndexed(imageData,dither=true){const q=quantize(imageData,256,dither),w=imageData.width,h=imageData.height;const palBytes=new Uint8Array(1024);q.palette.forEach((p,i)=>{palBytes[i*4]=p[0];palBytes[i*4+1]=p[1];palBytes[i*4+2]=p[2];palBytes[i*4+3]=p[3];});const indexBytes=swizzleIndices(q.indices,w,h,8);let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2);let imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1);const fileInfo=makeFileInfo();
   // Correct global next pointers after sizes are known.
   new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);
   const pictureSize=16+paletteBlock.length+imageBlock.length;const picture=blockHeader(3,pictureSize,16);const rootSize=16+pictureSize+fileInfo.length;const root=blockHeader(2,rootSize,16);const header=new Uint8Array([77,73,71,46,48,48,46,49,80,83,80,0,0,0,0,0]);return {bytes:concatArrays([header,root,picture,paletteBlock,imageBlock,fileInfo]),used:q.used};}
+function encodeGimPspFocus(imageData){
+  const validation=validatePspGeneratedFocus(imageData,imageData.width,imageData.height);
+  const w=imageData.width,h=imageData.height,palette=new Array(256).fill(null).map(()=>[0,0,0,0]);
+  const visibleLevels=PSP_FOCUS_ALPHA_LEVELS-1;
+  for(let level=1;level<=visibleLevels;level++)palette[level]=[255,255,255,Math.round(level*255/visibleLevels)];
+  const indices=new Uint8Array(w*h),d=imageData.data;
+  for(let i=0,p=0;i<d.length;i+=4,p++){
+    const a=d[i+3];indices[p]=a===0?0:Math.max(1,Math.min(visibleLevels,Math.round(a/255*visibleLevels)));
+  }
+  const palBytes=new Uint8Array(1024);
+  palette.forEach((entry,index)=>{palBytes[index*4]=entry[0];palBytes[index*4+1]=entry[1];palBytes[index*4+2]=entry[2];palBytes[index*4+3]=entry[3];});
+  const indexBytes=swizzleIndices(indices,w,h,8);
+  let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2),imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1),fileInfo=makeFileInfo();
+  new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);
+  const pictureSize=16+paletteBlock.length+imageBlock.length,picture=blockHeader(3,pictureSize,16),rootSize=16+pictureSize+fileInfo.length,root=blockHeader(2,rootSize,16),header=new Uint8Array([77,73,71,46,48,48,46,49,80,83,80,0,0,0,0,0]);
+  return {bytes:concatArrays([header,root,picture,paletteBlock,imageBlock,fileInfo]),used:validation.paletteEntries};
+}
 function encodeGimRgba(imageData){const w=imageData.width,h=imageData.height,d=imageData.data,pixels=new Uint8Array(w*h*4);pixels.set(d);const imageBlock=makeImageBlock(4,3,0,w,h,32,pixels,1),fileInfo=makeFileInfo();const pictureSize=16+imageBlock.length,picture=blockHeader(3,pictureSize,16),rootSize=16+pictureSize+fileInfo.length,root=blockHeader(2,rootSize,16),header=new Uint8Array([77,73,71,46,48,48,46,49,80,83,80,0,0,0,0,0]);return concatArrays([header,root,picture,imageBlock,fileInfo]);}
 function encodeBmp24(imageData){const w=imageData.width,h=imageData.height,row=align(w*3,4),size=54+row*h,b=new Uint8Array(size),v=new DataView(b.buffer);b[0]=66;b[1]=77;setU32(v,2,size);setU32(v,10,54);setU32(v,14,40);v.setInt32(18,w,true);v.setInt32(22,h,true);setU16(v,26,1);setU16(v,28,24);setU32(v,34,row*h);const d=imageData.data;for(let y=0;y<h;y++){const sy=h-1-y;for(let x=0;x<w;x++){const si=(sy*w+x)*4,di=54+y*row+x*3;b[di]=d[si+2];b[di+1]=d[si+1];b[di+2]=d[si];}}return b;}
 
 async function encodeAssetImage(asset,imageData){
   if(asset.fileType===5){
+    if(asset.pspGeneratedFocus&&(asset.role.type==='firstFocus'||asset.role.type==='secondFocus')){
+      const r=encodeGimPspFocus(imageData);asset.paletteCount=r.used;return r.bytes;
+    }
     if(asset.role.indexed){
       const r=encodeGimIndexed(imageData,els.ditherToggle.checked);asset.paletteCount=r.used;return r.bytes;
     }
@@ -1441,7 +1615,11 @@ async function buildPtf(options={}){
   if(!state.theme)throw new Error('No theme loaded.');
   if(options.status!==false)setStatus('Building PTF…');
   const categoryMap=new Map();
+  let omittedUnsupportedSlots=0;
   for(const a of state.assets){
+    // Do not emit invented PSP Go records 60–65. On real hardware a single
+    // unsupported subtype can invalidate the complete first-level icon group.
+    if(a.objIdx===3&&a.subIdx>PTF_FIRST_LEVEL_MAX_SUB){omittedUnsupportedSlots++;continue;}
     if(!categoryMap.has(a.objIdx))categoryMap.set(a.objIdx,[]);
     categoryMap.get(a.objIdx).push(a);
   }
@@ -1497,27 +1675,155 @@ async function buildPtf(options={}){
   writeFixedString(out,192,8,metadata.version,'Version');
   setU32(v,200,state.theme.value8||8);groups.forEach((g,i)=>setU32(v,0x100+i*4,g.offset));
   for(const g of groups){out.set(g.header,g.offset);out.set(g.body,g.offset+0x20);}
-  return {bytes:out,exportedAssets,metadata:{...metadata,themeColor},stats:{preservedLzr,convertedLzr,deflated,stored}};
+  return {bytes:out,exportedAssets,metadata:{...metadata,themeColor},stats:{preservedLzr,convertedLzr,deflated,stored,omittedUnsupportedSlots}};
 }
-async function exportPtf(){
+function normalizeExportFileName(value,productId){
+  let name=String(value??'').trim();
+  if(!name)name=String(productId||'theme').trim()||'theme';
+  name=name.replace(/[\\/:*?"<>|]+/g,'_').replace(/[. ]+$/g,'').trim();
+  if(!name)throw new Error('Output filename cannot be empty.');
+  if(!/\.ptf$/i.test(name))name+=`.ptf`;
+  return name;
+}
+function exportDialogValues(){
+  return {
+    fileName:normalizeExportFileName(els.exportFileName.value,els.exportProductId.value),
+    title:els.exportTitle.value,
+    productId:els.exportProductId.value,
+    version:els.exportVersion.value,
+    themeColor:normalizeThemeColor(els.exportThemeColor.value)
+  };
+}
+function exportValidationSignature(values){
+  return JSON.stringify({
+    fileName:values.fileName,title:values.title,productId:values.productId,version:values.version,
+    themeColor:values.themeColor,assetState:state.assets.map(a=>[a.objIdx,a.subIdx,a.edited,a.synthetic,a.imageData?.width||0,a.imageData?.height||0,a.paletteCount||0,a.decodeError||''])
+  });
+}
+function setExportValidationDisplay(status,title,summary,sizeText='—'){
+  els.exportValidationCard.className=`exportValidationCard ${status}`;
+  els.exportValidationTitle.textContent=title;
+  els.exportValidationSummary.textContent=summary;
+  els.exportSizePill.textContent=sizeText;
+}
+function renderExportValidationItems(items){
+  els.exportValidationList.innerHTML='';
+  for(const item of items){
+    const li=document.createElement('li');li.className=item.type;
+    const icon=document.createElement('span');icon.className='validationItemIcon';icon.textContent=item.type==='error'?'×':item.type==='warning'?'!':'✓';
+    const label=document.createElement('span');label.textContent=item.text;
+    li.append(icon,label);els.exportValidationList.appendChild(li);
+  }
+}
+function collectAssetExportChecks(){
+  const errors=[],warnings=[],info=[];
+  const unsupported=state.assets.filter(a=>a.objIdx===3&&a.subIdx>PTF_FIRST_LEVEL_MAX_SUB);
+  if(unsupported.length)warnings.push(`${unsupported.length} unsupported virtual PSP Go slot${unsupported.length===1?' will':'s will'} be omitted and replaced by the fallback icon on hardware.`);
+  for(const asset of state.assets){
+    if(asset.objIdx===3&&asset.subIdx>PTF_FIRST_LEVEL_MAX_SUB)continue;
+    if(asset.decodeError){errors.push(`${asset.role.label}: ${asset.decodeError}`);continue;}
+    if(!asset.imageData&&!asset.rawOriginal){errors.push(`${asset.role.label}: no usable image data.`);continue;}
+    if(asset.role.required&&asset.imageData){
+      const [w,h]=asset.role.required;
+      if(asset.imageData.width!==w||asset.imageData.height!==h)errors.push(`${asset.role.label}: ${asset.imageData.width} × ${asset.imageData.height}; required ${w} × ${h}.`);
+    }
+    if(asset.role.indexed&&asset.paletteCount>256)warnings.push(`${asset.role.label}: ${asset.paletteCount} colours will be reduced to the PSP 256-colour limit.`);
+    if(asset.pspGeneratedFocus&&asset.imageData){
+      try{validatePspGeneratedFocus(asset.imageData,asset.imageData.width,asset.imageData.height);}
+      catch(error){errors.push(`${asset.role.label}: ${error.message}`);}
+    }
+  }
+  const legacy=state.assets.filter(a=>a.comp===1).length;
+  if(legacy)info.push(`${legacy} legacy RLZ/LZR-compressed asset${legacy===1?' is':'s are'} supported; edited legacy assets will use PSP-compatible compression.`);
+  return {errors,warnings,info};
+}
+async function validateExportDialog(){
+  if(!state.theme)return;
+  const token=++state.exportValidationToken;
+  state.exportValidation=null;
+  els.exportConfirmCheck.checked=false;els.exportConfirmCheck.disabled=true;els.confirmExportBtn.disabled=true;
+  els.exportConfirmRow.classList.add('disabled');els.refreshExportValidationBtn.disabled=true;
+  setExportValidationDisplay('checking','Validating theme…','Checking metadata, assets, compression records, and final PTF size.');
+  renderExportValidationItems([]);
+  const errors=[],warnings=[],info=[];
+  let values=null,result=null;
   try{
-    els.exportBtn.disabled=true;const result=await buildPtf(),out=result.bytes;
-    verifyBuiltPtfMetadata(out,result.metadata);
-    if(out.length>PTF_MAX_SIZE)throw new Error(`Theme is ${formatBytes(out.length)}. The standard PSP PTF limit is 768 KB.`);
-    const base=(els.productId.value.trim()||'theme').replace(/[^a-z0-9_.-]+/gi,'_');
-    downloadBlob(new Blob([out],{type:'application/octet-stream'}),`${base}.ptf`);
+    values=exportDialogValues();
+    validateThemeMetadata(values);
+    info.push(`Output file: ${values.fileName}`);
+  }catch(error){errors.push(error.message);}
+  const assetChecks=collectAssetExportChecks();errors.push(...assetChecks.errors);warnings.push(...assetChecks.warnings);info.push(...assetChecks.info);
+  if(!errors.length){
+    try{
+      result=await buildPtf({status:false,title:values.title,productId:values.productId,version:values.version,themeColor:values.themeColor});
+      verifyBuiltPtfMetadata(result.bytes,result.metadata);
+      if(result.bytes.length>PTF_MAX_SIZE)errors.push(`Final theme size is ${formatBytes(result.bytes.length)}, exceeding the PSP 768 KB PTF limit.`);
+      else if(result.bytes.length>PTF_MAX_SIZE*.9)warnings.push(`Final theme size is ${formatBytes(result.bytes.length)}, close to the PSP 768 KB limit.`);
+      else info.push(`Final theme size: ${formatBytes(result.bytes.length)} of 768 KB.`);
+      if(result.stats.convertedLzr)info.push(`${result.stats.convertedLzr} edited legacy LZR asset${result.stats.convertedLzr===1?' will':'s will'} be converted during export.`);
+      if(result.stats.omittedUnsupportedSlots)warnings.push(`${result.stats.omittedUnsupportedSlots} unsafe virtual slot${result.stats.omittedUnsupportedSlots===1?' will':'s will'} be omitted to protect the first-level icon group.`);
+    }catch(error){errors.push(error.message);}
+  }
+  if(token!==state.exportValidationToken)return;
+  const items=[...errors.map(text=>({type:'error',text})),...warnings.map(text=>({type:'warning',text})),...info.map(text=>({type:'info',text}))];
+  renderExportValidationItems(items);
+  const sizeText=result?formatBytes(result.bytes.length):'—';
+  if(errors.length){
+    setExportValidationDisplay('bad','Theme is not ready for export',`${errors.length} blocking issue${errors.length===1?'':'s'} must be corrected.`,sizeText);
+  }else{
+    const summary=warnings.length?`Valid for export with ${warnings.length} warning${warnings.length===1?'':'s'}. Review them before continuing.`:'All PSP compatibility checks passed. The theme is valid for export.';
+    setExportValidationDisplay(warnings.length?'warn':'ok',warnings.length?'Valid with warnings':'Theme is valid for export',summary,sizeText);
+    const signature=exportValidationSignature(values);
+    state.exportValidation={valid:true,result,values,signature,warnings};
+    els.exportConfirmCheck.disabled=false;els.exportConfirmRow.classList.remove('disabled');
+  }
+  els.refreshExportValidationBtn.disabled=false;
+}
+let exportValidationTimer=0;
+function scheduleExportValidation(){
+  clearTimeout(exportValidationTimer);
+  state.exportValidation=null;els.exportConfirmCheck.checked=false;els.confirmExportBtn.disabled=true;
+  exportValidationTimer=setTimeout(validateExportDialog,260);
+}
+async function openExportDialog(){
+  if(!state.theme){toast('Import a theme first','Export becomes available after a PTF is loaded.');return;}
+  els.exportTitle.value=els.themeName.value;
+  els.exportProductId.value=els.productId.value;
+  els.exportVersion.value=els.version.value;
+  els.exportThemeColor.value=String(normalizeThemeColor(els.themeColor.value));
+  const currentBase=(els.productId.value.trim()||state.sourceName.replace(/\.ptf$/i,'')||'theme').replace(/[^A-Za-z0-9_.-]+/g,'_');
+  els.exportFileName.value=`${currentBase}.ptf`;
+  els.exportConfirmCheck.checked=false;els.confirmExportBtn.disabled=true;
+  openModal(els.exportModal);
+  await validateExportDialog();
+}
+async function confirmExportPtf(){
+  try{
+    let values=exportDialogValues();
+    const signature=exportValidationSignature(values);
+    if(!state.exportValidation?.valid||state.exportValidation.signature!==signature){
+      await validateExportDialog();
+      values=exportDialogValues();
+    }
+    if(!state.exportValidation?.valid)throw new Error('The theme has not passed export validation.');
+    if(!els.exportConfirmCheck.checked)throw new Error('Confirm that you reviewed the validation results before exporting.');
+    els.confirmExportBtn.disabled=true;els.refreshExportValidationBtn.disabled=true;
+    const {result}=state.exportValidation,out=result.bytes;
+    downloadBlob(new Blob([out],{type:'application/octet-stream'}),values.fileName);
+    els.themeName.value=result.metadata.title;els.productId.value=result.metadata.productId;els.version.value=result.metadata.version;els.themeColor.value=String(result.metadata.themeColor);
     state.theme.title=result.metadata.title;state.theme.productId=result.metadata.productId;state.theme.version=result.metadata.version;state.theme.backgroundMode=result.metadata.themeColor;
-    for(const [a,x] of result.exportedAssets){
-      a.rawOriginal=x.raw;a.rawCurrent=x.raw;a.packedOriginal=x.packed;a.comp=x.comp;a.packedSize=x.packedSize;a.ucSize=x.ucSize;a.edited=false;a.synthetic=false;
+    for(const [asset,packed] of result.exportedAssets){
+      asset.rawOriginal=packed.raw;asset.rawCurrent=packed.raw;asset.packedOriginal=packed.packed;asset.comp=packed.comp;asset.packedSize=packed.packedSize;asset.ucSize=packed.ucSize;asset.edited=false;asset.synthetic=false;
     }
     setDirty(false);renderAssetList();if(state.selectedAsset)selectAsset(state.selectedAsset);
-    const converted=result.stats.convertedLzr;
-    setStatus(`Exported ${formatBytes(out.length)}${converted?` · ${converted} changed LZR asset${converted===1?'':'s'} converted`:''}`);
-    const note=converted?` ${converted} edited legacy LZR asset${converted===1?' was':'s were'} exported with PSP-compatible Deflate or stored compression.`:'';
-    toast('PTF exported',`The rebuilt theme was downloaded.${note} Test it from /PSP/THEME/ before distributing it.`,'success');
-  }catch(e){console.error(e);setStatus('Export failed');toast('Could not export PTF',e.message,'error');}
-  finally{els.exportBtn.disabled=false;}
+    closeModal(els.exportModal);
+    const converted=result.stats.convertedLzr,omitted=result.stats.omittedUnsupportedSlots;
+    setStatus(`Exported ${formatBytes(out.length)}${converted?` · ${converted} changed LZR asset${converted===1?'':'s'} converted`:''}${omitted?` · ${omitted} unsafe virtual slot${omitted===1?'':'s'} omitted`:''}`);
+    toast('Validated PTF exported',`${values.fileName} passed metadata, asset, structure, and size checks before download.`,'success');
+  }catch(error){console.error(error);setStatus('Export failed');toast('Could not export PTF',error.message,'error');}
+  finally{els.refreshExportValidationBtn.disabled=false;if(els.exportConfirmCheck.checked&&state.exportValidation?.valid)els.confirmExportBtn.disabled=false;}
 }
+async function exportPtf(){return openExportDialog();}
 function downloadBlob(blob,name){
   const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
 }
@@ -1624,6 +1930,7 @@ async function exportVariants(){
       const strength=variant.tintStrength/100;
       const transform=strength>0?(asset=>{
         if(!asset.imageData||!['category','firstBody','firstFocus','secondBody','secondFocus'].includes(asset.role.type))return null;
+        if(asset.pspGeneratedFocus&&(asset.role.type==='firstFocus'||asset.role.type==='secondFocus'))return null;
         return tintImageData(asset.imageData,variant.tint,strength);
       }):null;
       const suffix=slugify(variant.name).replace(/_/g,'-');
@@ -1748,7 +2055,15 @@ els.loadSampleBtn.addEventListener('click',async()=>{
   for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
   await loadThemeBuffer(b.buffer,'PTF_STUDIO_SAMPLE_THEME.ptf');
 });
-els.exportBtn.addEventListener('click',exportPtf);
+els.exportBtn.addEventListener('click',openExportDialog);
+[els.exportFileName,els.exportTitle,els.exportProductId,els.exportVersion,els.exportThemeColor].forEach(control=>{
+  control.addEventListener(control.tagName==='SELECT'?'change':'input',scheduleExportValidation);
+});
+els.exportConfirmCheck.addEventListener('change',()=>{
+  els.confirmExportBtn.disabled=!els.exportConfirmCheck.checked||!state.exportValidation?.valid;
+});
+els.refreshExportValidationBtn.addEventListener('click',validateExportDialog);
+els.confirmExportBtn.addEventListener('click',confirmExportPtf);
 els.analyzeBtn.addEventListener('click',async()=>{
   openModal(els.analysisModal);
   await runThemeAnalysis();
@@ -1865,7 +2180,7 @@ els.resetNavBtn.addEventListener('click',()=>{
   state.nav={categoryPos:0,itemPos:0,secondPos:0,level:1};
   state.animationStart=performance.now();
 });
-els.toggleGridBtn.addEventListener('click',()=>state.showGuides=!state.showGuides);
+els.toggleGridBtn.addEventListener('click',()=>{state.showGuides=!state.showGuides;els.toggleGridBtn.classList.toggle('guidesActive',state.showGuides);els.toggleGridBtn.setAttribute('aria-pressed',state.showGuides?'true':'false');});
 [els.themeName,els.productId,els.version,els.themeColor].forEach(control=>{
   const markChanged=()=>{setDirty(true);updateModelUi();};
   control.addEventListener('input',markChanged);control.addEventListener('change',markChanged);
@@ -1896,7 +2211,9 @@ function setHelpMenu(open){
 }
 function openAbout(){setHelpMenu(false);openModal(els.aboutModal);}
 function closeAbout(){closeModal(els.aboutModal);}
-function allModals(){return [els.aboutModal,els.focusModal,els.analysisModal,els.variantsModal,els.importAssetModal,document.querySelector('#assetMakerModal')];}
+function openGuide(){setHelpMenu(false);openModal(els.guideModal);}
+function closeGuide(){closeModal(els.guideModal);}
+function allModals(){return [els.aboutModal,els.guideModal,els.exportModal,els.focusModal,els.analysisModal,els.variantsModal,els.importAssetModal,document.querySelector('#assetMakerModal')];}
 function anyModalOpen(){return allModals().some(modal=>modal&&!modal.classList.contains('hidden'));}
 function closeAllModals(){allModals().forEach(closeModal);}
 
@@ -1905,9 +2222,12 @@ els.helpMenuBtn.addEventListener('click',event=>{
   setHelpMenu(els.helpMenu.classList.contains('hidden'));
 });
 els.aboutBtn.addEventListener('click',openAbout);
+els.guideBtn.addEventListener('click',openGuide);
 els.creditsBtn.addEventListener('click',openAbout);
 els.closeAboutBtn.addEventListener('click',closeAbout);
 els.modalCloseButton.addEventListener('click',closeAbout);
+els.closeGuideBtn.addEventListener('click',closeGuide);
+els.guideCloseButton.addEventListener('click',closeGuide);
 document.querySelectorAll('[data-close-modal]').forEach(button=>{
   button.addEventListener('click',()=>closeModal(document.getElementById(button.dataset.closeModal)));
 });
@@ -1938,3 +2258,38 @@ updateModelUi();
 renderVariantList();
 updateFocusGeneratorPreview();
 
+// Start in a useful state: load the bundled sample automatically. Users can
+// immediately replace it with New/Open without altering the sample file.
+if(!state.theme && typeof SAMPLE_PTF_BASE64!=='undefined'){
+  setTimeout(()=>els.loadSampleBtn?.click(),0);
+}
+
+
+// Release 1.0 navigation rail. The rail mirrors existing commands rather than
+// introducing duplicate workflows, keeping the editor fully keyboard-friendly.
+function setActiveRail(action){
+  document.querySelectorAll('.railButton[data-rail-action]').forEach(button=>button.classList.toggle('active',button.dataset.railAction===action));
+}
+document.querySelectorAll('.railButton[data-rail-action]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const action=button.dataset.railAction;
+    setActiveRail(action);
+    if(action==='theme'){
+      document.querySelector('.leftPanel')?.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(()=>els.themeName?.focus(),220);
+    }else if(action==='assets'){
+      document.querySelector('#assetsSection')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }else if(action==='preview'){
+      document.querySelector('#previewStage')?.focus?.();
+      els.xmbCanvas?.scrollIntoView({behavior:'smooth',block:'center'});
+    }else if(action==='maker'){
+      document.querySelector('#assetMakerBtn')?.click();
+    }else if(action==='analysis'){
+      if(!els.analyzeBtn?.disabled)els.analyzeBtn.click();else toast('Import a theme first','Analysis becomes available after a PTF is loaded.');
+    }else if(action==='export'){
+      if(!els.exportBtn?.disabled)els.exportBtn.click();else toast('Import a theme first','Export becomes available after a PTF is loaded.');
+    }else if(action==='about'){
+      els.aboutBtn?.click();
+    }
+  });
+});

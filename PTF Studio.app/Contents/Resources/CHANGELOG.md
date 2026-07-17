@@ -1,4 +1,30 @@
 # Changelog
+- Aligned icons and labels consistently to the left in both the navigation rail and the large left sidebar.
+
+## 1.0 — PSP focus compatibility refresh
+- Switched the complete application interface to Poppins, with native system fallbacks when the web font is unavailable.
+- Replaced the bundled sample theme with the final custom `SAMPLE.ptf` artwork supplied for the 1.0 release.
+
+- Fixed the second-level XMB preview so all parent first-level labels are hidden while the child menu is open; parent icons remain visible as on real PSP firmware.
+- Rebuilt single and bulk focus generation around Sony-compatible PSP constraints.
+- Normal icons remain at native 48×48 or 32×32 size and are centred on focus canvases with an exact 8 px transparent margin.
+- Generated focus artwork now contains only an outer halo; the sharp icon core is removed.
+- Visible focus pixels use pure white RGB, with glow intensity stored only in alpha.
+- Generated focus palettes are capped at 64 RGBA entries and exported without colour dithering.
+- Added GIM encode/decode round-trip validation before generated focuses are accepted.
+- Added automatic 768 KB PTF size preflight and rollback when generation would make a theme invalid.
+- Asset Maker focus generation now uses the same PSP-safe pipeline.
+
+## 1.0 — 2026-07-17
+
+- Redesigned the full application interface with a new cyan/violet creative-workspace visual system.
+- Added the vertical navigation rail and release-quality responsive three-panel layout.
+- Restyled the Asset Maker, dialogs, asset browser, controls, viewer frame, notifications, and status areas.
+- Recalibrated live XMB coordinates against direct PSP screenshots.
+- Added dimmed neighbouring first-level labels and refined icon opacity.
+- Added PSP-style two-line storage labels, divider lines, and preview free-space text.
+- Improved exact-scale icon rendering, soft text shadows, status positioning, and long label handling.
+- Promoted the project from Beta to the first full release.
 
 ## Beta 0.9.5.5 — 2026-07-17
 

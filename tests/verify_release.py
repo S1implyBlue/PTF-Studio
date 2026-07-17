@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static and binary regression checks for PTF Studio Beta 0.9.5.5."""
+"""Static and binary regression checks for PTF Studio 1.0."""
 from __future__ import annotations
 
 import base64
@@ -47,7 +47,7 @@ def main() -> None:
     maker = (ROOT / "asset_maker.js").read_text(encoding="utf-8")
     css = (ROOT / "styles.css").read_text(encoding="utf-8")
 
-    assert "Beta 0.9.5.5" in app and "Beta 0.9.5.5" in html
+    assert "PTF Studio 1.0" in app and "PTF Studio 1.0" in html
 
     assert "Beta 0.9.5.3" not in app
     assert "Beta 0.9.5.3" not in html
@@ -64,8 +64,16 @@ def main() -> None:
     assert "writeFixedString(out,136,48,metadata.productId,'Product ID')" in app
     assert "forceRaw:true" in app
     assert "packed=raw;comp=2" in app
-    assert "verifyBuiltPtfMetadata(out,result.metadata)" in app
+    assert "verifyBuiltPtfMetadata(result.bytes,result.metadata)" in app
     assert "Product ID may contain only letters" in app
+    assert 'id="exportModal"' in html
+    assert 'id="exportFileName"' in html
+    assert 'id="exportThemeColor"' in html
+    assert 'id="exportConfirmCheck"' in html
+    assert "openExportDialog" in app
+    assert "validateExportDialog" in app
+    assert "confirmExportPtf" in app
+    assert "Theme is valid for export" in app
     assert "replaceSelectedAsset(f,'exact')" in app
     assert "replaceSelectedAsset(f,'downscale')" in app
     assert "resizeBicubicPremultiplied" in app
@@ -84,7 +92,9 @@ def main() -> None:
     assert "6:[64,8,60,62,10,2]" in app
     assert "bodyId===60 || bodyId===62 || bodyId===64" in app
     assert "Saved Data Utility — Memory Stick" in app
-    assert "{obj:3,sub:60}" in app and "{obj:3,sub:65}" in app
+    assert "const PTF_FIRST_LEVEL_MAX_SUB = 59" in app
+    assert "const PSP_GO_VIRTUAL_FIRST_LEVEL_IDS = new Set([60,62,64])" in app
+    assert "{obj:3,sub:60}" not in app and "{obj:3,sub:65}" not in app
     assert "excludedItems:[4,12]" in app
     assert "assetVisibleForProfile(asset)" in app
     assert "Bulk generate matching focuses" in html
@@ -96,10 +106,22 @@ def main() -> None:
     assert "UI_ICON_PATHS" in app and "installButtonIcons" in app
     for cls in ['action-open','action-generate','action-creative','action-batch','action-danger','action-secondary']:
         assert cls in html and cls in (ROOT / 'styles.css').read_text(encoding='utf-8')
+    assert 'class="appRail"' in html
+    assert 'data-rail-action="preview"' in html
+    assert 'PTF Studio 1.0 · PTF v1' in html
+    assert '.release10 .appRail' in css
+    assert '.release10 .workspace' in css
+    assert 'firstLevelDimAlpha' in app
+    assert 'drawStorageItemLabel' in app
+    assert 'all parent-level text disappears' in app
+    assert 'if(state.nav.level!==2)' in app
+    assert "40:'Online Instruction Manuals'" in app
+    assert 'categorySpacing: 82 * PSP_SCALE' in app
+    assert 'drawImageDataFit(ctx,a.imageData' in app and ',false);' in app
     assert '.button.primary' in css and 'color: #fff' in css
     assert 'color:#fff;' in css
-    assert "ctx.shadowColor='rgba(0,0,0,.56)'" in app
-    assert 'ctx.shadowBlur=4' in app
+    assert "ctx.shadowColor='rgba(0,0,0,.54)'" in app
+    assert 'ctx.shadowBlur=4.5' in app
     assert "makerCtx.shadowColor='rgba(0,0,0,.56)'" in maker
     assert 'makerCtx.shadowBlur=2.5' in maker
     assert 'id="focusGenerationMode"' in html
@@ -113,6 +135,20 @@ def main() -> None:
     assert "drawFocusPreviewSheet" in app
     assert "undoLastFocusGeneration" in app
     assert "state.lastFocusGenerationBackup" in app
+    assert "const PSP_FOCUS_MARGIN = 8" in app
+    assert "const PSP_FOCUS_ALPHA_LEVELS = 64" in app
+    assert "blurAlphaChannel" in app and "gaussianKernel" in app
+    assert "blurred[i]*strength-core[i]" in app
+    assert "Generated focus RGB must remain pure white" in app
+    assert "encodeGimPspFocus" in app
+    assert "asset.pspGeneratedFocus" in app
+    assert "failed GIM round-trip validation" in app
+    assert "Generated focuses would make the theme" in app
+    assert "PSP-safe focuses generated" in app
+    assert "Sony canvas margin" in html and 'value="8"' in html
+    assert "pure white RGB" in html and "maximum 64-entry alpha palette" in html
+    assert "generatedPspFocus" in maker
+    assert "Sony-guideline focus" in maker
 
     referenced = set(re.findall(r"\$\('#([^']+)'\)", app))
     referenced |= set(re.findall(r"querySelector\('#([^']+)'\)", maker))
@@ -176,7 +212,7 @@ def main() -> None:
     subprocess.run(["node", "--check", str(ROOT / "asset_maker.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "rlz.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "sample.js")], check=True)
-    print("PTF Studio Beta 0.9.5.5 verification passed")
+    print("PTF Studio 1.0 verification passed")
 
 
 if __name__ == "__main__":

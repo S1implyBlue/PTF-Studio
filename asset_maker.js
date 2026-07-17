@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.5 — built-in PSP Asset Maker */
+/* PTF Studio 1.0 — built-in PSP Asset Maker */
 'use strict';
 
 const MAKER_PRESETS = Object.freeze({
@@ -88,25 +88,28 @@ const makerState = {
   nextId:1,
   drag:null,
   lastRender:null,
-  targetKey:null
+  targetKey:null,
+  generatedPspFocus:false
 };
 
 function makerPreset(){ return MAKER_PRESETS[makerState.presetKey]; }
 function makerLayer(){ return makerState.layers.find(layer=>layer.id===makerState.selectedId) || null; }
 function makerCloneImageData(image){ return image ? new ImageData(new Uint8ClampedArray(image.data),image.width,image.height) : null; }
 function makerCloneLayer(layer){ return {...layer, source:makerCloneImageData(layer.source)}; }
-function makerSnapshot(){ return {presetKey:makerState.presetKey,layers:makerState.layers.map(makerCloneLayer),selectedId:makerState.selectedId,nextId:makerState.nextId}; }
+function makerSnapshot(){ return {presetKey:makerState.presetKey,layers:makerState.layers.map(makerCloneLayer),selectedId:makerState.selectedId,nextId:makerState.nextId,generatedPspFocus:makerState.generatedPspFocus}; }
 function makerRestore(snapshot){
   makerState.presetKey=snapshot.presetKey;
   makerState.layers=snapshot.layers.map(makerCloneLayer);
   makerState.selectedId=snapshot.selectedId;
   makerState.nextId=snapshot.nextId;
+  makerState.generatedPspFocus=!!snapshot.generatedPspFocus;
   makerEls.preset.value=makerState.presetKey;
   makerRefreshTargets();
   makerRenderAll();
 }
 function makerPushHistory(){
   makerState.history.push(makerSnapshot());
+  makerState.generatedPspFocus=false;
   if(makerState.history.length>24)makerState.history.shift();
   makerState.future=[];
   makerUpdateButtons();
@@ -133,7 +136,7 @@ function makerDefaultLayer(name,type){
 function makerNewDocument(presetKey=makerState.presetKey,{skipConfirm=false}={}){
   if(!skipConfirm&&makerState.layers.length&&!confirm('Clear the current Asset Maker canvas?'))return false;
   makerState.presetKey=presetKey;
-  makerState.layers=[];makerState.selectedId=null;makerState.history=[];makerState.future=[];makerState.nextId=1;
+  makerState.layers=[];makerState.selectedId=null;makerState.history=[];makerState.future=[];makerState.generatedPspFocus=false;makerState.nextId=1;
   makerEls.preset.value=presetKey;
   makerRefreshTargets();makerRenderAll();return true;
 }
@@ -260,8 +263,8 @@ function makerRenderCanvas(){
   const tile=12;for(let y=rect.y;y<rect.y+rect.h;y+=tile)for(let x=rect.x;x<rect.x+rect.w;x+=tile){makerCtx.fillStyle=(((x-rect.x)/tile+(y-rect.y)/tile)&1)?'#232830':'#181c22';makerCtx.fillRect(x,y,Math.min(tile,rect.x+rect.w-x),Math.min(tile,rect.y+rect.h-y));}
   const output=makerOutput({palettePreview:makerEls.palettePreview.checked});makerState.lastRender=output;
   makerCtx.imageSmoothingEnabled=true;makerCtx.imageSmoothingQuality='high';makerCtx.drawImage(output.canvas,rect.x,rect.y,rect.w,rect.h);
-  if(makerEls.grid.checked){makerCtx.save();makerCtx.strokeStyle='rgba(95,180,255,.28)';makerCtx.lineWidth=1;const step=Math.max(1,Math.round(Math.min(p.width,p.height)/8));for(let x=step;x<p.width;x+=step){const px=rect.x+x*rect.scale;makerCtx.beginPath();makerCtx.moveTo(px,rect.y);makerCtx.lineTo(px,rect.y+rect.h);makerCtx.stroke();}for(let y=step;y<p.height;y+=step){const py=rect.y+y*rect.scale;makerCtx.beginPath();makerCtx.moveTo(rect.x,py);makerCtx.lineTo(rect.x+rect.w,py);makerCtx.stroke();}makerCtx.restore();}
-  if(makerEls.xmbGuides.checked){makerCtx.save();makerCtx.strokeStyle='rgba(255,205,90,.72)';makerCtx.setLineDash([6,5]);makerCtx.strokeRect(rect.x+rect.w*.05,rect.y+rect.h*.05,rect.w*.9,rect.h*.9);makerCtx.beginPath();makerCtx.moveTo(rect.x+rect.w/2,rect.y);makerCtx.lineTo(rect.x+rect.w/2,rect.y+rect.h);makerCtx.moveTo(rect.x,rect.y+rect.h/2);makerCtx.lineTo(rect.x+rect.w,rect.y+rect.h/2);makerCtx.stroke();makerCtx.restore();}
+  if(makerEls.grid.checked){makerCtx.save();const step=Math.max(1,Math.round(Math.min(p.width,p.height)/8));const drawGrid=()=>{for(let x=step;x<p.width;x+=step){const px=rect.x+x*rect.scale;makerCtx.beginPath();makerCtx.moveTo(px,rect.y);makerCtx.lineTo(px,rect.y+rect.h);makerCtx.stroke();}for(let y=step;y<p.height;y+=step){const py=rect.y+y*rect.scale;makerCtx.beginPath();makerCtx.moveTo(rect.x,py);makerCtx.lineTo(rect.x+rect.w,py);makerCtx.stroke();}};makerCtx.strokeStyle='rgba(0,0,0,.62)';makerCtx.lineWidth=3;drawGrid();makerCtx.strokeStyle='rgba(84,225,255,.72)';makerCtx.lineWidth=1.25;makerCtx.shadowColor='rgba(44,207,255,.45)';makerCtx.shadowBlur=3;drawGrid();makerCtx.restore();}
+  if(makerEls.xmbGuides.checked){makerCtx.save();const drawSafe=()=>{makerCtx.strokeRect(rect.x+rect.w*.05,rect.y+rect.h*.05,rect.w*.9,rect.h*.9);makerCtx.beginPath();makerCtx.moveTo(rect.x+rect.w/2,rect.y);makerCtx.lineTo(rect.x+rect.w/2,rect.y+rect.h);makerCtx.moveTo(rect.x,rect.y+rect.h/2);makerCtx.lineTo(rect.x+rect.w,rect.y+rect.h/2);makerCtx.stroke();};makerCtx.setLineDash([9,6]);makerCtx.strokeStyle='rgba(0,0,0,.82)';makerCtx.lineWidth=5;drawSafe();makerCtx.strokeStyle='rgba(255,219,92,.98)';makerCtx.lineWidth=2;makerCtx.shadowColor='rgba(255,202,64,.68)';makerCtx.shadowBlur=6;drawSafe();makerCtx.restore();}
   if(p===MAKER_PRESETS.wallpaper&&makerEls.xmbOverlay.checked&&state.theme){
     const cats=visibleCategoryAssets(),cat=cats[Math.max(0,Math.min(state.nav.categoryPos,cats.length-1))]||cats[0];
     if(cat?.imageData){
@@ -315,13 +318,13 @@ function makerTargetAsset(useCurrent=false){
 function makerApplyToAsset(asset){
   if(!asset){toast('No compatible asset selected','Choose a matching PTF slot first.','error');return false;}
   const p=makerPreset();if(!p.roleTypes.includes(asset.role.type)){toast('Incompatible asset slot',`${p.label} cannot be applied to ${asset.role.label}.`,'error');return false;}
-  const output=makerOutput({palettePreview:false});asset.imageData=makerCloneImageData(output.imageData);asset.paletteCount=countColors(asset.imageData,257);asset.edited=true;asset.decodeError=null;setDirty(true);renderAssetList();selectAsset(asset);makerState.targetKey=`${asset.objIdx}:${asset.subIdx}`;makerRefreshTargets();toast('Asset applied',`${p.label} was applied to ${asset.role.label}.`,'success');return true;
+  const output=makerOutput({palettePreview:false});asset.imageData=makerCloneImageData(output.imageData);asset.paletteCount=countColors(asset.imageData,257);asset.edited=true;asset.decodeError=null;asset.pspGeneratedFocus=!!makerState.generatedPspFocus&&(asset.role.type==='firstFocus'||asset.role.type==='secondFocus');setDirty(true);renderAssetList();selectAsset(asset);makerState.targetKey=`${asset.objIdx}:${asset.subIdx}`;makerRefreshTargets();toast('Asset applied',`${p.label} was applied to ${asset.role.label}.`,'success');return true;
 }
 function makerApplyAndPreview(){const asset=makerTargetAsset(false);if(makerApplyToAsset(asset)){closeModal(makerEls.modal);state.viewMode='xmb';document.querySelectorAll('.seg').forEach(button=>button.classList.toggle('active',button.dataset.view==='xmb'));selectAsset(asset,{scroll:true});}}
 function makerExport(){const output=makerOutput({palettePreview:false});output.canvas.toBlob(blob=>blob&&downloadBlob(blob,`${slugify(makerPreset().label)||'ptf_asset'}.png`),'image/png');}
 function makerCreateFocus(){
   if(!['firstBody','secondBody'].includes(makerState.presetKey))return;
-  makerPushHistory();const source=makerOutput({palettePreview:false}).imageData,next=makerState.presetKey==='firstBody'?'firstFocus':'secondFocus';makerState.presetKey=next;makerEls.preset.value=next;const p=makerPreset(),generated=generateFocusImage(source,p.width,p.height,{color:'#ffffff',opacity:.78,blur:2,padding:Math.max(3,Math.round(p.width*.12)),includeCore:false}),layer=makerDefaultLayer('Generated focus','image');layer.source=generated;layer.width=p.width;layer.height=p.height;makerState.layers=[layer];makerState.selectedId=layer.id;makerRefreshTargets();makerRenderAll();toast('Focus generated','A restrained PSP-safe glow was baked into the focus image.','success');
+  makerPushHistory();const source=makerOutput({palettePreview:false}).imageData,next=makerState.presetKey==='firstBody'?'firstFocus':'secondFocus';makerState.presetKey=next;makerEls.preset.value=next;const p=makerPreset(),generated=generateFocusImage(source,p.width,p.height,{opacity:.9,blur:6}),layer=makerDefaultLayer('Sony-guideline focus','image');layer.source=generated;layer.width=p.width;layer.height=p.height;makerState.layers=[layer];makerState.selectedId=layer.id;makerState.generatedPspFocus=true;makerRefreshTargets();makerRenderAll();toast('PSP-safe focus generated','The icon was centred with an 8 px margin and converted to a white alpha-only halo.','success');
 }
 
 function makerBindProperty(element,property,parser=value=>value,{event='input',aspect=false}={}){
