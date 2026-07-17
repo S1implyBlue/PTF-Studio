@@ -1,5 +1,16 @@
 # Changelog
 
+## Beta 0.9.5.2 — 2026-07-17
+
+- Completed the PSP Go profile with System Storage body/focus slots.
+- Added Saved Data Utility — System Storage body/focus slots.
+- Added Resume Game body/focus slots.
+- Kept Memory Stick and Saved Data Utility — Memory Stick as distinct PSP Go entries.
+- Added PSP Go-specific ordering for Photo, Music, Video, and Game previews.
+- Kept UMD and UMD Update hidden in the PSP Go profile.
+- Added PSP Go-only compatibility badges in the Universal profile.
+- Added missing-slot creation and export coverage for first-level PTF records 60–65.
+
 ## Beta 0.9.5.1 — 2026-07-15
 
 - Fixed non-uniform stretching of the Asset Maker drawing surface.

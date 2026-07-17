@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.1 — dependency-free PSP PTF viewer/editor */
+/* PTF Studio Beta 0.9.5.2 — dependency-free PSP PTF viewer/editor */
 'use strict';
 
 const $ = (s) => document.querySelector(s);
@@ -40,8 +40,8 @@ const els = {
 const ctx = els.xmbCanvas.getContext('2d');
 const previewCtx = els.assetPreview.getContext('2d');
 
-const APP_VERSION = 'Beta 0.9.5.1';
-const APP_BUILD = '2026.07.15';
+const APP_VERSION = 'Beta 0.9.5.2';
+const APP_BUILD = '2026.07.17';
 
 const CATEGORY_LABELS = {1:'Settings',2:'Photo',3:'Music',4:'Video',5:'TV',6:'Game',7:'Network',8:'Extras'};
 const FIRST_LABELS = {
@@ -50,7 +50,8 @@ const FIRST_LABELS = {
   24:'Theme Settings',26:'Date & Time Settings',28:'Power Save Settings',30:'External Display Settings',
   32:'Sound Settings',34:'Security Settings',36:'RSS Channel Settings',38:'Network Settings',40:'Online Manual',
   42:'Remote Play',44:'Internet Radio',46:'RSS Channel',48:'Internet Browser',50:'Internet Search',
-  52:'Account Management',54:'Default / Fallback',56:'Bluetooth Settings',58:'SensMe Channels'
+  52:'Account Management',54:'Default / Fallback',56:'Bluetooth Settings',58:'SensMe Channels',
+  60:'System Storage',62:'Saved Data Utility — System Storage',64:'Resume Game'
 };
 const CATEGORY_ITEMS = {
   1:[14,16,18,20,22,24,26,28,30,32,34,36,38],
@@ -62,6 +63,17 @@ const CATEGORY_ITEMS = {
   7:[40,42,44,46,48,50],
   8:[52,56,58,40]
 };
+// The PSP Go uses internal System Storage alongside Memory Stick storage and
+// adds a Resume Game entry. Keeping the ordering profile-specific avoids
+// exposing these N1000-only items on the standard PSP layouts.
+const PROFILE_CATEGORY_ITEMS = Object.freeze({
+  go: {
+    2:[6,60,2],
+    3:[60,2],
+    4:[60,2],
+    6:[64,8,60,62,10,2]
+  }
+});
 const GROUP_NAMES = {0:'Preview & metadata',1:'Wallpaper',2:'Category icons',3:'First-level icons',4:'Second-level icons'};
 const THEME_COLORS = ['Monthly / automatic','January — Gray','February — Yellow','March — Lime','April — Pink','May — Green','June — Lilac','July — Turquoise','August — Blue','September — Purple','October — Orange','November — Brown','December — Red'];
 
@@ -83,7 +95,7 @@ const MODEL_PROFILES = Object.freeze({
     categories:[1,2,3,4,5,6,7,8], excludedItems:[56]
   },
   go: {
-    label:'PSP Go', hint:'Shows Bluetooth, SensMe and External Display slots; UMD-related entries are hidden.',
+    label:'PSP Go', hint:'Shows System Storage, System Storage Saved Data Utility, Resume Game, Bluetooth, SensMe and External Display slots; UMD entries are hidden.',
     categories:[1,2,3,4,6,7,8], excludedItems:[4,12]
   },
   street: {
@@ -93,11 +105,11 @@ const MODEL_PROFILES = Object.freeze({
 });
 
 const MODEL_SLOT_REQUIREMENTS = Object.freeze({
-  universal: [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59}],
+  universal: [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59},{obj:3,sub:60},{obj:3,sub:61},{obj:3,sub:62},{obj:3,sub:63},{obj:3,sub:64},{obj:3,sub:65}],
   '1000': [{obj:2,sub:8},{obj:3,sub:54},{obj:3,sub:55}],
   '2000': [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55}],
   '3000': [{obj:2,sub:5},{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55}],
-  go: [{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59}],
+  go: [{obj:2,sub:8},{obj:3,sub:30},{obj:3,sub:31},{obj:3,sub:54},{obj:3,sub:55},{obj:3,sub:56},{obj:3,sub:57},{obj:3,sub:58},{obj:3,sub:59},{obj:3,sub:60},{obj:3,sub:61},{obj:3,sub:62},{obj:3,sub:63},{obj:3,sub:64},{obj:3,sub:65}],
   street: [{obj:2,sub:8},{obj:3,sub:54},{obj:3,sub:55}]
 });
 
@@ -135,7 +147,7 @@ const XMB_LAYOUT = Object.freeze({
 const PSP_FONT_STACK = '"PSP New Rodin", "FOT-NewRodin Pro DB", "NewRodin Pro DB", Arial, sans-serif';
 
 const PSP_BATTERY_IMAGE = new Image();
-PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.1-beta';
+PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.2-beta';
 
 const state = {
   theme: null,
@@ -292,6 +304,7 @@ function assetCompatibility(asset){
     if(bodyId===30) return {label:'2000/3000/Go',className:'model',models:['2000','3000','go','universal']};
     if(bodyId===56) return {label:'PSP Go',className:'go',models:['go','universal']};
     if(bodyId===58) return {label:'6.xx / Go',className:'go',models:['go','2000','3000','1000','universal']};
+    if(bodyId===60 || bodyId===62 || bodyId===64) return {label:'PSP Go only',className:'go',models:['go','universal']};
     if(bodyId===54) return {label:'Fallback',className:'fallback',models:['1000','2000','3000','go','street','universal']};
   }
   return {label:'Standard',className:'',models:['1000','2000','3000','go','street','universal']};
@@ -307,8 +320,16 @@ function visibleCategoryAssets(){
 }
 function visibleItemsForCategory(categorySub){
   const profile=currentProfile();
-  const base=CATEGORY_ITEMS[categorySub] || state.assets.filter(a=>a.objIdx===3&&a.subIdx%2===0).map(a=>a.subIdx);
-  return base.filter(id=>!profile.excludedItems.includes(id) && !!bodyAsset(id));
+  const profileItems=PROFILE_CATEGORY_ITEMS[state.modelProfile]?.[categorySub];
+  const base=profileItems || CATEGORY_ITEMS[categorySub] || state.assets.filter(a=>a.objIdx===3&&a.subIdx%2===0).map(a=>a.subIdx);
+  return base.filter(id=>{
+    const asset=bodyAsset(id);
+    return !profile.excludedItems.includes(id) && !!asset && assetVisibleForProfile(asset);
+  });
+}
+function firstLevelDisplayLabel(bodyId){
+  if(state.modelProfile==='go' && bodyId===10)return 'Saved Data Utility — Memory Stick';
+  return FIRST_LABELS[bodyId] || `Item ${bodyId/2}`;
 }
 function updateModelUi(){
   const profile=currentProfile();
@@ -1101,7 +1122,7 @@ function drawVerticalItems(ids,time,hierarchyShift=0){
     // The selected first-level label disappears while its second-level menu is open,
     // matching the PSP hierarchy shown in the hardware reference captures.
     if(sel&&state.nav.level===1){
-      const label=FIRST_LABELS[bodyId]||`Item ${bodyId/2}`;
+      const label=firstLevelDisplayLabel(bodyId);
       drawPspText(label,XMB_LAYOUT.itemLabelX+hierarchyShift,yy+XMB_LAYOUT.itemLabelOffsetY,{
         size:XMB_LAYOUT.itemFontSize,weight:500,align:'left',alpha:focusIn
       });
@@ -1216,7 +1237,7 @@ function swizzleIndices(indices,w,h,bpp=8){const tileW=0x80/bpp,tileH=8,ow=align
 function blockHeader(type,size,next){const b=new Uint8Array(16);const v=new DataView(b.buffer);setU16(v,0,type);setU32(v,4,size);setU32(v,8,next);setU32(v,12,0x10);return b;}
 function concatArrays(parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
 function makeImageBlock(type,format,pixelOrder,w,h,bpp,pixelBytes,levelType){const content=new Uint8Array(0x40+pixelBytes.length);const v=new DataView(content.buffer);setU16(v,0,0x30);setU16(v,4,format);setU16(v,6,pixelOrder);setU16(v,8,w);setU16(v,10,h);setU16(v,12,bpp);setU16(v,14,0x10);setU16(v,16,0x08);setU16(v,18,2);setU32(v,24,0x30);setU32(v,28,0x40);setU32(v,32,0x40+pixelBytes.length);setU32(v,36,0);setU16(v,40,levelType);setU16(v,42,1);setU16(v,44,3);setU16(v,46,1);setU32(v,0x30,0x40);content.set(pixelBytes,0x40);const total=16+content.length;return concatArrays([blockHeader(type,total,total),content]);}
-function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.1\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
+function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.2\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
 function encodeGimIndexed(imageData,dither=true){const q=quantize(imageData,256,dither),w=imageData.width,h=imageData.height;const palBytes=new Uint8Array(1024);q.palette.forEach((p,i)=>{palBytes[i*4]=p[0];palBytes[i*4+1]=p[1];palBytes[i*4+2]=p[2];palBytes[i*4+3]=p[3];});const indexBytes=swizzleIndices(q.indices,w,h,8);let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2);let imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1);const fileInfo=makeFileInfo();
   // Correct global next pointers after sizes are known.
   new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);

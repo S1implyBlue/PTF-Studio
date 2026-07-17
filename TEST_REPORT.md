@@ -1,16 +1,14 @@
-# PTF Studio Beta 0.9.5.1 Test Report
+# Test Report — PTF Studio Beta 0.9.5.2
 
-## Regression checks
+Passed static and package regression checks:
 
-- JavaScript syntax checks passed for `app.js`, `asset_maker.js`, `rlz.js`, and `sample.js`.
-- Embedded sample PTF matches the distributed sample byte-for-byte.
-- Title, Product ID, version, theme-colour record, RLZ/LZR, Deflate, stored-resource, and image-import checks remain present.
-- Asset Maker preset dimensions and role mappings remain intact.
-- Responsive canvas synchronization is present in both the portable browser files and macOS application resources.
-- Browser layout test confirms that the canvas backing-store ratio matches its CSS display ratio.
-- Browser layout test confirms that a 48 × 48 document is displayed as a square after the Asset Maker modal opens.
-- Pointer mapping remains based on the synchronized backing-store-to-CSS scale.
+- JavaScript syntax checks for app, Asset Maker, RLZ decoder, and embedded sample.
+- PSP Go label definitions for System Storage, Saved Data Utility — System Storage, and Resume Game.
+- PSP Go and Universal model-slot requirements include body/focus pairs 60–65.
+- PSP Go-only compatibility filtering and badges.
+- PSP Go profile keeps UMD and UMD Update excluded.
+- Profile-specific item ordering is active for Photo, Music, Video, and Game.
+- Existing metadata, colour, RLZ/LZR, image resizing, Asset Maker, and sample-theme checks remain intact.
+- Top-level browser files and macOS application resources are synchronized.
 
-## Scope
-
-Beta 0.9.5.1 changes only Asset Maker display sizing and responsive rendering. Theme asset generation and PTF export data are unchanged from Beta 0.9.5.
+Hardware validation on a PSP Go is still recommended for exported themes containing newly created extended slots.

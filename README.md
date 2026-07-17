@@ -1,4 +1,4 @@
-# PTF Studio Beta 0.9.5.1
+# PTF Studio Beta 0.9.5.2
 
 PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It runs locally in a modern browser and is intended for the PSP modding community.
 
@@ -24,6 +24,19 @@ You may also open `index.html` directly in a current Safari, Chrome, Edge, or Fi
 - Export rebuilt PSP-compatible `.ptf` files, individual PNG assets, theme variants, analysis reports, and release ZIP packages.
 - Use PSP model profiles for PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or a universal asset view.
 - Generate focus glows and apply one focus image to every first-level focus slot.
+
+## New in Beta 0.9.5.2
+
+### Complete PSP Go asset profile
+
+- Added **System Storage** body and focus slots.
+- Added **Saved Data Utility — System Storage** body and focus slots.
+- Added **Resume Game** body and focus slots.
+- The PSP Go preview keeps **Memory Stick** and **Saved Data Utility — Memory Stick** separate from the internal-storage entries.
+- Photo, Music, Video, and Game categories now use PSP Go-specific item lists.
+- UMD and UMD Update remain hidden for the PSP Go profile.
+- The Universal profile exposes the new resources with **PSP Go only** compatibility badges.
+- Use **Add missing profile slots** after selecting PSP Go or Universal to create absent body/focus pairs from fallback artwork, then replace them normally.
 
 ## New in Beta 0.9.5.1
 

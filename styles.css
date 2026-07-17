@@ -505,7 +505,7 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
 .importChoice span { display: block; color: var(--muted); font-size: 11px; line-height: 1.5; }
 @media (max-width: 620px) { .importChoiceGrid { grid-template-columns: 1fr; } }
 
-/* Beta 0.9.5.1 — integrated PSP Asset Maker */
+/* Beta 0.9.5.2 — integrated PSP Asset Maker */
 .makerModalCard {
   width: min(1480px, 98vw);
   height: min(930px, 94vh);

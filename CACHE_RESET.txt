@@ -1,1 +1,3 @@
-PTF Studio Beta 0.9.5.1 uses cache key v=0.9.5.1-beta. Extract it into a new folder or hard-refresh the browser if an older interface appears.
+PTF Studio Beta 0.9.5.2
+Cache key: 0.9.5.2-beta
+Build date: 2026-07-17
