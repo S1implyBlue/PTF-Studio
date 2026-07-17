@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.4 — dependency-free PSP PTF viewer/editor */
+/* PTF Studio Beta 0.9.5.5 — dependency-free PSP PTF viewer/editor */
 'use strict';
 
 const $ = (s) => document.querySelector(s);
@@ -92,7 +92,7 @@ const els = {
 const ctx = els.xmbCanvas.getContext('2d');
 const previewCtx = els.assetPreview.getContext('2d');
 
-const APP_VERSION = 'Beta 0.9.5.4';
+const APP_VERSION = 'Beta 0.9.5.5';
 const APP_BUILD = '2026.07.17';
 
 const CATEGORY_LABELS = {1:'Settings',2:'Photo',3:'Music',4:'Video',5:'TV',6:'Game',7:'Network',8:'Extras'};
@@ -199,7 +199,7 @@ const XMB_LAYOUT = Object.freeze({
 const PSP_FONT_STACK = '"PSP New Rodin", "FOT-NewRodin Pro DB", "NewRodin Pro DB", Arial, sans-serif';
 
 const PSP_BATTERY_IMAGE = new Image();
-PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.4-beta';
+PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.5-beta';
 
 const state = {
   theme: null,
@@ -951,13 +951,14 @@ function drawPspText(text,x,y,{size=30,weight=500,align='left',alpha=1,shadow=tr
   setPspFont(size,weight);
   ctx.textAlign=align;
   ctx.textBaseline='alphabetic';
-  if(shadow){
-    ctx.globalAlpha=alpha*.75;
-    ctx.fillStyle='rgba(0,0,0,.88)';
-    ctx.fillText(text,x+2,y+3);
-  }
   ctx.globalAlpha=alpha;
   ctx.fillStyle='rgba(247,247,245,.98)';
+  if(shadow){
+    ctx.shadowColor='rgba(0,0,0,.56)';
+    ctx.shadowBlur=4;
+    ctx.shadowOffsetX=2;
+    ctx.shadowOffsetY=3;
+  }
   ctx.fillText(text,x,y);
   ctx.restore();
 }
@@ -1403,7 +1404,7 @@ function swizzleIndices(indices,w,h,bpp=8){const tileW=0x80/bpp,tileH=8,ow=align
 function blockHeader(type,size,next){const b=new Uint8Array(16);const v=new DataView(b.buffer);setU16(v,0,type);setU32(v,4,size);setU32(v,8,next);setU32(v,12,0x10);return b;}
 function concatArrays(parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
 function makeImageBlock(type,format,pixelOrder,w,h,bpp,pixelBytes,levelType){const content=new Uint8Array(0x40+pixelBytes.length);const v=new DataView(content.buffer);setU16(v,0,0x30);setU16(v,4,format);setU16(v,6,pixelOrder);setU16(v,8,w);setU16(v,10,h);setU16(v,12,bpp);setU16(v,14,0x10);setU16(v,16,0x08);setU16(v,18,2);setU32(v,24,0x30);setU32(v,28,0x40);setU32(v,32,0x40+pixelBytes.length);setU32(v,36,0);setU16(v,40,levelType);setU16(v,42,1);setU16(v,44,3);setU16(v,46,1);setU32(v,0x30,0x40);content.set(pixelBytes,0x40);const total=16+content.length;return concatArrays([blockHeader(type,total,total),content]);}
-function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.4\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
+function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.5\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
 function encodeGimIndexed(imageData,dither=true){const q=quantize(imageData,256,dither),w=imageData.width,h=imageData.height;const palBytes=new Uint8Array(1024);q.palette.forEach((p,i)=>{palBytes[i*4]=p[0];palBytes[i*4+1]=p[1];palBytes[i*4+2]=p[2];palBytes[i*4+3]=p[3];});const indexBytes=swizzleIndices(q.indices,w,h,8);let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2);let imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1);const fileInfo=makeFileInfo();
   // Correct global next pointers after sizes are known.
   new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);

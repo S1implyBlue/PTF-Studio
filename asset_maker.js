@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.4 — built-in PSP Asset Maker */
+/* PTF Studio Beta 0.9.5.5 — built-in PSP Asset Maker */
 'use strict';
 
 const MAKER_PRESETS = Object.freeze({
@@ -270,7 +270,7 @@ function makerRenderCanvas(){
       const ids=visibleItemsForCategory(cat.subIdx),body=ids.length?bodyAsset(ids[0]):null,focus=body?focusAsset(body.subIdx):null;
       if(focus)drawAsset(focus,109-32,137-32,64,64,.72);
       if(body)drawAsset(body,109-24,137-24,48,48,1);
-      makerCtx.save();makerCtx.scale(rect.scale,rect.scale);makerCtx.translate(rect.x/rect.scale,rect.y/rect.scale);makerCtx.font=`500 11px ${PSP_FONT_STACK}`;makerCtx.textAlign='center';makerCtx.fillStyle='rgba(248,248,246,.98)';makerCtx.shadowColor='rgba(0,0,0,.9)';makerCtx.shadowBlur=0;makerCtx.shadowOffsetX=1;makerCtx.shadowOffsetY=1.5;makerCtx.fillText(cat.role.label,109,104);if(body){makerCtx.font=`500 14px ${PSP_FONT_STACK}`;makerCtx.textAlign='left';makerCtx.fillText(body.role.label.replace(/\s+—\s+Body$/,''),149,143);}makerCtx.font=`500 13px ${PSP_FONT_STACK}`;makerCtx.textAlign='right';makerCtx.fillText(formatPspDateTime(),444,18);makerCtx.restore();
+      makerCtx.save();makerCtx.scale(rect.scale,rect.scale);makerCtx.translate(rect.x/rect.scale,rect.y/rect.scale);makerCtx.font=`500 11px ${PSP_FONT_STACK}`;makerCtx.textAlign='center';makerCtx.fillStyle='rgba(248,248,246,.98)';makerCtx.shadowColor='rgba(0,0,0,.56)';makerCtx.shadowBlur=2.5;makerCtx.shadowOffsetX=1;makerCtx.shadowOffsetY=1.5;makerCtx.fillText(cat.role.label,109,104);if(body){makerCtx.font=`500 14px ${PSP_FONT_STACK}`;makerCtx.textAlign='left';makerCtx.fillText(body.role.label.replace(/\s+—\s+Body$/,''),149,143);}makerCtx.font=`500 13px ${PSP_FONT_STACK}`;makerCtx.textAlign='right';makerCtx.fillText(formatPspDateTime(),444,18);makerCtx.restore();
     }
   }
   const layer=makerLayer();if(layer){makerCtx.save();makerCtx.translate(rect.x+layer.x*rect.scale,rect.y+layer.y*rect.scale);makerCtx.rotate(layer.rotation*Math.PI/180);makerCtx.strokeStyle='#63b7ff';makerCtx.lineWidth=1.5;makerCtx.setLineDash([6,4]);makerCtx.strokeRect(-layer.width*rect.scale/2,-layer.height*rect.scale/2,layer.width*rect.scale,layer.height*rect.scale);makerCtx.restore();}

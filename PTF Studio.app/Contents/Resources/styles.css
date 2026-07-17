@@ -56,9 +56,9 @@ button { color: inherit; }
 .button:hover:not(:disabled) { background: var(--panel-3); border-color: #3a4350; transform: translateY(-1px); }
 .button:active:not(:disabled) { transform: translateY(0); }
 .button:disabled { opacity: .42; cursor: not-allowed; }
-.button.primary { background: linear-gradient(180deg,#4caaff,#2f92ed); border-color: #4aa8ff; color: #06111d; }
+.button.primary { background: linear-gradient(180deg,#4caaff,#2f92ed); border-color: #4aa8ff; color: #fff; }
 .button.primary:hover:not(:disabled) { background: linear-gradient(180deg,#67b8ff,#3da0f7); }
-.button.success { background: linear-gradient(180deg,#4cd795,#35ba7b); border-color: #52d89b; color: #06140d; }
+.button.success { background: linear-gradient(180deg,#4cd795,#35ba7b); border-color: #52d89b; color: #fff; }
 .button.full { width: 100%; }
 
 .workspace { min-height: 0; display: grid; grid-template-columns: 300px minmax(540px,1fr) 320px; }
@@ -583,31 +583,31 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
   stroke: currentColor; opacity: .96;
 }
 .button.action-open, .miniButton.action-open, .importChoice.action-open {
-  background: linear-gradient(180deg,#4caaff,#2f92ed); border-color:#58adf8; color:#07131f;
+  background: linear-gradient(180deg,#4caaff,#2f92ed); border-color:#58adf8; color:#fff;
 }
 .button.action-open:hover:not(:disabled), .miniButton.action-open:hover:not(:disabled), .importChoice.action-open:hover {
   background: linear-gradient(180deg,#6abbff,#3da0f7); border-color:#75c1ff;
 }
 .button.action-generate, .miniButton.action-generate {
-  background: linear-gradient(180deg,#53dc9d,#36b978); border-color:#5cdea4; color:#06140d;
+  background: linear-gradient(180deg,#53dc9d,#36b978); border-color:#5cdea4; color:#fff;
 }
 .button.action-generate:hover:not(:disabled), .miniButton.action-generate:hover:not(:disabled) {
   background: linear-gradient(180deg,#70e9b2,#43ca89); border-color:#7aebb8;
 }
 .button.action-creative, .miniButton.action-creative {
-  background: linear-gradient(180deg,#aa7cff,#8254dd); border-color:#b38aff; color:#130822;
+  background: linear-gradient(180deg,#aa7cff,#8254dd); border-color:#b38aff; color:#fff;
 }
 .button.action-creative:hover:not(:disabled), .miniButton.action-creative:hover:not(:disabled) {
   background: linear-gradient(180deg,#bc96ff,#9468e8); border-color:#c4a1ff;
 }
 .button.action-batch, .miniButton.action-batch, .importChoice.action-batch {
-  background: linear-gradient(180deg,#f4b25f,#d8832d); border-color:#f1b66d; color:#1e0f02;
+  background: linear-gradient(180deg,#f4b25f,#d8832d); border-color:#f1b66d; color:#fff;
 }
 .button.action-batch:hover:not(:disabled), .miniButton.action-batch:hover:not(:disabled), .importChoice.action-batch:hover {
   background: linear-gradient(180deg,#ffc57e,#e79542); border-color:#ffca88;
 }
 .button.action-danger, .miniButton.action-danger {
-  background: linear-gradient(180deg,#ff7c86,#d84e5a); border-color:#ff8992; color:#21070a;
+  background: linear-gradient(180deg,#ff7c86,#d84e5a); border-color:#ff8992; color:#fff;
 }
 .button.action-danger:hover:not(:disabled), .miniButton.action-danger:hover:not(:disabled) {
   background: linear-gradient(180deg,#ff929a,#e65f69); border-color:#ffa0a7;
@@ -635,3 +635,11 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
 .miniButton .buttonIcon { width:12px; height:12px; }
 
 .helpMenu button.action-secondary { color:#e1e5ea; }
+
+/* Beta 0.9.5.5 — white action-button labels and icons. */
+.button.primary, .button.success,
+.button.action-open, .miniButton.action-open, .importChoice.action-open,
+.button.action-generate, .miniButton.action-generate,
+.button.action-creative, .miniButton.action-creative,
+.button.action-batch, .miniButton.action-batch, .importChoice.action-batch,
+.button.action-danger, .miniButton.action-danger { color:#fff; }

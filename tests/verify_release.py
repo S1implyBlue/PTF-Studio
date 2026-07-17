@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static and binary regression checks for PTF Studio Beta 0.9.5.4."""
+"""Static and binary regression checks for PTF Studio Beta 0.9.5.5."""
 from __future__ import annotations
 
 import base64
@@ -45,8 +45,9 @@ def main() -> None:
     html = (ROOT / "index.html").read_text(encoding="utf-8")
     sample_js = (ROOT / "sample.js").read_text(encoding="utf-8")
     maker = (ROOT / "asset_maker.js").read_text(encoding="utf-8")
+    css = (ROOT / "styles.css").read_text(encoding="utf-8")
 
-    assert "Beta 0.9.5.4" in app and "Beta 0.9.5.4" in html
+    assert "Beta 0.9.5.5" in app and "Beta 0.9.5.5" in html
 
     assert "Beta 0.9.5.3" not in app
     assert "Beta 0.9.5.3" not in html
@@ -95,6 +96,12 @@ def main() -> None:
     assert "UI_ICON_PATHS" in app and "installButtonIcons" in app
     for cls in ['action-open','action-generate','action-creative','action-batch','action-danger','action-secondary']:
         assert cls in html and cls in (ROOT / 'styles.css').read_text(encoding='utf-8')
+    assert '.button.primary' in css and 'color: #fff' in css
+    assert 'color:#fff;' in css
+    assert "ctx.shadowColor='rgba(0,0,0,.56)'" in app
+    assert 'ctx.shadowBlur=4' in app
+    assert "makerCtx.shadowColor='rgba(0,0,0,.56)'" in maker
+    assert 'makerCtx.shadowBlur=2.5' in maker
     assert 'id="focusGenerationMode"' in html
     assert 'id="focusBatchSummary"' in html
     assert 'id="undoFocusGeneratorBtn"' in html
@@ -169,7 +176,7 @@ def main() -> None:
     subprocess.run(["node", "--check", str(ROOT / "asset_maker.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "rlz.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "sample.js")], check=True)
-    print("PTF Studio Beta 0.9.5.4 verification passed")
+    print("PTF Studio Beta 0.9.5.5 verification passed")
 
 
 if __name__ == "__main__":

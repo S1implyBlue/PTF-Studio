@@ -1,5 +1,11 @@
 # Changelog
 
+## Beta 0.9.5.5 — 2026-07-17
+
+- Changed all coloured action-button labels and SVG icons to white.
+- Replaced the hard XMB icon-title shadow with a softer blurred PSP-style shadow.
+- Applied the same soft title shadow to the Asset Maker wallpaper XMB overlay.
+
 ## Beta 0.9.5.4
 
 - Restored single-icon focus generation as a separate Inspector action.
