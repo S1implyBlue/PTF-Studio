@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.3 — built-in PSP Asset Maker */
+/* PTF Studio Beta 0.9.5.4 — built-in PSP Asset Maker */
 'use strict';
 
 const MAKER_PRESETS = Object.freeze({

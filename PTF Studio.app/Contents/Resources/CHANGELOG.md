@@ -1,6 +1,14 @@
 # Changelog
 
-## Beta 0.9.5.3 — 2026-07-17
+## Beta 0.9.5.4
+
+- Restored single-icon focus generation as a separate Inspector action.
+- Retained the bulk matching-focus generator.
+- Added semantic colour coding to all primary action buttons.
+- Added built-in SVG icons beside button labels.
+- Added consistent hover, active, disabled and keyboard-focus styling.
+
+## Beta 0.9.5.4 — 2026-07-17
 
 - Added Bulk Generate Matching Focuses for paired first- and second-level body icons.
 - Added scopes for both levels, one level, the current XMB category, or the selected icon pair.

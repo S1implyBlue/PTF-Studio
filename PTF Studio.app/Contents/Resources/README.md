@@ -1,4 +1,4 @@
-# PTF Studio Beta 0.9.5.3
+# PTF Studio Beta 0.9.5.4
 
 PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It runs locally in a modern browser and is intended for the PSP modding community.
 
@@ -25,7 +25,7 @@ You may also open `index.html` directly in a current Safari, Chrome, Edge, or Fi
 - Use PSP model profiles for PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or a universal asset view.
 - Generate matching focus artwork individually or in bulk from each normal icon, while retaining the older apply-one-image bulk tool.
 
-## New in Beta 0.9.5.3
+## New in Beta 0.9.5.4
 
 ### Bulk Generate Matching Focuses
 

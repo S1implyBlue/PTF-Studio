@@ -1,8 +1,59 @@
-/* PTF Studio Beta 0.9.5.3 — dependency-free PSP PTF viewer/editor */
+/* PTF Studio Beta 0.9.5.4 — dependency-free PSP PTF viewer/editor */
 'use strict';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
+
+
+const UI_ICON_PATHS = Object.freeze({
+  upload:'<path d="M12 16V4m0 0-4 4m4-4 4 4"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+  download:'<path d="M12 4v12m0 0 4-4m-4 4-4-4"/><path d="M4 19h16"/>',
+  sample:'<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  palette:'<path d="M12 3a9 9 0 1 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a1.5 1.5 0 0 1 0-3h2a7 7 0 0 0-2-10Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="9.5" cy="6.5" r="1"/><circle cx="14" cy="6.5" r="1"/><circle cx="17" cy="10" r="1"/>',
+  analyze:'<path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/>',
+  package:'<path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z"/><path d="M12 11v10"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.2 2.1c-.8.4-1 1-1 1.9M12 17h.01"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  font:'<path d="M5 20 11 4h2l6 16M7 15h10"/>',
+  folder:'<path d="M3 6h7l2 2h9v11H3z"/>',
+  downscale:'<path d="M4 4h7v2H6v5H4V4Zm16 16h-7v-2h5v-5h2v7Z"/><path d="m14 10 6-6m0 0h-5m5 0v5M10 14l-6 6m0 0h5m-5 0v-5"/>',
+  sparkles:'<path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3Z"/><path d="m19 14 .7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14ZM5 13l.8 2.2L8 16l-2.2.8L5 19l-.8-2.2L2 16l2.2-.8L5 13Z"/>',
+  restore:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/>',
+  target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+  reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  grid:'<path d="M4 4h16v16H4zM4 10h16M10 4v16"/>',
+  close:'<path d="m6 6 12 12M18 6 6 18"/>',
+  undo:'<path d="M9 7 4 12l5 5"/><path d="M4 12h9a6 6 0 0 1 6 6"/>',
+  redo:'<path d="m15 7 5 5-5 5"/><path d="M20 12h-9a6 6 0 0 0-6 6"/>',
+  new:'<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h5M12 11v6M9 14h6"/>',
+  rectangle:'<rect x="4" y="6" width="16" height="12" rx="1"/>',
+  rounded:'<rect x="4" y="5" width="16" height="14" rx="4"/>',
+  circle:'<circle cx="12" cy="12" r="8"/>',
+  line:'<path d="m5 19 14-14"/>',
+  up:'<path d="m6 15 6-6 6 6"/>',
+  down:'<path d="m6 9 6 6 6-6"/>',
+  copy:'<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/>',
+  check:'<path d="m5 12 4 4L19 6"/>',
+  preview:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m21 15-5-5L5 20"/>'
+});
+function installButtonIcons(){
+  document.querySelectorAll('[data-icon]').forEach(el=>{
+    if(el.querySelector(':scope > .buttonIcon'))return;
+    const path=UI_ICON_PATHS[el.dataset.icon];
+    if(!path)return;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','buttonIcon');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+    svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');
+    svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.innerHTML=path;
+    el.prepend(svg);
+  });
+}
+installButtonIcons();
 
 const els = {
   ptfInput: $('#ptfInput'), loadSampleBtn: $('#loadSampleBtn'), exportBtn: $('#exportBtn'),
@@ -20,12 +71,12 @@ const els = {
   bulkFocusDownscaleInput: $('#bulkFocusDownscaleInput'), restoreBulkFocusBtn: $('#restoreBulkFocusBtn'),
   bulkFolderBtn: $('#bulkFolderBtn'), bulkFolderInput: $('#bulkFolderInput'),
   bulkFolderDownscaleBtn: $('#bulkFolderDownscaleBtn'), bulkFolderDownscaleInput: $('#bulkFolderDownscaleInput'),
-  focusGeneratorBtn: $('#focusGeneratorBtn'), variantsBtn: $('#variantsBtn'), selectFallbackBtn: $('#selectFallbackBtn'),
+  focusGeneratorBtn: $('#focusGeneratorBtn'), selectedFocusGeneratorBtn: $('#selectedFocusGeneratorBtn'), variantsBtn: $('#variantsBtn'), selectFallbackBtn: $('#selectFallbackBtn'),
   ditherToggle: $('#ditherToggle'), pulseToggle: $('#pulseToggle'), validationBox: $('#validationBox'),
   validationText: $('#validationText'), statusText: $('#statusText'), dirtyState: $('#dirtyState'), toastHost: $('#toastHost'),
   helpMenuBtn: $('#helpMenuBtn'), helpMenu: $('#helpMenu'), aboutBtn: $('#aboutBtn'), creditsBtn: $('#creditsBtn'),
   aboutModal: $('#aboutModal'), closeAboutBtn: $('#closeAboutBtn'), modalCloseButton: $('#modalCloseButton'),
-  focusModal: $('#focusModal'), focusPreviewCanvas: $('#focusPreviewCanvas'), focusPreviewLabel: $('#focusPreviewLabel'),
+  focusModal: $('#focusModal'), focusTitle: $('#focusTitle'), focusSubtitle: $('#focusSubtitle'), focusPreviewCanvas: $('#focusPreviewCanvas'), focusPreviewLabel: $('#focusPreviewLabel'),
   focusTarget: $('#focusTarget'), focusColor: $('#focusColor'), focusOpacity: $('#focusOpacity'), focusOpacityValue: $('#focusOpacityValue'),
   focusBlur: $('#focusBlur'), focusBlurValue: $('#focusBlurValue'), focusPadding: $('#focusPadding'),
   focusPaddingValue: $('#focusPaddingValue'), focusIncludeCore: $('#focusIncludeCore'), focusGenerationMode: $('#focusGenerationMode'),
@@ -41,7 +92,7 @@ const els = {
 const ctx = els.xmbCanvas.getContext('2d');
 const previewCtx = els.assetPreview.getContext('2d');
 
-const APP_VERSION = 'Beta 0.9.5.3';
+const APP_VERSION = 'Beta 0.9.5.4';
 const APP_BUILD = '2026.07.17';
 
 const CATEGORY_LABELS = {1:'Settings',2:'Photo',3:'Music',4:'Video',5:'TV',6:'Game',7:'Network',8:'Extras'};
@@ -148,7 +199,7 @@ const XMB_LAYOUT = Object.freeze({
 const PSP_FONT_STACK = '"PSP New Rodin", "FOT-NewRodin Pro DB", "NewRodin Pro DB", Arial, sans-serif';
 
 const PSP_BATTERY_IMAGE = new Image();
-PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.3-beta';
+PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.4-beta';
 
 const state = {
   theme: null,
@@ -617,6 +668,7 @@ function updateUiEnabled(){
    els.addModelSlotsBtn,els.assetSearch,els.resetNavBtn,els.toggleGridBtn,els.bulkFocusBtn,els.bulkFocusDownscaleBtn,
    els.bulkFolderBtn,els.bulkFolderDownscaleBtn,els.focusGeneratorBtn,els.variantsBtn,els.selectFallbackBtn].forEach(e=>e.disabled=!on);
   updateBulkFocusButtons();
+  updateSelectedFocusButton();
 }
 function updateBulkFocusButtons(){
   const focusAssets=state.assets.filter(a=>a.role.type==='firstFocus');
@@ -671,7 +723,7 @@ function selectAsset(asset,{scroll=false}={}){
   els.paletteInfo.textContent=asset.role.indexed?(asset.paletteCount!=null?`${asset.paletteCount} used / 256`:'≤ 256 colors'):'24/32-bit';
   els.packedInfo.textContent=asset.packedSize?formatBytes(asset.packedSize):asset.synthetic?'Pending export':'—';
   els.compatibilityInfo.textContent=assetCompatibility(asset).label;
-  els.restoreAssetBtn.disabled=!asset.edited;updateValidation();drawInspectorPreview();updateFocusGeneratorPreview();
+  els.restoreAssetBtn.disabled=!asset.edited;updateValidation();drawInspectorPreview();updateFocusGeneratorPreview();updateSelectedFocusButton();
   if(scroll)scrollAssetIntoView(asset);
 }
 function checker(c,x,y,w,h,s=12){for(let yy=0;yy<h;yy+=s)for(let xx=0;xx<w;xx+=s){c.fillStyle=((xx/s+yy/s)&1)?'#20252c':'#171b20';c.fillRect(x+xx,y+yy,Math.min(s,w-xx),Math.min(s,h-yy));}}
@@ -936,6 +988,17 @@ async function loadPreviewFont(file){
 }
 
 
+function selectedBodyForDirectFocus(){
+  const a=state.selectedAsset;
+  if(a?.role.type==='firstBody'||a?.role.type==='secondBody')return a;
+  if(a?.role.type==='firstFocus')return getAsset(3,a.subIdx-1);
+  if(a?.role.type==='secondFocus')return getAsset(4,a.subIdx-1);
+  return null;
+}
+function updateSelectedFocusButton(){
+  const body=selectedBodyForDirectFocus();
+  els.selectedFocusGeneratorBtn.disabled=!state.theme||!body?.imageData||!imageHasVisiblePixels(body.imageData);
+}
 function selectedBodyForFocusGenerator(){
   const a=state.selectedAsset;
   if(a?.role.type==='firstBody'||a?.role.type==='secondBody')return a;
@@ -1340,7 +1403,7 @@ function swizzleIndices(indices,w,h,bpp=8){const tileW=0x80/bpp,tileH=8,ow=align
 function blockHeader(type,size,next){const b=new Uint8Array(16);const v=new DataView(b.buffer);setU16(v,0,type);setU32(v,4,size);setU32(v,8,next);setU32(v,12,0x10);return b;}
 function concatArrays(parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
 function makeImageBlock(type,format,pixelOrder,w,h,bpp,pixelBytes,levelType){const content=new Uint8Array(0x40+pixelBytes.length);const v=new DataView(content.buffer);setU16(v,0,0x30);setU16(v,4,format);setU16(v,6,pixelOrder);setU16(v,8,w);setU16(v,10,h);setU16(v,12,bpp);setU16(v,14,0x10);setU16(v,16,0x08);setU16(v,18,2);setU32(v,24,0x30);setU32(v,28,0x40);setU32(v,32,0x40+pixelBytes.length);setU32(v,36,0);setU16(v,40,levelType);setU16(v,42,1);setU16(v,44,3);setU16(v,46,1);setU32(v,0x30,0x40);content.set(pixelBytes,0x40);const total=16+content.length;return concatArrays([blockHeader(type,total,total),content]);}
-function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.3\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
+function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.4\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
 function encodeGimIndexed(imageData,dither=true){const q=quantize(imageData,256,dither),w=imageData.width,h=imageData.height;const palBytes=new Uint8Array(1024);q.palette.forEach((p,i)=>{palBytes[i*4]=p[0];palBytes[i*4+1]=p[1];palBytes[i*4+2]=p[2];palBytes[i*4+3]=p[3];});const indexBytes=swizzleIndices(q.indices,w,h,8);let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2);let imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1);const fileInfo=makeFileInfo();
   // Correct global next pointers after sizes are known.
   new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);
@@ -1542,8 +1605,8 @@ function renderVariantList(){
     title.querySelector('.variantRowSub').textContent=`${THEME_COLORS[variant.themeColor]} · tint ${variant.tintStrength}%`;
     const sw=document.createElement('div');sw.className='variantSwatch';sw.style.background=variant.tint;
     const profile=document.createElement('span');profile.className='compatPill';profile.textContent=currentProfile().label;
-    const remove=document.createElement('button');remove.className='miniButton';remove.textContent='Remove';remove.addEventListener('click',()=>{state.variants.splice(index,1);renderVariantList();});
-    row.append(title,sw,profile,remove);els.variantList.appendChild(row);
+    const remove=document.createElement('button');remove.className='miniButton action-danger';remove.dataset.icon='trash';remove.textContent='Remove';remove.addEventListener('click',()=>{state.variants.splice(index,1);renderVariantList();});
+    row.append(title,sw,profile,remove);els.variantList.appendChild(row);installButtonIcons();
   });
 }
 function addVariant(){
@@ -1715,10 +1778,27 @@ els.bulkFolderDownscaleInput.addEventListener('change',async e=>{
   if(e.target.files.length)await bulkImportFolder(e.target.files,'downscale');
   e.target.value='';
 });
-els.focusGeneratorBtn.addEventListener('click',()=>{
+function openFocusGenerator(mode){
+  if(mode==='selected'){
+    const body=selectedBodyForDirectFocus();
+    if(!body?.imageData||!imageHasVisiblePixels(body.imageData)){
+      toast('Select an icon','Choose a populated first- or second-level icon before generating its focus.','error');
+      return;
+    }
+    els.focusTitle.textContent='Generate Focus for Selected Icon';
+    els.focusSubtitle.textContent='Create or replace the matching focus for the selected icon';
+    els.focusTarget.value='selected';
+    els.focusGenerationMode.value='replace';
+  }else{
+    els.focusTitle.textContent='Bulk Focus Generator';
+    els.focusSubtitle.textContent='Create matching PSP focus glows from multiple normal icons';
+    els.focusTarget.value='both';
+  }
   updateFocusGeneratorPreview();
   openModal(els.focusModal);
-});
+}
+els.selectedFocusGeneratorBtn.addEventListener('click',()=>openFocusGenerator('selected'));
+els.focusGeneratorBtn.addEventListener('click',()=>openFocusGenerator('bulk'));
 [els.focusTarget,els.focusGenerationMode,els.focusColor,els.focusOpacity,els.focusBlur,els.focusPadding,els.focusIncludeCore].forEach(control=>{
   control.addEventListener(control.type==='checkbox'?'change':'input',updateFocusGeneratorPreview);
 });

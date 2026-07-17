@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static and binary regression checks for PTF Studio Beta 0.9.5.3."""
+"""Static and binary regression checks for PTF Studio Beta 0.9.5.4."""
 from __future__ import annotations
 
 import base64
@@ -46,7 +46,15 @@ def main() -> None:
     sample_js = (ROOT / "sample.js").read_text(encoding="utf-8")
     maker = (ROOT / "asset_maker.js").read_text(encoding="utf-8")
 
-    assert "Beta 0.9.5.3" in app and "Beta 0.9.5.3" in html
+    assert "Beta 0.9.5.4" in app and "Beta 0.9.5.4" in html
+
+    assert "Beta 0.9.5.3" not in app
+    assert "Beta 0.9.5.3" not in html
+    assert "0.9.5.3-beta" not in app
+    assert "0.9.5.3-beta" not in html
+    assert (ROOT / "PTF Studio.app/Contents/Resources/app.js").read_bytes() == (ROOT / "app.js").read_bytes()
+    assert (ROOT / "PTF Studio.app/Contents/Resources/index.html").read_bytes() == (ROOT / "index.html").read_bytes()
+    assert (ROOT / "PTF Studio.app/Contents/Resources/styles.css").read_bytes() == (ROOT / "styles.css").read_bytes()
     assert "title: readFixedString(bytes,8,128)" in app
     assert "productId:readFixedString(bytes,136,48)" in app
     assert "els.themeName.value=t.title" in app
@@ -79,6 +87,14 @@ def main() -> None:
     assert "excludedItems:[4,12]" in app
     assert "assetVisibleForProfile(asset)" in app
     assert "Bulk generate matching focuses" in html
+    assert 'id="selectedFocusGeneratorBtn"' in html
+    assert "Generate focus for selected icon" in html
+    assert "openFocusGenerator('selected')" in app
+    assert "selectedBodyForDirectFocus" in app
+    assert "focusGenerationMode.value='replace'" in app
+    assert "UI_ICON_PATHS" in app and "installButtonIcons" in app
+    for cls in ['action-open','action-generate','action-creative','action-batch','action-danger','action-secondary']:
+        assert cls in html and cls in (ROOT / 'styles.css').read_text(encoding='utf-8')
     assert 'id="focusGenerationMode"' in html
     assert 'id="focusBatchSummary"' in html
     assert 'id="undoFocusGeneratorBtn"' in html
@@ -153,7 +169,7 @@ def main() -> None:
     subprocess.run(["node", "--check", str(ROOT / "asset_maker.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "rlz.js")], check=True)
     subprocess.run(["node", "--check", str(ROOT / "sample.js")], check=True)
-    print("PTF Studio Beta 0.9.5.3 verification passed")
+    print("PTF Studio Beta 0.9.5.4 verification passed")
 
 
 if __name__ == "__main__":

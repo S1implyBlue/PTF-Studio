@@ -515,7 +515,7 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
 .importChoice span { display: block; color: var(--muted); font-size: 11px; line-height: 1.5; }
 @media (max-width: 620px) { .importChoiceGrid { grid-template-columns: 1fr; } }
 
-/* Beta 0.9.5.3 — integrated PSP Asset Maker */
+/* Beta 0.9.5.4 — integrated PSP Asset Maker */
 .makerModalCard {
   width: min(1480px, 98vw);
   height: min(930px, 94vh);
@@ -575,3 +575,63 @@ kbd { display: inline-grid; place-items: center; min-width: 20px; height: 19px; 
   .makerToolsPanel,.makerInspectorPanel { border: 0; border-bottom: 1px solid var(--line); overflow: visible; }
   .makerCanvasPanel { min-height: 560px; }
 }
+
+
+/* Beta 0.9.5.4 — semantic button colours and built-in SVG action icons. */
+.buttonIcon {
+  width: 15px; height: 15px; flex: 0 0 auto; pointer-events: none;
+  stroke: currentColor; opacity: .96;
+}
+.button.action-open, .miniButton.action-open, .importChoice.action-open {
+  background: linear-gradient(180deg,#4caaff,#2f92ed); border-color:#58adf8; color:#07131f;
+}
+.button.action-open:hover:not(:disabled), .miniButton.action-open:hover:not(:disabled), .importChoice.action-open:hover {
+  background: linear-gradient(180deg,#6abbff,#3da0f7); border-color:#75c1ff;
+}
+.button.action-generate, .miniButton.action-generate {
+  background: linear-gradient(180deg,#53dc9d,#36b978); border-color:#5cdea4; color:#06140d;
+}
+.button.action-generate:hover:not(:disabled), .miniButton.action-generate:hover:not(:disabled) {
+  background: linear-gradient(180deg,#70e9b2,#43ca89); border-color:#7aebb8;
+}
+.button.action-creative, .miniButton.action-creative {
+  background: linear-gradient(180deg,#aa7cff,#8254dd); border-color:#b38aff; color:#130822;
+}
+.button.action-creative:hover:not(:disabled), .miniButton.action-creative:hover:not(:disabled) {
+  background: linear-gradient(180deg,#bc96ff,#9468e8); border-color:#c4a1ff;
+}
+.button.action-batch, .miniButton.action-batch, .importChoice.action-batch {
+  background: linear-gradient(180deg,#f4b25f,#d8832d); border-color:#f1b66d; color:#1e0f02;
+}
+.button.action-batch:hover:not(:disabled), .miniButton.action-batch:hover:not(:disabled), .importChoice.action-batch:hover {
+  background: linear-gradient(180deg,#ffc57e,#e79542); border-color:#ffca88;
+}
+.button.action-danger, .miniButton.action-danger {
+  background: linear-gradient(180deg,#ff7c86,#d84e5a); border-color:#ff8992; color:#21070a;
+}
+.button.action-danger:hover:not(:disabled), .miniButton.action-danger:hover:not(:disabled) {
+  background: linear-gradient(180deg,#ff929a,#e65f69); border-color:#ffa0a7;
+}
+.button.action-secondary, .miniButton.action-secondary, .iconButton.action-secondary {
+  background: linear-gradient(180deg,#2b3038,#20242b); border-color:#3a424d; color:#e1e5ea;
+}
+.button.action-secondary:hover:not(:disabled), .miniButton.action-secondary:hover:not(:disabled), .iconButton.action-secondary:hover:not(:disabled) {
+  background: linear-gradient(180deg,#373d47,#292e36); border-color:#4a5562;
+}
+.button:focus-visible, .miniButton:focus-visible, .iconButton:focus-visible, .importChoice:focus-visible {
+  outline: none; box-shadow: 0 0 0 3px rgba(113,183,255,.32), 0 0 0 1px #8bc8ff inset;
+}
+.button:disabled .buttonIcon, .miniButton:disabled .buttonIcon, .iconButton:disabled .buttonIcon { opacity:.58; }
+.iconButton { display:inline-grid; place-items:center; padding:0; }
+.iconButton .buttonIcon { width:14px; height:14px; }
+.modalClose { display:inline-grid; place-items:center; }
+.modalClose .buttonIcon { width:17px; height:17px; }
+.helpMenu button { display:flex; align-items:center; gap:8px; }
+.helpMenu button .buttonIcon { width:14px; height:14px; }
+.seg { display:inline-flex; align-items:center; gap:6px; }
+.seg .buttonIcon { width:12px; height:12px; }
+.importChoice .buttonIcon { width:20px; height:20px; margin-bottom:10px; }
+.miniButton { display:inline-flex; align-items:center; justify-content:center; gap:5px; }
+.miniButton .buttonIcon { width:12px; height:12px; }
+
+.helpMenu button.action-secondary { color:#e1e5ea; }

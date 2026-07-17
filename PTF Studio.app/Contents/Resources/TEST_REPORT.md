@@ -1,4 +1,4 @@
-# Test Report — PTF Studio Beta 0.9.5.3
+# Test Report — PTF Studio Beta 0.9.5.4
 
 Passed static and package regression checks:
 
@@ -13,3 +13,6 @@ Passed static and package regression checks:
 - Top-level browser files and macOS application resources are synchronized.
 
 Real-hardware validation is still recommended for exported themes.
+
+- Passed single-icon focus generator presence and routing check.
+- Passed semantic button colour and SVG icon checks.

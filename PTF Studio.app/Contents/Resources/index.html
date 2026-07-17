@@ -1,556 +1,525 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PTF Studio Beta 0.9.5.3</title>
-  <link rel="stylesheet" href="styles.css?v=0.9.5.3-beta" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>PTF Studio Beta 0.9.5.4</title>
+<link href="styles.css?v=0.9.5.4-beta" rel="stylesheet"/>
 </head>
 <body>
-  <div id="appShell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brandMark">P</div>
-        <div>
-          <div class="brandTitle">PTF Studio</div>
-          <div class="brandSub">PSP theme editor · Beta 0.9.5.3</div>
-        </div>
-      </div>
-      <div class="topActions">
-        <label class="button primary" for="ptfInput">Import PTF</label>
-        <input id="ptfInput" type="file" accept=".ptf,application/octet-stream" hidden />
-        <button id="loadSampleBtn" class="button">Load sample</button>
-        <button id="assetMakerBtn" class="button primary">Asset Maker</button>
-        <button id="analyzeBtn" class="button" disabled>Analyze</button>
-        <button id="releasePackageBtn" class="button" disabled>Release ZIP</button>
-        <button id="exportBtn" class="button success" disabled>Export PTF</button>
-        <div class="menuWrap">
-          <button id="helpMenuBtn" class="button" aria-haspopup="true" aria-expanded="false">Help</button>
-          <div id="helpMenu" class="helpMenu hidden" role="menu">
-            <button id="aboutBtn" role="menuitem">About PTF Studio</button>
-            <button id="creditsBtn" role="menuitem">Credits</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main class="workspace">
-      <aside class="sidebar leftPanel">
-        <section class="panelSection projectSection">
-          <div class="sectionTitle">Theme</div>
-          <div class="fieldGroup compact">
-            <label>Title</label>
-            <input id="themeName" type="text" disabled maxlength="128" />
-          </div>
-          <div class="fieldGroup compact">
-            <label>Product ID</label>
-            <input id="themeProductId" type="text" disabled maxlength="48" />
-          </div>
-          <div class="inlineFields">
-            <div class="fieldGroup compact">
-              <label>Version</label>
-              <input id="themeVersion" type="text" disabled maxlength="8" />
-            </div>
-            <div class="fieldGroup compact">
-              <label>Color</label>
-              <select id="themeColor" disabled></select>
-            </div>
-          </div>
-          <div class="fieldGroup compact modelProfileField">
-            <label>PSP model profile</label>
-            <select id="modelProfile" disabled>
-              <option value="universal">Universal — all known slots</option>
-              <option value="1000">PSP-1000</option>
-              <option value="2000">PSP-2000</option>
-              <option value="3000">PSP-3000</option>
-              <option value="go">PSP Go</option>
-              <option value="street">PSP Street / E1000</option>
-            </select>
-            <div id="modelHint" class="fieldHint">Shows all known PTF slots.</div>
-            <button id="addModelSlotsBtn" class="button full" disabled>Add missing profile slots</button>
-          </div>
-          <div class="fontLoader">
-            <label class="button full" for="fontInput">Load PSP preview font</label>
-            <input id="fontInput" type="file" accept=".otf,.ttf,.woff,.woff2,font/otf,font/ttf" hidden />
-            <div class="fontStatusRow"><span>Preview font</span><strong id="fontStatus">System fallback</strong></div>
-          </div>
-          <div class="batchTools">
-            <div class="sectionTitle small">Batch & creation tools</div>
-            <button id="bulkFolderBtn" class="button full" disabled>Import exact-size icon folder</button>
-            <input id="bulkFolderInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
-            <button id="bulkFolderDownscaleBtn" class="button full" disabled>Downscale & import icon folder</button>
-            <input id="bulkFolderDownscaleInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
-            <button id="focusGeneratorBtn" class="button primary full" disabled>Bulk generate matching focuses</button>
-            <button id="bulkFocusBtn" class="button full" disabled>Bulk import first-level focus</button>
-            <input id="bulkFocusInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
-            <button id="bulkFocusDownscaleBtn" class="button full" disabled>Bulk downscale first-level focus</button>
-            <input id="bulkFocusDownscaleInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
-            <button id="restoreBulkFocusBtn" class="button full" disabled>Restore all first-level focus</button>
-            <button id="variantsBtn" class="button full" disabled>Theme variants</button>
-            <button id="selectFallbackBtn" class="button full" disabled>Show fallback assets</button>
-            <div class="batchHint">Folder import accepts slot names such as <code>3_0024.png</code> or descriptive names such as <code>first_theme_settings_focus.png</code>.</div>
-          </div>
-        </section>
-
-        <section class="panelSection assetsSection">
-          <div class="sectionTitleRow">
-            <div class="sectionTitle">Assets</div>
-            <input id="assetSearch" class="searchInput" type="search" placeholder="Search" disabled />
-          </div>
-          <div id="assetGroups" class="assetGroups emptyState">
+<div id="appShell">
+<header class="topbar">
+<div class="brand">
+<div class="brandMark">P</div>
+<div>
+<div class="brandTitle">PTF Studio</div>
+<div class="brandSub">PSP theme editor · Beta 0.9.5.4</div>
+</div>
+</div>
+<div class="topActions">
+<label class="button action-open" data-icon="upload" for="ptfInput">Import PTF</label>
+<input accept=".ptf,application/octet-stream" hidden="" id="ptfInput" type="file"/>
+<button class="button action-open" data-icon="sample" id="loadSampleBtn">Load sample</button>
+<button class="button action-creative" data-icon="palette" id="assetMakerBtn">Asset Maker</button>
+<button class="button action-batch" data-icon="analyze" disabled="" id="analyzeBtn">Analyze</button>
+<button class="button action-generate" data-icon="package" disabled="" id="releasePackageBtn">Release ZIP</button>
+<button class="button action-generate" data-icon="download" disabled="" id="exportBtn">Export PTF</button>
+<div class="menuWrap">
+<button aria-expanded="false" aria-haspopup="true" class="button action-secondary" data-icon="help" id="helpMenuBtn">Help</button>
+<div class="helpMenu hidden" id="helpMenu" role="menu">
+<button class="action-secondary" data-icon="info" id="aboutBtn" role="menuitem">About PTF Studio</button>
+<button class="action-secondary" data-icon="users" id="creditsBtn" role="menuitem">Credits</button>
+</div>
+</div>
+</div>
+</header>
+<main class="workspace">
+<aside class="sidebar leftPanel">
+<section class="panelSection projectSection">
+<div class="sectionTitle">Theme</div>
+<div class="fieldGroup compact">
+<label>Title</label>
+<input disabled="" id="themeName" maxlength="128" type="text"/>
+</div>
+<div class="fieldGroup compact">
+<label>Product ID</label>
+<input disabled="" id="themeProductId" maxlength="48" type="text"/>
+</div>
+<div class="inlineFields">
+<div class="fieldGroup compact">
+<label>Version</label>
+<input disabled="" id="themeVersion" maxlength="8" type="text"/>
+</div>
+<div class="fieldGroup compact">
+<label>Color</label>
+<select disabled="" id="themeColor"></select>
+</div>
+</div>
+<div class="fieldGroup compact modelProfileField">
+<label>PSP model profile</label>
+<select disabled="" id="modelProfile">
+<option value="universal">Universal — all known slots</option>
+<option value="1000">PSP-1000</option>
+<option value="2000">PSP-2000</option>
+<option value="3000">PSP-3000</option>
+<option value="go">PSP Go</option>
+<option value="street">PSP Street / E1000</option>
+</select>
+<div class="fieldHint" id="modelHint">Shows all known PTF slots.</div>
+<button class="button full action-generate" data-icon="plus" disabled="" id="addModelSlotsBtn">Add missing profile slots</button>
+</div>
+<div class="fontLoader">
+<label class="button full action-open" data-icon="font" for="fontInput">Load PSP preview font</label>
+<input accept=".otf,.ttf,.woff,.woff2,font/otf,font/ttf" hidden="" id="fontInput" type="file"/>
+<div class="fontStatusRow"><span>Preview font</span><strong id="fontStatus">System fallback</strong></div>
+</div>
+<div class="batchTools">
+<div class="sectionTitle small">Batch &amp; creation tools</div>
+<button class="button full action-batch" data-icon="folder" disabled="" id="bulkFolderBtn">Import exact-size icon folder</button>
+<input accept="image/*" directory="" hidden="" id="bulkFolderInput" multiple="" type="file" webkitdirectory=""/>
+<button class="button full action-batch" data-icon="downscale" disabled="" id="bulkFolderDownscaleBtn">Downscale &amp; import icon folder</button>
+<input accept="image/*" directory="" hidden="" id="bulkFolderDownscaleInput" multiple="" type="file" webkitdirectory=""/>
+<button class="button full action-batch" data-icon="sparkles" disabled="" id="focusGeneratorBtn">Bulk generate matching focuses</button>
+<button class="button full action-batch" data-icon="folder" disabled="" id="bulkFocusBtn">Bulk import first-level focus</button>
+<input accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden="" id="bulkFocusInput" type="file"/>
+<button class="button full action-batch" data-icon="downscale" disabled="" id="bulkFocusDownscaleBtn">Bulk downscale first-level focus</button>
+<input accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden="" id="bulkFocusDownscaleInput" type="file"/>
+<button class="button full action-danger" data-icon="restore" disabled="" id="restoreBulkFocusBtn">Restore all first-level focus</button>
+<button class="button full action-creative" data-icon="layers" disabled="" id="variantsBtn">Theme variants</button>
+<button class="button full action-open" data-icon="target" disabled="" id="selectFallbackBtn">Show fallback assets</button>
+<div class="batchHint">Folder import accepts slot names such as <code>3_0024.png</code> or descriptive names such as <code>first_theme_settings_focus.png</code>.</div>
+</div>
+</section>
+<section class="panelSection assetsSection">
+<div class="sectionTitleRow">
+<div class="sectionTitle">Assets</div>
+<input class="searchInput" disabled="" id="assetSearch" placeholder="Search" type="search"/>
+</div>
+<div class="assetGroups emptyState" id="assetGroups">
             Import a PTF theme to begin.
           </div>
-        </section>
-      </aside>
-
-      <section class="centerStage">
-        <div class="viewerToolbar">
-          <div class="segmented">
-            <button class="seg active" data-view="xmb">XMB</button>
-            <button class="seg" data-view="assets">Asset</button>
-          </div>
-          <div class="viewerMeta">
-            <span id="viewerStatus">No theme loaded</span>
-            <span class="dot"></span>
-            <span>480 × 272</span>
-          </div>
-          <div class="viewerControls">
-            <button id="resetNavBtn" class="iconButton" title="Reset XMB position" disabled>↺</button>
-            <button id="toggleGridBtn" class="iconButton" title="Toggle guides" disabled>⌗</button>
-          </div>
-        </div>
-
-        <div class="viewerWrap">
-          <div id="dropZone" class="dropZone">
-            <canvas id="xmbCanvas" width="960" height="544"></canvas>
-            <div id="dropOverlay" class="dropOverlay">
-              <div class="dropIcon">↓</div>
-              <div class="dropTitle">Drop a PTF theme here</div>
-              <div class="dropHint">or use Import PTF</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="navHelp">
-          <span><kbd>←</kbd><kbd>→</kbd> categories</span>
-          <span><kbd>↑</kbd><kbd>↓</kbd> items</span>
-          <span><kbd>Enter</kbd> second level</span>
-          <span><kbd>Esc</kbd> back</span>
-        </div>
-      </section>
-
-      <aside class="sidebar rightPanel">
-        <section class="panelSection inspectorSection">
-          <div class="sectionTitle">Inspector</div>
-          <div id="inspectorEmpty" class="emptyInspector">
+</section>
+</aside>
+<section class="centerStage">
+<div class="viewerToolbar">
+<div class="segmented">
+<button class="seg active" data-icon="preview" data-view="xmb">XMB</button>
+<button class="seg" data-icon="image" data-view="assets">Asset</button>
+</div>
+<div class="viewerMeta">
+<span id="viewerStatus">No theme loaded</span>
+<span class="dot"></span>
+<span>480 × 272</span>
+</div>
+<div class="viewerControls">
+<button class="iconButton action-secondary" data-icon="reset" disabled="" id="resetNavBtn" title="Reset XMB position"></button>
+<button class="iconButton action-secondary" data-icon="grid" disabled="" id="toggleGridBtn" title="Toggle guides"></button>
+</div>
+</div>
+<div class="viewerWrap">
+<div class="dropZone" id="dropZone">
+<canvas height="544" id="xmbCanvas" width="960"></canvas>
+<div class="dropOverlay" id="dropOverlay">
+<div class="dropIcon">↓</div>
+<div class="dropTitle">Drop a PTF theme here</div>
+<div class="dropHint">or use Import PTF</div>
+</div>
+</div>
+</div>
+<div class="navHelp">
+<span><kbd>←</kbd><kbd>→</kbd> categories</span>
+<span><kbd>↑</kbd><kbd>↓</kbd> items</span>
+<span><kbd>Enter</kbd> second level</span>
+<span><kbd>Esc</kbd> back</span>
+</div>
+</section>
+<aside class="sidebar rightPanel">
+<section class="panelSection inspectorSection">
+<div class="sectionTitle">Inspector</div>
+<div class="emptyInspector" id="inspectorEmpty">
             Select an asset to edit it.
           </div>
-          <div id="inspector" class="inspector hidden">
-            <div class="assetHero">
-              <canvas id="assetPreview" width="280" height="180"></canvas>
+<div class="inspector hidden" id="inspector">
+<div class="assetHero">
+<canvas height="180" id="assetPreview" width="280"></canvas>
+</div>
+<div class="assetIdentity">
+<div class="assetTitle" id="assetTitle"></div>
+<div class="assetSlot" id="assetSlot"></div>
+</div>
+<div class="infoGrid">
+<div><span>Required</span><strong id="requiredSize">—</strong></div>
+<div><span>Current</span><strong id="currentSize">—</strong></div>
+<div><span>Format</span><strong id="currentFormat">—</strong></div>
+<div><span>Palette</span><strong id="paletteInfo">—</strong></div>
+<div><span>Packed</span><strong id="packedInfo">—</strong></div>
+<div><span>Compatibility</span><strong id="compatibilityInfo">—</strong></div>
+</div>
+<div class="inspectorActions">
+<label class="button full action-open" data-icon="upload" for="replaceInput">Import</label>
+<input accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden="" id="replaceInput" type="file"/>
+<label class="button full action-batch" data-icon="downscale" for="downscaleInput">Downscale &amp; Import</label>
+<input accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden="" id="downscaleInput" type="file"/>
+<button class="button full action-danger" data-icon="restore" disabled="" id="restoreAssetBtn">Restore original</button>
+<button class="button full action-generate" data-icon="download" id="exportAssetBtn">Export PNG</button>
+<button class="button full action-creative" data-icon="palette" id="editInMakerBtn">Edit in Asset Maker</button><button class="button full action-generate" data-icon="sparkles" disabled="" id="selectedFocusGeneratorBtn">Generate focus for selected icon</button>
+</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">Import modes</div>
+<div class="importModeHelp">
+<strong>Import</strong> accepts only an image already matching the required pixel dimensions.<br/>
+<strong>Downscale &amp; Import</strong> uses bicubic smooth resampling. Icon canvases and transparent borders are preserved; visible pixels are never trimmed or cropped.
             </div>
-            <div class="assetIdentity">
-              <div id="assetTitle" class="assetTitle"></div>
-              <div id="assetSlot" class="assetSlot"></div>
-            </div>
-
-            <div class="infoGrid">
-              <div><span>Required</span><strong id="requiredSize">—</strong></div>
-              <div><span>Current</span><strong id="currentSize">—</strong></div>
-              <div><span>Format</span><strong id="currentFormat">—</strong></div>
-              <div><span>Palette</span><strong id="paletteInfo">—</strong></div>
-              <div><span>Packed</span><strong id="packedInfo">—</strong></div>
-              <div><span>Compatibility</span><strong id="compatibilityInfo">—</strong></div>
-            </div>
-
-            <div class="inspectorActions">
-              <label class="button primary full" for="replaceInput">Import</label>
-              <input id="replaceInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
-              <label class="button full" for="downscaleInput">Downscale & Import</label>
-              <input id="downscaleInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
-              <button id="restoreAssetBtn" class="button full" disabled>Restore original</button>
-              <button id="exportAssetBtn" class="button full">Export PNG</button>
-              <button id="editInMakerBtn" class="button full">Edit in Asset Maker</button>
-            </div>
-
-            <div class="sectionDivider"></div>
-
-            <div class="sectionTitle small">Import modes</div>
-            <div class="importModeHelp">
-              <strong>Import</strong> accepts only an image already matching the required pixel dimensions.<br />
-              <strong>Downscale & Import</strong> uses bicubic smooth resampling. Icon canvases and transparent borders are preserved; visible pixels are never trimmed or cropped.
-            </div>
-            <label class="checkRow">
-              <input id="ditherToggle" type="checkbox" checked />
-              <span>Use dithering when reducing to 256 colors</span>
-            </label>
-            <label class="checkRow">
-              <input id="pulseToggle" type="checkbox" checked />
-              <span>Animate focus pulse in live view</span>
-            </label>
-
-            <div class="validationBox" id="validationBox">
-              <div class="validationDot ok"></div>
-              <div>
-                <strong>Asset is valid</strong>
-                <span id="validationText">Ready for export.</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      </aside>
-    </main>
-
-    <footer class="statusbar">
-      <div id="statusText">Ready</div>
-      <div class="statusRight">
-        <span id="dirtyState">No project</span>
-        <span class="statusSep"></span>
-        <span>PTF Studio Beta 0.9.5.3 · PTF v1</span>
-      </div>
-    </footer>
-  </div>
-
-  <div id="aboutModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-    <div class="modalCard">
-      <div class="modalHeader">
-        <div>
-          <div id="aboutTitle" class="modalTitle">PTF Studio</div>
-          <div class="modalVersion">Beta 0.9.5.3 · Build 2026.07.17</div>
-        </div>
-        <button id="closeAboutBtn" class="modalClose" aria-label="Close">×</button>
-      </div>
-      <div class="modalBody">
-        <p class="modalLead">A portable PSP PTF theme maker, editor, live viewer, and exporter for the modding community.</p>
-        <div class="creditGrid">
-          <div><span>Created by</span><strong>Blue</strong></div>
-          <div><span>Development</span><strong>With the assistance of ChatGPT</strong></div>
-          <div><span>Testing</span><strong>Blue and community testers</strong></div>
-          <div><span>Runtime</span><strong>Dependency-free browser build</strong></div>
-        </div>
-        <div class="modalSection">
-          <h3>Credits</h3>
-          <p>Created by Blue with the use and assistance of ChatGPT.</p>
-        </div>
-        <div class="modalSection">
-          <h3>Third-party libraries</h3>
-          <p>No external runtime libraries are bundled. PTF Studio uses standard browser APIs, including its built-in legacy LZR/RLZ decoder.</p>
-        </div>
-        <div class="modalNote">GitHub and forum links can be added to the release description once the public project pages are available.</div>
-      </div>
-      <div class="modalFooter">
-        <button id="modalCloseButton" class="button primary">Close</button>
-      </div>
-    </div>
-  </div>
-
-
-
-  <div id="focusModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="focusTitle">
-    <div class="modalCard toolModal">
-      <div class="modalHeader">
-        <div>
-          <div id="focusTitle" class="modalTitle">Focus Generator</div>
-          <div class="modalVersion">Create PSP focus glows from normal icons</div>
-        </div>
-        <button class="modalClose" data-close-modal="focusModal" aria-label="Close">×</button>
-      </div>
-      <div class="modalBody toolGrid">
-        <div class="toolPreviewCard">
-          <canvas id="focusPreviewCanvas" width="256" height="256"></canvas>
-          <div id="focusPreviewLabel" class="toolPreviewLabel">Select a body icon first</div>
-        </div>
-        <div class="toolControls">
-          <div class="fieldGroup compact">
-            <label>Target</label>
-            <select id="focusTarget">
-              <option value="both">All first- and second-level icon pairs</option>
-              <option value="first">All first-level icon pairs</option>
-              <option value="second">All second-level icon pairs</option>
-              <option value="category">Current XMB category — first level</option>
-              <option value="selected">Selected icon pair</option>
-            </select>
-          </div>
-          <div class="fieldGroup compact">
-            <label>Generation mode</label>
-            <select id="focusGenerationMode">
-              <option value="missing">Generate missing focus assets only</option>
-              <option value="replace">Replace every matching focus asset</option>
-            </select>
-          </div>
-          <div class="inlineFields">
-            <div class="fieldGroup compact">
-              <label>Glow color</label>
-              <input id="focusColor" type="color" value="#ffffff" />
-            </div>
-            <div class="fieldGroup compact">
-              <label>Opacity</label>
-              <input id="focusOpacity" type="range" min="10" max="100" value="90" />
-              <span id="focusOpacityValue" class="rangeValue">90%</span>
-            </div>
-          </div>
-          <div class="fieldGroup compact">
-            <label>Blur radius</label>
-            <input id="focusBlur" type="range" min="0" max="14" value="6" />
-            <span id="focusBlurValue" class="rangeValue">6 px</span>
-          </div>
-          <div class="fieldGroup compact">
-            <label>Icon padding</label>
-            <input id="focusPadding" type="range" min="0" max="14" value="7" />
-            <span id="focusPaddingValue" class="rangeValue">7 px</span>
-          </div>
-          <label class="checkRow">
-            <input id="focusIncludeCore" type="checkbox" />
-            <span>Include a faint sharp core inside the glow</span>
-          </label>
-          <div id="focusBatchSummary" class="focusBatchSummary">Select a target to preview the matching icon pairs.</div>
-          <button id="applyFocusGeneratorBtn" class="button primary full">Generate matching focus assets</button>
-          <button id="undoFocusGeneratorBtn" class="button full" disabled>Undo last bulk generation</button>
-          <div class="modalNote">Each normal icon is paired with its own focus slot. Missing-only mode leaves existing focus artwork untouched; replace mode regenerates every matching focus.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="analysisModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="analysisTitle">
-    <div class="modalCard wideModal">
-      <div class="modalHeader">
-        <div>
-          <div id="analysisTitle" class="modalTitle">Theme Analysis</div>
-          <div id="analysisSubtitle" class="modalVersion">Palette, dimensions, compression and estimated export size</div>
-        </div>
-        <button class="modalClose" data-close-modal="analysisModal" aria-label="Close">×</button>
-      </div>
-      <div class="modalBody">
-        <div id="analysisSummary" class="summaryCards"></div>
-        <div class="analysisToolbar">
-          <div id="analysisStatus" class="analysisStatus">Run analysis to inspect every asset.</div>
-          <button id="exportAnalysisCsvBtn" class="button" disabled>Export CSV</button>
-        </div>
-        <div class="analysisTableWrap">
-          <table class="analysisTable">
-            <thead><tr><th>Asset</th><th>Size</th><th>Colors</th><th>Raw</th><th>Packed</th><th>Compression</th><th>Status</th></tr></thead>
-            <tbody id="analysisTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modalFooter">
-        <button id="runAnalysisBtn" class="button primary">Run analysis</button>
-        <button class="button" data-close-modal="analysisModal">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="variantsModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="variantsTitle">
-    <div class="modalCard wideModal">
-      <div class="modalHeader">
-        <div>
-          <div id="variantsTitle" class="modalTitle">Theme Variants</div>
-          <div class="modalVersion">Export several colour editions from one project</div>
-        </div>
-        <button class="modalClose" data-close-modal="variantsModal" aria-label="Close">×</button>
-      </div>
-      <div class="modalBody">
-        <div class="variantBuilder">
-          <div class="fieldGroup compact">
-            <label>Variant name</label>
-            <input id="variantName" type="text" placeholder="Red Edition" />
-          </div>
-          <div class="fieldGroup compact">
-            <label>Theme color</label>
-            <select id="variantThemeColor"></select>
-          </div>
-          <div class="fieldGroup compact">
-            <label>Optional icon tint</label>
-            <input id="variantTint" type="color" value="#ffffff" />
-          </div>
-          <div class="fieldGroup compact">
-            <label>Tint strength</label>
-            <input id="variantTintStrength" type="range" min="0" max="100" value="0" />
-            <span id="variantTintValue" class="rangeValue">0%</span>
-          </div>
-          <button id="addVariantBtn" class="button primary">Add variant</button>
-        </div>
-        <div id="variantList" class="variantList emptyVariant">No variants added.</div>
-        <div class="modalNote">A 0% tint changes only metadata and preserves imported resources. Higher tint strengths re-encode icon assets while keeping their alpha transparency.</div>
-      </div>
-      <div class="modalFooter">
-        <button id="exportVariantsBtn" class="button success" disabled>Export variants ZIP</button>
-        <button class="button" data-close-modal="variantsModal">Close</button>
-      </div>
-    </div>
-  </div>
-
-
-  <div id="importAssetModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="importAssetModalTitle">
-    <div class="modalCard compactModal">
-      <div class="modalHeader">
-        <div>
-          <div id="importAssetModalTitle" class="modalTitle">Import asset</div>
-          <div id="importAssetModalSub" class="modalVersion">Choose how the image should be handled.</div>
-        </div>
-        <button class="modalClose" data-close-modal="importAssetModal" aria-label="Close">×</button>
-      </div>
-      <div class="modalBody">
-        <div class="importChoiceGrid">
-          <button id="importExactModalBtn" class="importChoice primaryChoice">
-            <strong>Import</strong>
-            <span>Use an image already matching the exact required dimensions. No resize is performed.</span>
-          </button>
-          <button id="importDownscaleModalBtn" class="importChoice">
-            <strong>Downscale & Import</strong>
-            <span>Resize with bicubic smooth filtering while preserving the complete canvas and transparent borders.</span>
-          </button>
-        </div>
-        <div class="modalNote">Images smaller than the required canvas are not enlarged automatically.</div>
-      </div>
-    </div>
-  </div>
-
-
-  <div id="assetMakerModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="assetMakerTitle">
-    <div class="modalCard makerModalCard">
-      <div class="modalHeader makerHeader">
-        <div>
-          <div id="assetMakerTitle" class="modalTitle">Asset Maker</div>
-          <div class="modalVersion">Create PSP-ready icons, focus graphics, wallpapers, and preview assets</div>
-        </div>
-        <div class="makerHeaderActions">
-          <button id="makerUndo" class="button" disabled>Undo</button>
-          <button id="makerRedo" class="button" disabled>Redo</button>
-          <button class="modalClose" data-close-modal="assetMakerModal" aria-label="Close">×</button>
-        </div>
-      </div>
-      <div class="makerWorkspace">
-        <aside class="makerSidebar makerToolsPanel">
-          <div class="sectionTitle">Document</div>
-          <div class="fieldGroup compact">
-            <label>PSP asset preset</label>
-            <select id="makerPreset"></select>
-          </div>
-          <button id="makerNewBtn" class="button full">New blank canvas</button>
-          <button id="makerImportBtn" class="button primary full">Import artwork layer</button>
-          <input id="makerImportInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
-
-          <div class="sectionDivider"></div>
-          <div class="sectionTitle small">Shapes</div>
-          <div class="makerShapeGrid">
-            <button id="makerAddRect" class="button">Rectangle</button>
-            <button id="makerAddRoundRect" class="button">Rounded</button>
-            <button id="makerAddCircle" class="button">Circle</button>
-            <button id="makerAddLine" class="button">Line</button>
-          </div>
-
-          <div class="sectionDivider"></div>
-          <div class="sectionTitle small">View</div>
-          <label class="checkRow"><input id="makerGrid" type="checkbox" checked /><span>Grid and alignment guides</span></label>
-          <label class="checkRow"><input id="makerXmbGuides" type="checkbox" /><span>Safe-area and centre guides</span></label>
-          <label class="checkRow"><input id="makerXmbOverlay" type="checkbox" /><span>XMB readability overlay for wallpapers</span></label>
-          <label class="checkRow"><input id="makerPalettePreview" type="checkbox" checked /><span>PSP 256-colour palette preview</span></label>
-          <div class="makerPspNote">Effects are baked into the exported pixels. The editor intentionally limits glow, outline, and shadow settings to conservative PSP-friendly ranges.</div>
-
-          <div class="sectionDivider"></div>
-          <div class="sectionTitle small">Layers</div>
-          <div class="makerLayerActions">
-            <button id="makerLayerUp" class="miniButton" disabled>Up</button>
-            <button id="makerLayerDown" class="miniButton" disabled>Down</button>
-            <button id="makerDuplicate" class="miniButton" disabled>Duplicate</button>
-            <button id="makerDelete" class="miniButton" disabled>Delete</button>
-          </div>
-          <div id="makerEmptyLayers" class="makerEmptyLayers">Import artwork or add a shape.</div>
-          <div id="makerLayers" class="makerLayers"></div>
-        </aside>
-
-        <main class="makerCanvasPanel">
-          <div class="makerCanvasToolbar">
-            <span id="makerDocInfo">First-level icon · 48 × 48px</span>
-            <span id="makerPaletteInfo">0 / 256 colors</span>
-          </div>
-          <div class="makerCanvasWrap">
-            <canvas id="makerCanvas" width="1000" height="650"></canvas>
-          </div>
-          <div class="makerCanvasHint">Drag layers directly on the canvas. Drop an image file here to add it as a new layer.</div>
-        </main>
-
-        <aside class="makerSidebar makerInspectorPanel">
-          <div id="makerNoSelection" class="emptyInspector">Select a layer to edit its properties.</div>
-          <div id="makerPropertyPanel" class="makerProperties hidden">
-            <div class="sectionTitle">Selected layer</div>
-            <div class="fieldGroup compact"><label>Name</label><input id="makerLayerName" type="text" /></div>
-            <label class="checkRow"><input id="makerLayerVisible" type="checkbox" checked /><span>Layer visible</span></label>
-            <div class="makerFourGrid">
-              <div class="fieldGroup compact"><label>X</label><input id="makerX" type="number" step="0.25" /></div>
-              <div class="fieldGroup compact"><label>Y</label><input id="makerY" type="number" step="0.25" /></div>
-              <div class="fieldGroup compact"><label>Width</label><input id="makerWidth" type="number" min="0.25" step="0.25" /></div>
-              <div class="fieldGroup compact"><label>Height</label><input id="makerHeight" type="number" min="0.25" step="0.25" /></div>
-            </div>
-            <label class="checkRow"><input id="makerLockAspect" type="checkbox" checked /><span>Lock aspect ratio while resizing</span></label>
-            <div class="makerTwoGrid">
-              <div class="fieldGroup compact"><label>Rotation</label><input id="makerRotation" type="number" min="-360" max="360" step="1" /></div>
-              <div class="fieldGroup compact"><label>Opacity</label><input id="makerOpacity" type="range" min="0" max="100" value="100" /><span id="makerOpacityValue" class="rangeValue">100%</span></div>
-            </div>
-
-            <div class="sectionDivider"></div>
-            <div class="sectionTitle small">Shape appearance</div>
-            <div class="makerTwoGrid makerShapeOnly">
-              <div class="fieldGroup compact"><label>Fill</label><input id="makerFill" type="color" value="#ffffff" /></div>
-              <div class="fieldGroup compact"><label>Second fill</label><input id="makerFill2" type="color" value="#64b8ff" /></div>
-            </div>
-            <label class="checkRow makerShapeOnly"><input id="makerGradient" type="checkbox" /><span>Use simple two-colour gradient</span></label>
-            <div class="makerTwoGrid makerShapeOnly">
-              <div class="fieldGroup compact"><label>Stroke</label><input id="makerStroke" type="color" value="#000000" /></div>
-              <div class="fieldGroup compact"><label>Stroke width</label><input id="makerStrokeWidth" type="number" min="0" max="4" step="1" value="0" /></div>
-            </div>
-
-            <div class="sectionDivider"></div>
-            <div class="sectionTitle small">Colour adjustments</div>
-            <div class="makerThreeGrid">
-              <div class="fieldGroup compact"><label>Brightness %</label><input id="makerBrightness" type="number" min="25" max="200" value="100" /></div>
-              <div class="fieldGroup compact"><label>Contrast %</label><input id="makerContrast" type="number" min="25" max="200" value="100" /></div>
-              <div class="fieldGroup compact"><label>Saturation %</label><input id="makerSaturation" type="number" min="0" max="200" value="100" /></div>
-            </div>
-            <div class="makerTwoGrid">
-              <div class="fieldGroup compact"><label>Tint</label><input id="makerTint" type="color" value="#ffffff" /></div>
-              <div class="fieldGroup compact"><label>Tint strength %</label><input id="makerTintStrength" type="number" min="0" max="100" value="0" /></div>
-            </div>
-
-            <div class="sectionDivider"></div>
-            <div class="sectionTitle small">PSP-safe baked effects</div>
-            <div class="makerTwoGrid">
-              <div class="fieldGroup compact"><label>Outline width (0–3)</label><input id="makerOutlineWidth" type="number" min="0" max="3" value="0" /></div>
-              <div class="fieldGroup compact"><label>Outline colour</label><input id="makerOutlineColor" type="color" value="#ffffff" /></div>
-            </div>
-            <label class="checkRow"><input id="makerShadow" type="checkbox" /><span>Solid shadow</span></label>
-            <div class="makerThreeGrid">
-              <div class="fieldGroup compact"><label>Shadow colour</label><input id="makerShadowColor" type="color" value="#000000" /></div>
-              <div class="fieldGroup compact"><label>Shadow X</label><input id="makerShadowX" type="number" min="-4" max="4" value="1" /></div>
-              <div class="fieldGroup compact"><label>Shadow Y</label><input id="makerShadowY" type="number" min="-4" max="4" value="1" /></div>
-            </div>
-            <div class="makerTwoGrid">
-              <div class="fieldGroup compact"><label>Low-radius glow (0–3)</label><input id="makerGlowRadius" type="number" min="0" max="3" value="0" /></div>
-              <div class="fieldGroup compact"><label>Glow colour</label><input id="makerGlowColor" type="color" value="#ffffff" /></div>
-            </div>
-          </div>
-
-          <div class="makerApplyPanel">
-            <div class="sectionTitle small">Use in theme</div>
-            <div class="fieldGroup compact"><label>Compatible asset slot</label><select id="makerTarget"></select></div>
-            <button id="makerApplyBtn" class="button primary full">Apply to selected slot</button>
-            <button id="makerApplyPreviewBtn" class="button success full">Apply & preview in XMB</button>
-            <button id="makerUseCurrentBtn" class="button full">Use as current asset</button>
-            <button id="makerFocusBtn" class="button full">Create matching focus</button>
-            <button id="makerExportPngBtn" class="button full">Export maker canvas as PNG</button>
-            <div id="makerStatus" class="makerStatus">Sample asset library is intentionally not bundled in this build.</div>
-          </div>
-        </aside>
-      </div>
-    </div>
-  </div>
-
-  <div id="toastHost"></div>
-  <script src="sample.js?v=0.9.5.3-beta"></script>
-  <script src="rlz.js?v=0.9.5.3-beta"></script>
-  <script src="app.js?v=0.9.5.3-beta"></script>
-  <script src="asset_maker.js?v=0.9.5.3-beta"></script>
+<label class="checkRow">
+<input checked="" id="ditherToggle" type="checkbox"/>
+<span>Use dithering when reducing to 256 colors</span>
+</label>
+<label class="checkRow">
+<input checked="" id="pulseToggle" type="checkbox"/>
+<span>Animate focus pulse in live view</span>
+</label>
+<div class="validationBox" id="validationBox">
+<div class="validationDot ok"></div>
+<div>
+<strong>Asset is valid</strong>
+<span id="validationText">Ready for export.</span>
+</div>
+</div>
+</div>
+</section>
+</aside>
+</main>
+<footer class="statusbar">
+<div id="statusText">Ready</div>
+<div class="statusRight">
+<span id="dirtyState">No project</span>
+<span class="statusSep"></span>
+<span>PTF Studio Beta 0.9.5.4 · PTF v1</span>
+</div>
+</footer>
+</div>
+<div aria-labelledby="aboutTitle" aria-modal="true" class="modalBackdrop hidden" id="aboutModal" role="dialog">
+<div class="modalCard">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="aboutTitle">PTF Studio</div>
+<div class="modalVersion">Beta 0.9.5.4 · Build 2026.07.17</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-icon="close" id="closeAboutBtn"></button>
+</div>
+<div class="modalBody">
+<p class="modalLead">A portable PSP PTF theme maker, editor, live viewer, and exporter for the modding community.</p>
+<div class="creditGrid">
+<div><span>Created by</span><strong>Blue</strong></div>
+<div><span>Development</span><strong>With the assistance of ChatGPT</strong></div>
+<div><span>Testing</span><strong>Blue and community testers</strong></div>
+<div><span>Runtime</span><strong>Dependency-free browser build</strong></div>
+</div>
+<div class="modalSection">
+<h3>Credits</h3>
+<p>Created by Blue with the use and assistance of ChatGPT.</p>
+</div>
+<div class="modalSection">
+<h3>Third-party libraries</h3>
+<p>No external runtime libraries are bundled. PTF Studio uses standard browser APIs, including its built-in legacy LZR/RLZ decoder.</p>
+</div>
+<div class="modalNote">GitHub and forum links can be added to the release description once the public project pages are available.</div>
+</div>
+<div class="modalFooter">
+<button class="button action-secondary" data-icon="close" id="modalCloseButton">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="focusTitle" aria-modal="true" class="modalBackdrop hidden" id="focusModal" role="dialog">
+<div class="modalCard toolModal">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="focusTitle">Focus Generator</div>
+<div class="modalVersion" id="focusSubtitle">Create PSP focus glows from normal icons</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="focusModal" data-icon="close"></button>
+</div>
+<div class="modalBody toolGrid">
+<div class="toolPreviewCard">
+<canvas height="256" id="focusPreviewCanvas" width="256"></canvas>
+<div class="toolPreviewLabel" id="focusPreviewLabel">Select a body icon first</div>
+</div>
+<div class="toolControls">
+<div class="fieldGroup compact">
+<label>Target</label>
+<select id="focusTarget">
+<option value="both">All first- and second-level icon pairs</option>
+<option value="first">All first-level icon pairs</option>
+<option value="second">All second-level icon pairs</option>
+<option value="category">Current XMB category — first level</option>
+<option value="selected">Selected icon pair</option>
+</select>
+</div>
+<div class="fieldGroup compact">
+<label>Generation mode</label>
+<select id="focusGenerationMode">
+<option value="missing">Generate missing focus assets only</option>
+<option value="replace">Replace every matching focus asset</option>
+</select>
+</div>
+<div class="inlineFields">
+<div class="fieldGroup compact">
+<label>Glow color</label>
+<input id="focusColor" type="color" value="#ffffff"/>
+</div>
+<div class="fieldGroup compact">
+<label>Opacity</label>
+<input id="focusOpacity" max="100" min="10" type="range" value="90"/>
+<span class="rangeValue" id="focusOpacityValue">90%</span>
+</div>
+</div>
+<div class="fieldGroup compact">
+<label>Blur radius</label>
+<input id="focusBlur" max="14" min="0" type="range" value="6"/>
+<span class="rangeValue" id="focusBlurValue">6 px</span>
+</div>
+<div class="fieldGroup compact">
+<label>Icon padding</label>
+<input id="focusPadding" max="14" min="0" type="range" value="7"/>
+<span class="rangeValue" id="focusPaddingValue">7 px</span>
+</div>
+<label class="checkRow">
+<input id="focusIncludeCore" type="checkbox"/>
+<span>Include a faint sharp core inside the glow</span>
+</label>
+<div class="focusBatchSummary" id="focusBatchSummary">Select a target to preview the matching icon pairs.</div>
+<button class="button full action-generate" data-icon="sparkles" id="applyFocusGeneratorBtn">Generate matching focus assets</button>
+<button class="button full action-secondary" data-icon="undo" disabled="" id="undoFocusGeneratorBtn">Undo last bulk generation</button>
+<div class="modalNote">Each normal icon is paired with its own focus slot. Missing-only mode leaves existing focus artwork untouched; replace mode regenerates every matching focus.</div>
+</div>
+</div>
+</div>
+</div>
+<div aria-labelledby="analysisTitle" aria-modal="true" class="modalBackdrop hidden" id="analysisModal" role="dialog">
+<div class="modalCard wideModal">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="analysisTitle">Theme Analysis</div>
+<div class="modalVersion" id="analysisSubtitle">Palette, dimensions, compression and estimated export size</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="analysisModal" data-icon="close"></button>
+</div>
+<div class="modalBody">
+<div class="summaryCards" id="analysisSummary"></div>
+<div class="analysisToolbar">
+<div class="analysisStatus" id="analysisStatus">Run analysis to inspect every asset.</div>
+<button class="button action-generate" data-icon="download" disabled="" id="exportAnalysisCsvBtn">Export CSV</button>
+</div>
+<div class="analysisTableWrap">
+<table class="analysisTable">
+<thead><tr><th>Asset</th><th>Size</th><th>Colors</th><th>Raw</th><th>Packed</th><th>Compression</th><th>Status</th></tr></thead>
+<tbody id="analysisTableBody"></tbody>
+</table>
+</div>
+</div>
+<div class="modalFooter">
+<button class="button action-batch" data-icon="analyze" id="runAnalysisBtn">Run analysis</button>
+<button class="button action-secondary" data-close-modal="analysisModal" data-icon="close">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="variantsTitle" aria-modal="true" class="modalBackdrop hidden" id="variantsModal" role="dialog">
+<div class="modalCard wideModal">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="variantsTitle">Theme Variants</div>
+<div class="modalVersion">Export several colour editions from one project</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="variantsModal" data-icon="close"></button>
+</div>
+<div class="modalBody">
+<div class="variantBuilder">
+<div class="fieldGroup compact">
+<label>Variant name</label>
+<input id="variantName" placeholder="Red Edition" type="text"/>
+</div>
+<div class="fieldGroup compact">
+<label>Theme color</label>
+<select id="variantThemeColor"></select>
+</div>
+<div class="fieldGroup compact">
+<label>Optional icon tint</label>
+<input id="variantTint" type="color" value="#ffffff"/>
+</div>
+<div class="fieldGroup compact">
+<label>Tint strength</label>
+<input id="variantTintStrength" max="100" min="0" type="range" value="0"/>
+<span class="rangeValue" id="variantTintValue">0%</span>
+</div>
+<button class="button action-generate" data-icon="plus" id="addVariantBtn">Add variant</button>
+</div>
+<div class="variantList emptyVariant" id="variantList">No variants added.</div>
+<div class="modalNote">A 0% tint changes only metadata and preserves imported resources. Higher tint strengths re-encode icon assets while keeping their alpha transparency.</div>
+</div>
+<div class="modalFooter">
+<button class="button action-generate" data-icon="package" disabled="" id="exportVariantsBtn">Export variants ZIP</button>
+<button class="button action-secondary" data-close-modal="variantsModal" data-icon="close">Close</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="importAssetModalTitle" aria-modal="true" class="modalBackdrop hidden" id="importAssetModal" role="dialog">
+<div class="modalCard compactModal">
+<div class="modalHeader">
+<div>
+<div class="modalTitle" id="importAssetModalTitle">Import asset</div>
+<div class="modalVersion" id="importAssetModalSub">Choose how the image should be handled.</div>
+</div>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="importAssetModal" data-icon="close"></button>
+</div>
+<div class="modalBody">
+<div class="importChoiceGrid">
+<button class="importChoice action-open" data-icon="upload" id="importExactModalBtn">
+<strong>Import</strong>
+<span>Use an image already matching the exact required dimensions. No resize is performed.</span>
+</button>
+<button class="importChoice action-batch" data-icon="downscale" id="importDownscaleModalBtn">
+<strong>Downscale &amp; Import</strong>
+<span>Resize with bicubic smooth filtering while preserving the complete canvas and transparent borders.</span>
+</button>
+</div>
+<div class="modalNote">Images smaller than the required canvas are not enlarged automatically.</div>
+</div>
+</div>
+</div>
+<div aria-labelledby="assetMakerTitle" aria-modal="true" class="modalBackdrop hidden" id="assetMakerModal" role="dialog">
+<div class="modalCard makerModalCard">
+<div class="modalHeader makerHeader">
+<div>
+<div class="modalTitle" id="assetMakerTitle">Asset Maker</div>
+<div class="modalVersion">Create PSP-ready icons, focus graphics, wallpapers, and preview assets</div>
+</div>
+<div class="makerHeaderActions">
+<button class="button action-secondary" data-icon="undo" disabled="" id="makerUndo">Undo</button>
+<button class="button action-secondary" data-icon="redo" disabled="" id="makerRedo">Redo</button>
+<button aria-label="Close" class="modalClose action-secondary" data-close-modal="assetMakerModal" data-icon="close"></button>
+</div>
+</div>
+<div class="makerWorkspace">
+<aside class="makerSidebar makerToolsPanel">
+<div class="sectionTitle">Document</div>
+<div class="fieldGroup compact">
+<label>PSP asset preset</label>
+<select id="makerPreset"></select>
+</div>
+<button class="button full action-creative" data-icon="new" id="makerNewBtn">New blank canvas</button>
+<button class="button full action-open" data-icon="upload" id="makerImportBtn">Import artwork layer</button>
+<input accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden="" id="makerImportInput" type="file"/>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">Shapes</div>
+<div class="makerShapeGrid">
+<button class="button action-creative" data-icon="rectangle" id="makerAddRect">Rectangle</button>
+<button class="button action-creative" data-icon="rounded" id="makerAddRoundRect">Rounded</button>
+<button class="button action-creative" data-icon="circle" id="makerAddCircle">Circle</button>
+<button class="button action-creative" data-icon="line" id="makerAddLine">Line</button>
+</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">View</div>
+<label class="checkRow"><input checked="" id="makerGrid" type="checkbox"/><span>Grid and alignment guides</span></label>
+<label class="checkRow"><input id="makerXmbGuides" type="checkbox"/><span>Safe-area and centre guides</span></label>
+<label class="checkRow"><input id="makerXmbOverlay" type="checkbox"/><span>XMB readability overlay for wallpapers</span></label>
+<label class="checkRow"><input checked="" id="makerPalettePreview" type="checkbox"/><span>PSP 256-colour palette preview</span></label>
+<div class="makerPspNote">Effects are baked into the exported pixels. The editor intentionally limits glow, outline, and shadow settings to conservative PSP-friendly ranges.</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">Layers</div>
+<div class="makerLayerActions">
+<button class="miniButton action-secondary" data-icon="up" disabled="" id="makerLayerUp">Up</button>
+<button class="miniButton action-secondary" data-icon="down" disabled="" id="makerLayerDown">Down</button>
+<button class="miniButton action-creative" data-icon="copy" disabled="" id="makerDuplicate">Duplicate</button>
+<button class="miniButton action-danger" data-icon="trash" disabled="" id="makerDelete">Delete</button>
+</div>
+<div class="makerEmptyLayers" id="makerEmptyLayers">Import artwork or add a shape.</div>
+<div class="makerLayers" id="makerLayers"></div>
+</aside>
+<main class="makerCanvasPanel">
+<div class="makerCanvasToolbar">
+<span id="makerDocInfo">First-level icon · 48 × 48px</span>
+<span id="makerPaletteInfo">0 / 256 colors</span>
+</div>
+<div class="makerCanvasWrap">
+<canvas height="650" id="makerCanvas" width="1000"></canvas>
+</div>
+<div class="makerCanvasHint">Drag layers directly on the canvas. Drop an image file here to add it as a new layer.</div>
+</main>
+<aside class="makerSidebar makerInspectorPanel">
+<div class="emptyInspector" id="makerNoSelection">Select a layer to edit its properties.</div>
+<div class="makerProperties hidden" id="makerPropertyPanel">
+<div class="sectionTitle">Selected layer</div>
+<div class="fieldGroup compact"><label>Name</label><input id="makerLayerName" type="text"/></div>
+<label class="checkRow"><input checked="" id="makerLayerVisible" type="checkbox"/><span>Layer visible</span></label>
+<div class="makerFourGrid">
+<div class="fieldGroup compact"><label>X</label><input id="makerX" step="0.25" type="number"/></div>
+<div class="fieldGroup compact"><label>Y</label><input id="makerY" step="0.25" type="number"/></div>
+<div class="fieldGroup compact"><label>Width</label><input id="makerWidth" min="0.25" step="0.25" type="number"/></div>
+<div class="fieldGroup compact"><label>Height</label><input id="makerHeight" min="0.25" step="0.25" type="number"/></div>
+</div>
+<label class="checkRow"><input checked="" id="makerLockAspect" type="checkbox"/><span>Lock aspect ratio while resizing</span></label>
+<div class="makerTwoGrid">
+<div class="fieldGroup compact"><label>Rotation</label><input id="makerRotation" max="360" min="-360" step="1" type="number"/></div>
+<div class="fieldGroup compact"><label>Opacity</label><input id="makerOpacity" max="100" min="0" type="range" value="100"/><span class="rangeValue" id="makerOpacityValue">100%</span></div>
+</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">Shape appearance</div>
+<div class="makerTwoGrid makerShapeOnly">
+<div class="fieldGroup compact"><label>Fill</label><input id="makerFill" type="color" value="#ffffff"/></div>
+<div class="fieldGroup compact"><label>Second fill</label><input id="makerFill2" type="color" value="#64b8ff"/></div>
+</div>
+<label class="checkRow makerShapeOnly"><input id="makerGradient" type="checkbox"/><span>Use simple two-colour gradient</span></label>
+<div class="makerTwoGrid makerShapeOnly">
+<div class="fieldGroup compact"><label>Stroke</label><input id="makerStroke" type="color" value="#000000"/></div>
+<div class="fieldGroup compact"><label>Stroke width</label><input id="makerStrokeWidth" max="4" min="0" step="1" type="number" value="0"/></div>
+</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">Colour adjustments</div>
+<div class="makerThreeGrid">
+<div class="fieldGroup compact"><label>Brightness %</label><input id="makerBrightness" max="200" min="25" type="number" value="100"/></div>
+<div class="fieldGroup compact"><label>Contrast %</label><input id="makerContrast" max="200" min="25" type="number" value="100"/></div>
+<div class="fieldGroup compact"><label>Saturation %</label><input id="makerSaturation" max="200" min="0" type="number" value="100"/></div>
+</div>
+<div class="makerTwoGrid">
+<div class="fieldGroup compact"><label>Tint</label><input id="makerTint" type="color" value="#ffffff"/></div>
+<div class="fieldGroup compact"><label>Tint strength %</label><input id="makerTintStrength" max="100" min="0" type="number" value="0"/></div>
+</div>
+<div class="sectionDivider"></div>
+<div class="sectionTitle small">PSP-safe baked effects</div>
+<div class="makerTwoGrid">
+<div class="fieldGroup compact"><label>Outline width (0–3)</label><input id="makerOutlineWidth" max="3" min="0" type="number" value="0"/></div>
+<div class="fieldGroup compact"><label>Outline colour</label><input id="makerOutlineColor" type="color" value="#ffffff"/></div>
+</div>
+<label class="checkRow"><input id="makerShadow" type="checkbox"/><span>Solid shadow</span></label>
+<div class="makerThreeGrid">
+<div class="fieldGroup compact"><label>Shadow colour</label><input id="makerShadowColor" type="color" value="#000000"/></div>
+<div class="fieldGroup compact"><label>Shadow X</label><input id="makerShadowX" max="4" min="-4" type="number" value="1"/></div>
+<div class="fieldGroup compact"><label>Shadow Y</label><input id="makerShadowY" max="4" min="-4" type="number" value="1"/></div>
+</div>
+<div class="makerTwoGrid">
+<div class="fieldGroup compact"><label>Low-radius glow (0–3)</label><input id="makerGlowRadius" max="3" min="0" type="number" value="0"/></div>
+<div class="fieldGroup compact"><label>Glow colour</label><input id="makerGlowColor" type="color" value="#ffffff"/></div>
+</div>
+</div>
+<div class="makerApplyPanel">
+<div class="sectionTitle small">Use in theme</div>
+<div class="fieldGroup compact"><label>Compatible asset slot</label><select id="makerTarget"></select></div>
+<button class="button full action-generate" data-icon="check" id="makerApplyBtn">Apply to selected slot</button>
+<button class="button full action-generate" data-icon="preview" id="makerApplyPreviewBtn">Apply &amp; preview in XMB</button>
+<button class="button full action-open" data-icon="target" id="makerUseCurrentBtn">Use as current asset</button>
+<button class="button full action-generate" data-icon="sparkles" id="makerFocusBtn">Create matching focus</button>
+<button class="button full action-generate" data-icon="download" id="makerExportPngBtn">Export maker canvas as PNG</button>
+<div class="makerStatus" id="makerStatus">Sample asset library is intentionally not bundled in this build.</div>
+</div>
+</aside>
+</div>
+</div>
+</div>
+<div id="toastHost"></div>
+<script src="sample.js?v=0.9.5.4-beta"></script>
+<script src="rlz.js?v=0.9.5.4-beta"></script>
+<script src="app.js?v=0.9.5.4-beta"></script>
+<script src="asset_maker.js?v=0.9.5.4-beta"></script>
 </body>
 </html>
