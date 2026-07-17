@@ -1,5 +1,14 @@
 # Changelog
 
+## Beta 0.9.5.3 — 2026-07-17
+
+- Added Bulk Generate Matching Focuses for paired first- and second-level body icons.
+- Added scopes for both levels, one level, the current XMB category, or the selected icon pair.
+- Added missing-only and replace-all generation modes.
+- Added a multi-icon contact-sheet preview and generation summary.
+- Added one-step undo that restores overwritten focus artwork and removes newly created focus slots.
+- Preserved transparent icon alignment and automatic 64 × 64 / 48 × 48 focus sizing.
+
 ## Beta 0.9.5.2 — 2026-07-17
 
 - Completed the PSP Go profile with System Storage body/focus slots.

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PTF Studio Beta 0.9.5.2</title>
-  <link rel="stylesheet" href="styles.css?v=0.9.5.2-beta" />
+  <title>PTF Studio Beta 0.9.5.3</title>
+  <link rel="stylesheet" href="styles.css?v=0.9.5.3-beta" />
 </head>
 <body>
   <div id="appShell">
@@ -13,7 +13,7 @@
         <div class="brandMark">P</div>
         <div>
           <div class="brandTitle">PTF Studio</div>
-          <div class="brandSub">PSP theme editor · Beta 0.9.5.2</div>
+          <div class="brandSub">PSP theme editor · Beta 0.9.5.3</div>
         </div>
       </div>
       <div class="topActions">
@@ -80,7 +80,7 @@
             <input id="bulkFolderInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
             <button id="bulkFolderDownscaleBtn" class="button full" disabled>Downscale & import icon folder</button>
             <input id="bulkFolderDownscaleInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
-            <button id="focusGeneratorBtn" class="button primary full" disabled>Focus generator</button>
+            <button id="focusGeneratorBtn" class="button primary full" disabled>Bulk generate matching focuses</button>
             <button id="bulkFocusBtn" class="button full" disabled>Bulk import first-level focus</button>
             <input id="bulkFocusInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/tiff" hidden />
             <button id="bulkFocusDownscaleBtn" class="button full" disabled>Bulk downscale first-level focus</button>
@@ -206,7 +206,7 @@
       <div class="statusRight">
         <span id="dirtyState">No project</span>
         <span class="statusSep"></span>
-        <span>PTF Studio Beta 0.9.5.2 · PTF v1</span>
+        <span>PTF Studio Beta 0.9.5.3 · PTF v1</span>
       </div>
     </footer>
   </div>
@@ -216,7 +216,7 @@
       <div class="modalHeader">
         <div>
           <div id="aboutTitle" class="modalTitle">PTF Studio</div>
-          <div class="modalVersion">Beta 0.9.5.2 · Build 2026.07.17</div>
+          <div class="modalVersion">Beta 0.9.5.3 · Build 2026.07.17</div>
         </div>
         <button id="closeAboutBtn" class="modalClose" aria-label="Close">×</button>
       </div>
@@ -264,9 +264,18 @@
           <div class="fieldGroup compact">
             <label>Target</label>
             <select id="focusTarget">
+              <option value="both">All first- and second-level icon pairs</option>
+              <option value="first">All first-level icon pairs</option>
+              <option value="second">All second-level icon pairs</option>
+              <option value="category">Current XMB category — first level</option>
               <option value="selected">Selected icon pair</option>
-              <option value="first">All first-level focus slots</option>
-              <option value="second">All second-level focus slots</option>
+            </select>
+          </div>
+          <div class="fieldGroup compact">
+            <label>Generation mode</label>
+            <select id="focusGenerationMode">
+              <option value="missing">Generate missing focus assets only</option>
+              <option value="replace">Replace every matching focus asset</option>
             </select>
           </div>
           <div class="inlineFields">
@@ -294,8 +303,10 @@
             <input id="focusIncludeCore" type="checkbox" />
             <span>Include a faint sharp core inside the glow</span>
           </label>
-          <button id="applyFocusGeneratorBtn" class="button primary full">Generate focus assets</button>
-          <div class="modalNote">Generated focus graphics use only the body icon’s alpha shape. The normal icon remains a separate PTF asset.</div>
+          <div id="focusBatchSummary" class="focusBatchSummary">Select a target to preview the matching icon pairs.</div>
+          <button id="applyFocusGeneratorBtn" class="button primary full">Generate matching focus assets</button>
+          <button id="undoFocusGeneratorBtn" class="button full" disabled>Undo last bulk generation</button>
+          <div class="modalNote">Each normal icon is paired with its own focus slot. Missing-only mode leaves existing focus artwork untouched; replace mode regenerates every matching focus.</div>
         </div>
       </div>
     </div>
@@ -537,9 +548,9 @@
   </div>
 
   <div id="toastHost"></div>
-  <script src="sample.js?v=0.9.5.2-beta"></script>
-  <script src="rlz.js?v=0.9.5.2-beta"></script>
-  <script src="app.js?v=0.9.5.2-beta"></script>
-  <script src="asset_maker.js?v=0.9.5.2-beta"></script>
+  <script src="sample.js?v=0.9.5.3-beta"></script>
+  <script src="rlz.js?v=0.9.5.3-beta"></script>
+  <script src="app.js?v=0.9.5.3-beta"></script>
+  <script src="asset_maker.js?v=0.9.5.3-beta"></script>
 </body>
 </html>

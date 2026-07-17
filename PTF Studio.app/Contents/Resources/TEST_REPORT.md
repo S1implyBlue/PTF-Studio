@@ -1,14 +1,15 @@
-# Test Report — PTF Studio Beta 0.9.5.2
+# Test Report — PTF Studio Beta 0.9.5.3
 
 Passed static and package regression checks:
 
 - JavaScript syntax checks for app, Asset Maker, RLZ decoder, and embedded sample.
-- PSP Go label definitions for System Storage, Saved Data Utility — System Storage, and Resume Game.
-- PSP Go and Universal model-slot requirements include body/focus pairs 60–65.
-- PSP Go-only compatibility filtering and badges.
-- PSP Go profile keeps UMD and UMD Update excluded.
-- Profile-specific item ordering is active for Photo, Music, Video, and Game.
-- Existing metadata, colour, RLZ/LZR, image resizing, Asset Maker, and sample-theme checks remain intact.
+- Bulk focus generator UI controls and matching body-to-focus pairing.
+- First-level focus output uses 64 × 64; second-level focus output uses 48 × 48.
+- Both-level, first-level, second-level, current-category, and selected-pair scopes.
+- Missing-only and replace-all generation modes.
+- Contact-sheet preview, count summary, and empty-source handling.
+- Undo restores prior focus images and removes newly created synthetic focus slots.
+- Existing PSP Go profile, metadata, colour, RLZ/LZR, bicubic resizing, Asset Maker, and sample-theme checks remain intact.
 - Top-level browser files and macOS application resources are synchronized.
 
-Hardware validation on a PSP Go is still recommended for exported themes containing newly created extended slots.
+Real-hardware validation is still recommended for exported themes.

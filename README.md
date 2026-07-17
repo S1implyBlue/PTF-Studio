@@ -1,4 +1,4 @@
-# PTF Studio Beta 0.9.5.2
+# PTF Studio Beta 0.9.5.3
 
 PTF Studio is a portable PSP PTF theme maker, editor, live XMB viewer, and exporter for macOS and Windows. It runs locally in a modern browser and is intended for the PSP modding community.
 
@@ -23,7 +23,20 @@ You may also open `index.html` directly in a current Safari, Chrome, Edge, or Fi
 - Edit theme metadata and theme-colour selection.
 - Export rebuilt PSP-compatible `.ptf` files, individual PNG assets, theme variants, analysis reports, and release ZIP packages.
 - Use PSP model profiles for PSP-1000, PSP-2000, PSP-3000, PSP Go, PSP Street, or a universal asset view.
-- Generate focus glows and apply one focus image to every first-level focus slot.
+- Generate matching focus artwork individually or in bulk from each normal icon, while retaining the older apply-one-image bulk tool.
+
+## New in Beta 0.9.5.3
+
+### Bulk Generate Matching Focuses
+
+- Added a dedicated **Bulk generate matching focuses** tool.
+- Automatically pairs every normal first-level or second-level icon with its corresponding focus slot.
+- Supports all first-level icons, all second-level icons, both levels together, the current XMB category, or one selected icon pair.
+- **Generate missing only** preserves focus artwork that already exists.
+- **Replace every matching focus** regenerates the complete selected set.
+- Displays a contact-sheet preview and a count of generated, preserved, and skipped assets before applying.
+- Preserves transparent alignment and uses the correct 64 × 64 or 48 × 48 focus canvas automatically.
+- Added one-click undo for the most recent bulk generation, including removal of newly created synthetic focus slots.
 
 ## New in Beta 0.9.5.2
 

@@ -1,4 +1,4 @@
-/* PTF Studio Beta 0.9.5.2 — dependency-free PSP PTF viewer/editor */
+/* PTF Studio Beta 0.9.5.3 — dependency-free PSP PTF viewer/editor */
 'use strict';
 
 const $ = (s) => document.querySelector(s);
@@ -28,7 +28,8 @@ const els = {
   focusModal: $('#focusModal'), focusPreviewCanvas: $('#focusPreviewCanvas'), focusPreviewLabel: $('#focusPreviewLabel'),
   focusTarget: $('#focusTarget'), focusColor: $('#focusColor'), focusOpacity: $('#focusOpacity'), focusOpacityValue: $('#focusOpacityValue'),
   focusBlur: $('#focusBlur'), focusBlurValue: $('#focusBlurValue'), focusPadding: $('#focusPadding'),
-  focusPaddingValue: $('#focusPaddingValue'), focusIncludeCore: $('#focusIncludeCore'), applyFocusGeneratorBtn: $('#applyFocusGeneratorBtn'),
+  focusPaddingValue: $('#focusPaddingValue'), focusIncludeCore: $('#focusIncludeCore'), focusGenerationMode: $('#focusGenerationMode'),
+  focusBatchSummary: $('#focusBatchSummary'), applyFocusGeneratorBtn: $('#applyFocusGeneratorBtn'), undoFocusGeneratorBtn: $('#undoFocusGeneratorBtn'),
   analysisModal: $('#analysisModal'), analysisSummary: $('#analysisSummary'), analysisStatus: $('#analysisStatus'),
   analysisTableBody: $('#analysisTableBody'), runAnalysisBtn: $('#runAnalysisBtn'), exportAnalysisCsvBtn: $('#exportAnalysisCsvBtn'),
   variantsModal: $('#variantsModal'), variantName: $('#variantName'), variantThemeColor: $('#variantThemeColor'),
@@ -40,7 +41,7 @@ const els = {
 const ctx = els.xmbCanvas.getContext('2d');
 const previewCtx = els.assetPreview.getContext('2d');
 
-const APP_VERSION = 'Beta 0.9.5.2';
+const APP_VERSION = 'Beta 0.9.5.3';
 const APP_BUILD = '2026.07.17';
 
 const CATEGORY_LABELS = {1:'Settings',2:'Photo',3:'Music',4:'Video',5:'TV',6:'Game',7:'Network',8:'Extras'};
@@ -147,7 +148,7 @@ const XMB_LAYOUT = Object.freeze({
 const PSP_FONT_STACK = '"PSP New Rodin", "FOT-NewRodin Pro DB", "NewRodin Pro DB", Arial, sans-serif';
 
 const PSP_BATTERY_IMAGE = new Image();
-PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.2-beta';
+PSP_BATTERY_IMAGE.src = 'assets/psp_battery.png?v=0.9.5.3-beta';
 
 const state = {
   theme: null,
@@ -165,7 +166,8 @@ const state = {
   variants: [],
   analysisRows: [],
   analysisEstimate: 0,
-  previewHitRegions: []
+  previewHitRegions: [],
+  lastFocusGenerationBackup: null
 };
 
 function toast(title, text='', type='') {
@@ -588,7 +590,8 @@ async function loadThemeBuffer(buffer,name){
   setStatus('Reading PTF…');
   try{
     const parsed=await parsePtf(buffer,name);
-    state.theme=parsed.theme;state.assets=parsed.assets;state.sourceName=name;state.selectedAsset=null;state.nav={categoryPos:0,itemPos:0,secondPos:0,level:1};state.modelProfile='universal';state.variants=[];els.modelProfile.value='universal';
+    state.theme=parsed.theme;state.assets=parsed.assets;state.sourceName=name;state.selectedAsset=null;state.nav={categoryPos:0,itemPos:0,secondPos:0,level:1};state.modelProfile='universal';state.variants=[];state.lastFocusGenerationBackup=null;els.modelProfile.value='universal';
+    if(els.undoFocusGeneratorBtn)els.undoFocusGeneratorBtn.disabled=true;
     state.animationStart=performance.now();setDirty(false); bindThemeFields(); renderAssetList(); updateUiEnabled();updateModelUi();renderVariantList();
     els.dropOverlay.classList.add('hidden');
     const errors=state.assets.filter(a=>a.decodeError).length;
@@ -967,27 +970,92 @@ function focusOptionsFromUi(){
     includeCore:els.focusIncludeCore.checked
   };
 }
+function imageHasVisiblePixels(imageData){
+  if(!imageData?.data)return false;
+  for(let i=3;i<imageData.data.length;i+=4)if(imageData.data[i]>7)return true;
+  return false;
+}
+function focusAssetForBody(body){
+  return body?getAsset(body.objIdx,body.subIdx+1):null;
+}
+function currentCategoryFocusBodies(){
+  const categories=visibleCategoryAssets();
+  const selected=categories[state.nav.categoryPos];
+  if(!selected)return [];
+  return visibleItemsForCategory(selected.subIdx).map(bodyAsset).filter(a=>a?.role.type==='firstBody');
+}
+function focusTargetsForSelection(){
+  const target=els.focusTarget.value;
+  let bodies=[];
+  if(target==='first')bodies=state.assets.filter(a=>a.role.type==='firstBody');
+  else if(target==='second')bodies=state.assets.filter(a=>a.role.type==='secondBody');
+  else if(target==='both')bodies=state.assets.filter(a=>a.role.type==='firstBody'||a.role.type==='secondBody');
+  else if(target==='category')bodies=currentCategoryFocusBodies();
+  else{
+    const selected=selectedBodyForFocusGenerator();
+    bodies=selected?[selected]:[];
+  }
+  const unique=new Map();
+  for(const body of bodies)unique.set(`${body.objIdx}:${body.subIdx}`,body);
+  return [...unique.values()].sort((a,b)=>a.objIdx-b.objIdx||a.subIdx-b.subIdx);
+}
+function focusGenerationPlan(){
+  const allTargets=focusTargetsForSelection();
+  const populated=allTargets.filter(a=>a.imageData&&imageHasVisiblePixels(a.imageData));
+  const missingSources=allTargets.length-populated.length;
+  const missingOnly=els.focusGenerationMode?.value!=='replace';
+  const existing=populated.filter(body=>{
+    const focus=focusAssetForBody(body);
+    return focus?.imageData&&imageHasVisiblePixels(focus.imageData);
+  });
+  const affected=missingOnly?populated.filter(body=>!existing.includes(body)):populated;
+  return {allTargets,populated,existing,affected,missingSources,missingOnly};
+}
+function drawFocusPreviewSheet(pc,bodies,opts){
+  pc.clearRect(0,0,256,256);checker(pc,0,0,256,256,16);
+  if(!bodies.length)return;
+  if(bodies.length===1){
+    const body=bodies[0],target=body.role.type==='secondBody'?[48,48]:[64,64];
+    const generated=generateFocusImage(body.imageData,target[0],target[1],opts);
+    const scale=3.2,gw=generated.width*scale,gh=generated.height*scale,bw=body.imageData.width*scale,bh=body.imageData.height*scale;
+    drawImageDataFit(pc,generated,(256-gw)/2,(256-gh)/2,gw,gh,1);
+    drawImageDataFit(pc,body.imageData,(256-bw)/2,(256-bh)/2,bw,bh,1);
+    return;
+  }
+  const previewBodies=bodies.slice(0,16),cols=4,rows=Math.ceil(previewBodies.length/cols),cellW=256/cols,cellH=256/Math.max(1,rows);
+  previewBodies.forEach((body,index)=>{
+    const target=body.role.type==='secondBody'?[48,48]:[64,64];
+    const generated=generateFocusImage(body.imageData,target[0],target[1],opts);
+    const scale=Math.min((cellW-8)/target[0],(cellH-8)/target[1]);
+    const gw=target[0]*scale,gh=target[1]*scale,x=(index%cols)*cellW+(cellW-gw)/2,y=Math.floor(index/cols)*cellH+(cellH-gh)/2;
+    drawImageDataFit(pc,generated,x,y,gw,gh,1);
+    const bodyScale=Math.min((cellW-20)/body.imageData.width,(cellH-20)/body.imageData.height);
+    const bw=body.imageData.width*bodyScale,bh=body.imageData.height*bodyScale;
+    drawImageDataFit(pc,body.imageData,(index%cols)*cellW+(cellW-bw)/2,Math.floor(index/cols)*cellH+(cellH-bh)/2,bw,bh,1);
+  });
+}
 function updateFocusGeneratorPreview(){
   if(!els.focusPreviewCanvas)return;
   els.focusOpacityValue.textContent=`${els.focusOpacity.value}%`;
   els.focusBlurValue.textContent=`${els.focusBlur.value} px`;
   els.focusPaddingValue.textContent=`${els.focusPadding.value} px`;
-  const body=selectedBodyForFocusGenerator(),pc=els.focusPreviewCanvas.getContext('2d');
-  pc.clearRect(0,0,256,256);checker(pc,0,0,256,256,16);
-  if(!body?.imageData){els.focusPreviewLabel.textContent='Select a body icon first';return;}
-  const target=body.role.type==='secondBody'?[48,48]:[64,64];
-  const generated=generateFocusImage(body.imageData,target[0],target[1],focusOptionsFromUi());
-  const scale=3.2,gw=generated.width*scale,gh=generated.height*scale,bw=body.imageData.width*scale,bh=body.imageData.height*scale;
-  drawImageDataFit(pc,generated,(256-gw)/2,(256-gh)/2,gw,gh,1);
-  drawImageDataFit(pc,body.imageData,(256-bw)/2,(256-bh)/2,bw,bh,1);
-  els.focusPreviewLabel.textContent=`Preview from ${body.role.label.replace(/\s+—\s+Body$/,'')}`;
-}
-function focusTargetsForSelection(){
-  const target=els.focusTarget.value;
-  if(target==='first')return state.assets.filter(a=>a.role.type==='firstBody');
-  if(target==='second')return state.assets.filter(a=>a.role.type==='secondBody');
-  const selected=selectedBodyForFocusGenerator();
-  return selected?[selected]:[];
+  const plan=focusGenerationPlan(),pc=els.focusPreviewCanvas.getContext('2d');
+  drawFocusPreviewSheet(pc,plan.affected,focusOptionsFromUi());
+  if(!plan.populated.length){
+    els.focusPreviewLabel.textContent='No matching normal icons are available';
+  }else if(!plan.affected.length){
+    els.focusPreviewLabel.textContent='Every matching focus slot already contains artwork';
+  }else if(plan.affected.length===1){
+    els.focusPreviewLabel.textContent=`Preview from ${plan.affected[0].role.label.replace(/\s+—\s+Body$/,'')}`;
+  }else{
+    els.focusPreviewLabel.textContent=`Previewing ${Math.min(plan.affected.length,16)} of ${plan.affected.length} generated focus assets`;
+  }
+  const existingSkipped=plan.missingOnly?plan.existing.length:0;
+  const parts=[`${plan.populated.length} matching normal icon${plan.populated.length===1?'':'s'}`,`${plan.affected.length} focus asset${plan.affected.length===1?'':'s'} will be generated`];
+  if(existingSkipped)parts.push(`${existingSkipped} existing focus asset${existingSkipped===1?'':'s'} will remain unchanged`);
+  if(plan.missingSources)parts.push(`${plan.missingSources} empty source slot${plan.missingSources===1?'':'s'} skipped`);
+  els.focusBatchSummary.textContent=parts.join(' · ');
+  els.applyFocusGeneratorBtn.disabled=!plan.affected.length;
 }
 function ensureFocusPair(body){
   const focusSub=body.subIdx+1;let focus=getAsset(body.objIdx,focusSub);
@@ -996,20 +1064,55 @@ function ensureFocusPair(body){
   }
   return focus;
 }
+function snapshotFocusForUndo(body){
+  const focus=focusAssetForBody(body);
+  if(!focus)return {objIdx:body.objIdx,subIdx:body.subIdx+1,existed:false};
+  return {
+    objIdx:focus.objIdx,subIdx:focus.subIdx,existed:true,
+    imageData:focus.imageData?cloneImageData(focus.imageData):null,
+    paletteCount:focus.paletteCount,edited:focus.edited,decodeError:focus.decodeError,synthetic:focus.synthetic
+  };
+}
 function applyFocusGenerator(){
-  const bodies=focusTargetsForSelection().filter(a=>a.imageData);
-  if(!bodies.length){toast('No source icons','Select a body icon or choose a populated icon group.','error');return;}
-  const opts=focusOptionsFromUi();
-  for(const body of bodies){
+  const plan=focusGenerationPlan();
+  if(!plan.affected.length){
+    toast('Nothing to generate',plan.missingOnly?'All matching focus slots already contain artwork.':'No populated source icons match the selected scope.','error');
+    return;
+  }
+  const opts=focusOptionsFromUi(),dirtyBefore=state.dirty,entries=plan.affected.map(snapshotFocusForUndo);
+  for(const body of plan.affected){
     const focus=ensureFocusPair(body),[tw,th]=focus.role.required;
     focus.imageData=generateFocusImage(body.imageData,tw,th,opts);
     focus.paletteCount=countColors(focus.imageData,257);focus.edited=true;focus.decodeError=null;
   }
+  state.lastFocusGenerationBackup={entries,dirtyBefore};
+  els.undoFocusGeneratorBtn.disabled=false;
   setDirty(true);renderAssetList();if(state.selectedAsset)selectAsset(state.selectedAsset);
-  closeModal(els.focusModal);
-  toast('Focus graphics generated',`${bodies.length} focus asset${bodies.length===1?' was':'s were'} created.`,'success');
+  updateFocusGeneratorPreview();
+  toast('Matching focuses generated',`${plan.affected.length} body icon${plan.affected.length===1?' was':'s were'} converted into matching focus artwork.`,'success');
 }
-
+function undoLastFocusGeneration(){
+  const backup=state.lastFocusGenerationBackup;
+  if(!backup?.entries?.length)return;
+  for(const entry of [...backup.entries].reverse()){
+    const current=getAsset(entry.objIdx,entry.subIdx);
+    if(!entry.existed){
+      if(current){
+        if(state.selectedAsset===current)state.selectedAsset=null;
+        state.assets=state.assets.filter(a=>a!==current);
+      }
+      continue;
+    }
+    if(!current)continue;
+    current.imageData=entry.imageData?cloneImageData(entry.imageData):null;
+    current.paletteCount=entry.paletteCount;current.edited=entry.edited;current.decodeError=entry.decodeError;current.synthetic=entry.synthetic;
+  }
+  state.lastFocusGenerationBackup=null;els.undoFocusGeneratorBtn.disabled=true;
+  setDirty(backup.dirtyBefore);renderAssetList();
+  if(state.selectedAsset)selectAsset(state.selectedAsset);
+  updateFocusGeneratorPreview();
+  toast('Bulk generation undone','The previous focus assets have been restored.','success');
+}
 
 function registerPreviewHit(asset,x,y,w,h,kind='icon'){
   if(!asset)return;
@@ -1237,7 +1340,7 @@ function swizzleIndices(indices,w,h,bpp=8){const tileW=0x80/bpp,tileH=8,ow=align
 function blockHeader(type,size,next){const b=new Uint8Array(16);const v=new DataView(b.buffer);setU16(v,0,type);setU32(v,4,size);setU32(v,8,next);setU32(v,12,0x10);return b;}
 function concatArrays(parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;for(const p of parts){out.set(p,o);o+=p.length;}return out;}
 function makeImageBlock(type,format,pixelOrder,w,h,bpp,pixelBytes,levelType){const content=new Uint8Array(0x40+pixelBytes.length);const v=new DataView(content.buffer);setU16(v,0,0x30);setU16(v,4,format);setU16(v,6,pixelOrder);setU16(v,8,w);setU16(v,10,h);setU16(v,12,bpp);setU16(v,14,0x10);setU16(v,16,0x08);setU16(v,18,2);setU32(v,24,0x30);setU32(v,28,0x40);setU32(v,32,0x40+pixelBytes.length);setU32(v,36,0);setU16(v,40,levelType);setU16(v,42,1);setU16(v,44,3);setU16(v,46,1);setU32(v,0x30,0x40);content.set(pixelBytes,0x40);const total=16+content.length;return concatArrays([blockHeader(type,total,total),content]);}
-function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.2\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
+function makeFileInfo(){const text=new TextEncoder().encode(`\0\0${new Date().toString().slice(0,24)}\n\0PTF Studio Beta 0.9.5.3\0`);const padded=new Uint8Array(align(text.length,4));padded.set(text);const total=16+padded.length;return concatArrays([blockHeader(0xff,total,total),padded]);}
 function encodeGimIndexed(imageData,dither=true){const q=quantize(imageData,256,dither),w=imageData.width,h=imageData.height;const palBytes=new Uint8Array(1024);q.palette.forEach((p,i)=>{palBytes[i*4]=p[0];palBytes[i*4+1]=p[1];palBytes[i*4+2]=p[2];palBytes[i*4+3]=p[3];});const indexBytes=swizzleIndices(q.indices,w,h,8);let paletteBlock=makeImageBlock(5,3,0,256,1,32,palBytes,2);let imageBlock=makeImageBlock(4,5,1,w,h,8,indexBytes,1);const fileInfo=makeFileInfo();
   // Correct global next pointers after sizes are known.
   new DataView(paletteBlock.buffer).setUint32(8,paletteBlock.length,true);new DataView(imageBlock.buffer).setUint32(8,imageBlock.length,true);
@@ -1616,10 +1719,11 @@ els.focusGeneratorBtn.addEventListener('click',()=>{
   updateFocusGeneratorPreview();
   openModal(els.focusModal);
 });
-[els.focusTarget,els.focusColor,els.focusOpacity,els.focusBlur,els.focusPadding,els.focusIncludeCore].forEach(control=>{
+[els.focusTarget,els.focusGenerationMode,els.focusColor,els.focusOpacity,els.focusBlur,els.focusPadding,els.focusIncludeCore].forEach(control=>{
   control.addEventListener(control.type==='checkbox'?'change':'input',updateFocusGeneratorPreview);
 });
 els.applyFocusGeneratorBtn.addEventListener('click',applyFocusGenerator);
+els.undoFocusGeneratorBtn.addEventListener('click',undoLastFocusGeneration);
 els.bulkFocusBtn.addEventListener('click',()=>els.bulkFocusInput.click());
 els.bulkFocusInput.addEventListener('change',async e=>{
   const f=e.target.files[0];
